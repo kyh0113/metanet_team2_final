@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -143,12 +144,15 @@ public class EmployeeController {
 		employee.setEmpId((String)session.getAttribute("empId"));
 		employee.setName((String)session.getAttribute("name"));
 		employee.setEmail((String)session.getAttribute("email"));
-		employee.setPassword(password);
+		// password 암호화
+		PasswordEncoder pwEncoder = 
+				PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		String encodedPw = pwEncoder.encode(password);
+		employee.setPassword(encodedPw);
 		
 		String result = employeeService.changePassword(employee);
         Result rst = new Result();
         rst.setResultMessage(result);
         return rst;
-	    
 	}
 }
