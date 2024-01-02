@@ -30,7 +30,7 @@ public class ManagerService implements IManagerService {
 
         // 아이디 및 비밀번호 설정
         employee.setEmpId(id);
-        employee.setPassword(id);
+        employee.setPassword(employee.getPassword());
         
         // 비밀번호 암호화
         String encodedPassword = encodePassword(employee.getPassword());
