@@ -40,4 +40,26 @@
 	      WHERE name=#{name} AND email=#{email}
    		]]>
 	</select>
+	
+	<select id="selectEmployeeInfoByIdNameEmail" parameterType="com.example.vms.manager.model.Employee" resultType="com.example.vms.manager.model.Employee">
+		<![CDATA[
+	      SELECT 
+	        EMP_ID AS empId,
+			NAME AS name,
+			PASSWORD AS password,
+			EMAIL AS email,
+			POSITION AS position,
+			GENDER AS gender,
+			BIRTH AS birth,
+			HIRE_DATE AS hireDate,
+			RETIRE_DATE AS retireDate,
+			PHONE AS phone,
+			STATUS AS status,
+			REMAINS AS remains,
+			DEPT_ID AS deptId 
+	      FROM 
+	         EMPLOYEES 
+	      WHERE EMP_ID=#{empId} AND NAME=#{name} AND EMAIL=#{email}
+   		]]>
+	</select>
 </mapper>

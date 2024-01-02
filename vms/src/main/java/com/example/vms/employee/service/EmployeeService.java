@@ -1,5 +1,8 @@
 package com.example.vms.employee.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,4 +84,34 @@ public class EmployeeService implements IEmployeeService{
         }
     }
 	
+	@Override
+	public Map<String, String> findPassword(Employee employee) {
+		//비밀번호 찾기
+		Map<String, String> resultMap = new HashMap<>();
+		//입력된 정보로 사원 정보 찾기
+		Employee emp = employeeDao.selectEmployeeInfoByIdNameEmail(employee);
+		if(emp == null) {
+			resultMap.put("message", "존재하지 않는 정보입니다.");
+			return resultMap;
+		}
+		
+		//존재하면 랜덤코드 생성 후 해당 이메일로 인증코드 발송
+		//랜덤 인증코드 6자리 생성
+    	Random random = new Random();
+        StringBuffer authCode = new StringBuffer();
+        while(authCode.length()<6){
+            if(random.nextBoolean()){
+            	authCode.append((char)((int)(random.nextInt(26))+65));
+            }
+            else{
+            	authCode.append(random.nextInt(10));
+            }                
+        }
+        String mailSubject = "휴가관리 이메일 인증";
+		String mailMessage = "요청하신 인증 번호입니다.";
+		String result = sendMail(authCode.toString(), employee.getEmail(), mailSubject, mailMessage);
+		resultMap.put("message", result);
+		resultMap.put("authCode", authCode.toString());
+		return resultMap;
+	}
 }

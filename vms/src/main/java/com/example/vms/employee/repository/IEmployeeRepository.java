@@ -15,4 +15,5 @@ public interface IEmployeeRepository {
 	Set<String> getRolesByEmpId(String empId);
 	
 	String selectEmpIdByNameEmail(Employee employee);
+	Employee selectEmployeeInfoByIdNameEmail(Employee employee);
 }
