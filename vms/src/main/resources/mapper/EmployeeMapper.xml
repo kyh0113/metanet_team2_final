@@ -1,0 +1,33 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.employee.repository.IEmployeeRepository">
+<select id="selectEmployee" parameterType="String" resultType="com.example.vms.manager.model.Employee">
+		<![CDATA[
+			SELECT 
+				EMP_ID AS empId,
+				NAME AS name,
+				PASSWORD AS password,
+				EMAIL AS email,
+				POSITION AS position,
+				GENDER AS gender,
+				BIRTH AS birth,
+				HIRE_DATE AS hireDate,
+				RETIRE_DATE AS retireDate,
+				PHONE AS phone,
+				STATUS AS status,
+				REMAINS AS remains,
+				DEPT_ID AS deptId
+			FROM 
+				employees 
+			WHERE EMP_ID=#{empId}
+		]]>		
+	</select>
+    
+    <select id="getRolesByEmpId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT R.NAME
+    FROM EMPLOYEE_ROLES ER
+    JOIN ROLES R ON ER.ROLE_ID = R.ROLE_ID
+    WHERE ER.EMP_ID = #{empId}
+	</select>
+</mapper>
