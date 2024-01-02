@@ -30,4 +30,14 @@
     JOIN ROLES R ON ER.ROLE_ID = R.ROLE_ID
     WHERE ER.EMP_ID = #{empId}
 	</select>
+	
+	<select id="selectEmpIdByNameEmail" parameterType="com.example.vms.manager.model.Employee" resultType="string">
+		<![CDATA[
+	      SELECT 
+	         EMP_ID   
+	      FROM 
+	         EMPLOYEES 
+	      WHERE name=#{name} AND email=#{email}
+   		]]>
+	</select>
 </mapper>

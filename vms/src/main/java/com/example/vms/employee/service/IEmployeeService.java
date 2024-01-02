@@ -7,4 +7,7 @@ import com.example.vms.manager.model.Employee;
 public interface IEmployeeService {
 	Employee selectEmployee(String empId);
 	Set<String> getRolesByEmpId(String empId);
+	
+	String findEmpId(Employee employee);
+	String sendMail(String content, String email, String mailSubject, String mailMessage);
 }

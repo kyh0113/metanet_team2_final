@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
@@ -47,9 +48,7 @@ public class EmployeeController {
 	}
 
 	// 로그아웃 기능
-	// 비밀번호 변경 기능
-	// 아이디 찾기 기능
-	// 비밀번호 찾기 기능
+	
 
 	@PostMapping("/login")
 	public String login(@RequestParam String empId, @RequestParam String password, Model model) {
@@ -90,4 +89,21 @@ public class EmployeeController {
 	        return "JWT test failed: " + e.getMessage();
 	    }
 	}
+	
+	// 아이디 찾기 기능
+	@GetMapping("/find-employeeid")
+    public String findEmployeeId(){
+        return "employee/findEmpId";
+    }
+	
+	@ResponseBody
+	@PostMapping("/find-employeeid")
+    public Result findEmployeeId(Employee employee){
+		String msg = employeeService.findEmpId(employee);
+		Result rst = new Result();
+        rst.setResultMessage(msg);
+        return rst;
+    }
+	// 비밀번호 찾기 기능
+	// 비밀번호 변경 기능
 }
