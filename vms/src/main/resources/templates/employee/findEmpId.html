@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function sendInfo(){
+        $.ajax({
+            url:"/employee/find-employeeid",
+            type:"post",
+            dataType:"json",
+            timeout : 5000,
+            data:{ 
+				"name": $("#name").val(),
+				"email": $("#email").val()
+			},
+            success: function(data){ 
+                alert(data.resultMessage);
+                console.log(data.resultMessage);
+            },
+            error : function(xhr, ajaxSettings, thrownError) {
+		       alert(thrownError);
+		   }
+        });
+    }
+</script>
+<body>
+    <div id="find_id" name="find_id">
+		<input type="text" name="name" id="name" placeholder="이름">
+		<input type="text" name="email" id="email" placeholder="아매일">
+		<button type="button" id="sendBtn" name="sendBtn" onclick="sendInfo()">아이디 찾기</button>
+    </div>
+</body>
+</html>
