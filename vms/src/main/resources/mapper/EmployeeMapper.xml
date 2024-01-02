@@ -62,4 +62,12 @@
 	      WHERE EMP_ID=#{empId} AND NAME=#{name} AND EMAIL=#{email}
    		]]>
 	</select>
+	
+	<update id="updatePassword" parameterType="com.example.vms.manager.model.Employee">
+		UPDATE EMPLOYEES
+      SET 
+         PASSWORD=#{password} 
+      WHERE 
+         EMP_ID=#{empId} AND NAME=#{name} AND EMAIL=#{email}
+	</update>
 </mapper>

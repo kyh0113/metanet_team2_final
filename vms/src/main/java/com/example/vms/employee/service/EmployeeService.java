@@ -114,4 +114,16 @@ public class EmployeeService implements IEmployeeService{
 		resultMap.put("authCode", authCode.toString());
 		return resultMap;
 	}
+	
+	@Override
+	public String changePassword(Employee employee) {
+		// 비밀번호 변경
+		int result = employeeDao.updatePassword(employee);
+		if(result != 1) {
+			return "비밀번호 변경 실패";
+		}
+		else {
+			return "비밀번호가 변경되었습니다.";
+		}
+	}
 }

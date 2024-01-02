@@ -12,4 +12,5 @@ public interface IEmployeeService {
 	String findEmpId(Employee employee);
 	String sendMail(String content, String email, String mailSubject, String mailMessage);
 	Map<String, String> findPassword(Employee employee);
+	String changePassword(Employee employee);
 }

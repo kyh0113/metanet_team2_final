@@ -130,4 +130,25 @@ public class EmployeeController {
 	}
 	
 	// 비밀번호 변경 기능
+	@GetMapping("/change-password")
+    public String changePassword(){
+        return "employee/changePassword";
+    }
+	 
+	@ResponseBody
+	@PostMapping("/change-password")
+	public Result changePassword(String password, HttpSession session) {
+		//비밀번호 변경
+		Employee employee = new Employee();
+		employee.setEmpId((String)session.getAttribute("empId"));
+		employee.setName((String)session.getAttribute("name"));
+		employee.setEmail((String)session.getAttribute("email"));
+		employee.setPassword(password);
+		
+		String result = employeeService.changePassword(employee);
+        Result rst = new Result();
+        rst.setResultMessage(result);
+        return rst;
+	    
+	}
 }
