@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.vms.certificate.model.Certificate;
+import com.example.vms.certificate.model.CertificateResponseDTO;
 
 @Repository
 @Mapper
@@ -18,7 +19,13 @@ public interface ICertificateRepository {
 	);
 	public int searchMaxCertificateId();
 	public int searchCertificateIdByEmpId(
-			@Param("empId") String empId
+		@Param("empId") String empId
+	);
+	public CertificateResponseDTO[] searchCertificatesByEmpId(
+		@Param("empId") String empId
+	);
+	public void deleteCertificate(
+		@Param("certificateId") int certificateId
 	);
 
 }

@@ -5,9 +5,11 @@ import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.model.CertificateRequestDTO;
+import com.example.vms.certificate.model.CertificateResponseDTO;
 import com.example.vms.certificate.repository.ICertificateRepository;
 
 @Service
@@ -17,6 +19,7 @@ public class CertificateService implements ICertificateService {
 	ICertificateRepository certificateRepository;
 	
 	@Override
+	@Transactional
 	public int createCertificate(CertificateRequestDTO certificateDTO) {
 		
     	Certificate certificate = new Certificate();
@@ -24,12 +27,19 @@ public class CertificateService implements ICertificateService {
     	certificate.setRegDate(currentTime());
     	certificate.setType(certificateDTO.getType());
     	certificate.setEmpId(certificateDTO.getEmp_id());
-    	System.out.println(certificate);
+    	
+    	CertificateResponseDTO[] certificates = certificateRepository.searchCertificatesByEmpId(certificateDTO.getEmp_id());
+    	
+    	for (CertificateResponseDTO cert: certificates) {
+    		if (cert.getType().equals(certificate.getType())) {
+    			certificateRepository.deleteCertificate(cert.getCertificateId());
+    		}
+    	}
     	
 		try {
 			certificateRepository.createCertificate(
-				certificate
-			);
+					certificate
+				);
 			return certificate.getCertificateId();
 		} catch (Exception e) {
 			return -1; 
