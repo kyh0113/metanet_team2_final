@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Certificate {
-    int certificateId;
+    String certificateId;
     Date regDate;
     String type;
     String reason;

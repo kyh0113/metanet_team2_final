@@ -25,10 +25,10 @@ public interface ICertificateRepository {
 		@Param("empId") String empId
 	);
 	public CertificateResponseDTO[] searchCertificatesByCertificateId(
-			@Param("certificateId") int certificateId
+			@Param("certificateId") String certificateId
 		);
 	public void deleteCertificate(
-		@Param("certificateId") int certificateId
+		@Param("certificateId") String certificateId
 	);
 
 }

@@ -5,8 +5,8 @@ import com.example.vms.certificate.model.CertificateResponseDTO;
 
 public interface ICertificateService {
 
-	public int createCertificate(CertificateRequestDTO certificateDTO);
+	public String createCertificate(CertificateRequestDTO certificateDTO);
 	
 	public CertificateResponseDTO[] searchCertificatesByEmpId(String empId);
-	public CertificateResponseDTO[] searchCertificatesByCertificateId(int certificateId);
+	public CertificateResponseDTO[] searchCertificatesByCertificateId(String certificateId);
 }

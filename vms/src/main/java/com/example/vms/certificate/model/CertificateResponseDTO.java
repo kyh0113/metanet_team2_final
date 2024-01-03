@@ -20,7 +20,7 @@ public class CertificateResponseDTO {
     private Date retireDate;
     private String phone;
     private String status;
-    private int certificateId;
+    private String certificateId;
     private Date regDate;
     private String type;
     private String reason;

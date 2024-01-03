@@ -7,12 +7,14 @@ import java.sql.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.model.CertificateRequestDTO;
@@ -25,7 +27,7 @@ import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestController 
+@Controller
 @RequestMapping("/certificate")
 public class CertificateController {
 	
@@ -40,26 +42,27 @@ public class CertificateController {
     }
     
     @PostMapping("/generate")
-    public int generateCerti(
+    @ResponseBody
+    public String generateCerticate(
     	@RequestBody CertificateRequestDTO certificateRequestDTO
     ) {
     	return certificateService.createCertificate(certificateRequestDTO);
     }
     
     @GetMapping("/search") 
-    public CertificateResponseDTO[] searchCertificatesByEmpId(
+    public String searchCertificatesByEmpId(
     	@RequestParam(name = "emp_id", required=false, defaultValue = "") String emp_id,
-    	@RequestParam(name = "certificate_id", required = false) Integer certificate_id,
+    	@RequestParam(name = "certificate_id", required = false, defaultValue = "") String certificate_id,
     	Model model
     ) {
     	CertificateResponseDTO[] certificates;
-    	if (certificate_id != null) {
+    	if (!certificate_id.equals("")) {
     		certificates = certificateService.searchCertificatesByCertificateId(certificate_id);
     	} else {
     		certificates = certificateService.searchCertificatesByEmpId(emp_id);
     	}
     	model.addAttribute("certificates", certificates);
-    	return certificates;
+    	return "certificate/search";
     }
     
 }

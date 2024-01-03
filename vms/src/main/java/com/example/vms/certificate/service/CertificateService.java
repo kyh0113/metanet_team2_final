@@ -2,6 +2,7 @@ package com.example.vms.certificate.service;
 
 
 import java.sql.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,10 @@ public class CertificateService implements ICertificateService {
 	
 	@Override
 	@Transactional
-	public int createCertificate(CertificateRequestDTO certificateDTO) {
+	public String createCertificate(CertificateRequestDTO certificateDTO) {
 		
     	Certificate certificate = new Certificate();
-    	certificate.setCertificateId(certificateRepository.searchMaxCertificateId()+1);
+    	certificate.setCertificateId(UUID.randomUUID().toString());
     	certificate.setRegDate(currentTime());
     	certificate.setType(certificateDTO.getType());
     	certificate.setEmpId(certificateDTO.getEmp_id());
@@ -40,7 +41,8 @@ public class CertificateService implements ICertificateService {
 				);
 			return certificate.getCertificateId();
 		} catch (Exception e) {
-			return -1; 
+			System.out.println(e);
+			return null; 
 		}
 	}
 
@@ -50,7 +52,7 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
-	public CertificateResponseDTO[] searchCertificatesByCertificateId(int certificateId) {
+	public CertificateResponseDTO[] searchCertificatesByCertificateId(String certificateId) {
 		return certificateRepository.searchCertificatesByCertificateId(certificateId);
 	}
 	
