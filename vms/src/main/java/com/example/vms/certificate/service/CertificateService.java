@@ -27,16 +27,14 @@ public class CertificateService implements ICertificateService {
     	certificate.setRegDate(currentTime());
     	certificate.setType(certificateDTO.getType());
     	certificate.setEmpId(certificateDTO.getEmp_id());
-    	
-    	CertificateResponseDTO[] certificates = certificateRepository.searchCertificatesByEmpId(certificateDTO.getEmp_id());
-    	
-    	for (CertificateResponseDTO cert: certificates) {
-    		if (cert.getType().equals(certificate.getType())) {
-    			certificateRepository.deleteCertificate(cert.getCertificateId());
-    		}
-    	}
-    	
 		try {
+	    	CertificateResponseDTO[] certificates = certificateRepository.searchCertificatesByEmpId(certificateDTO.getEmp_id());
+	    	
+	    	for (CertificateResponseDTO cert: certificates) {
+	    		if (cert.getType().equals(certificate.getType())) {
+	    			certificateRepository.deleteCertificate(cert.getCertificateId());
+	    		}
+	    	}
 			certificateRepository.createCertificate(
 					certificate
 				);
