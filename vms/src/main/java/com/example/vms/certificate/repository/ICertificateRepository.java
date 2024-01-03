@@ -24,6 +24,9 @@ public interface ICertificateRepository {
 	public CertificateResponseDTO[] searchCertificatesByEmpId(
 		@Param("empId") String empId
 	);
+	public CertificateResponseDTO[] searchCertificatesByCertificateId(
+			@Param("certificateId") int certificateId
+		);
 	public void deleteCertificate(
 		@Param("certificateId") int certificateId
 	);

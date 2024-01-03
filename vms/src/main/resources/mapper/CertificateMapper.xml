@@ -60,6 +60,35 @@
         ]]>
     </select>
     
+    <select id="searchCertificatesByCertificateId" resultType="com.example.vms.certificate.model.CertificateResponseDTO">
+		        <![CDATA[
+        SELECT
+            e.EMP_ID AS empId,
+            e.NAME AS empName,
+            e.EMAIL,
+            e.POSITION,
+            e.GENDER,
+            e.BIRTH,
+            e.HIRE_DATE AS hireDate,
+            e.RETIRE_DATE AS retireDate,
+            e.PHONE,
+            e.STATUS,
+            c.CERTIFICATE_ID AS certificateId,
+            c.REG_DATE AS regDate,
+            c.TYPE,
+            c.REASON,
+            d.NAME AS deptName
+        FROM
+            employees e
+        JOIN
+            Certification c ON e.EMP_ID = c.EMP_ID
+        JOIN
+            departments d ON e.DEPT_ID = d.DEPT_ID
+        WHERE
+            c.CERTIFICATE_ID = #{certificateId}
+        ]]>
+	</select>
+    
     <delete id="deleteCertificate">
 		DELETE Certification WHERE certificate_id=#{certificateId}
 	</delete>

@@ -45,8 +45,17 @@ public class CertificateService implements ICertificateService {
 			return -1; 
 		}
 	}
-	
 
+	@Override
+	public CertificateResponseDTO[] searchCertificatesByEmpId(String empId) {
+		return certificateRepository.searchCertificatesByEmpId(empId);
+	}
+
+	@Override
+	public CertificateResponseDTO[] searchCertificatesByCertificateId(int certificateId) {
+		return certificateRepository.searchCertificatesByCertificateId(certificateId);
+	}
+	
 	private Date currentTime() {
         // 현재 날짜와 시간 얻기
         java.util.Date currentDate = new java.util.Date();

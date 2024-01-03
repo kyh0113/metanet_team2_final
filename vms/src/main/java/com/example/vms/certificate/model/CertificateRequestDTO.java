@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CertificateRequestDTO {
-	String emp_id;
-	String type;
+	private String emp_id;
+	private String type;
 }
