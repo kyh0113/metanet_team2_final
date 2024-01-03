@@ -1,5 +1,16 @@
 package com.example.vms.certificate.model;
 
-public class Certificate {
+import java.sql.Date;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class Certificate {
+    int certificateId;
+    Date regDate;
+    String type;
+    String reason;
+    String empId;
 }

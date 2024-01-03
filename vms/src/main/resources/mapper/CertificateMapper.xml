@@ -1,0 +1,33 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.certificate.repository.ICertificateRepository">
+	
+	<select id="searchMaxCertificateId" resultType="java.lang.Integer">
+	  SELECT 
+	  NVL(MAX(CERTIFICATE_ID), 0) 
+	  FROM CERTIFICATION
+	</select>
+
+	 <select id="searchCertificateIdByEmpId" resultType="java.lang.Integer">
+	   SELECT CERTIFICATE_ID
+	   FROM CERTIFICATION
+	   WHERE EMP_ID=#{empId}
+	 </select>
+	 
+	<insert id="createCertificate" parameterType="com.example.vms.certificate.model.Certificate">
+	    INSERT INTO 
+	    CERTIFICATION (
+	        CERTIFICATE_ID, 
+	        REG_DATE, 
+	        TYPE, 
+	        EMP_ID
+	    )
+	    VALUES (
+	        #{certificateId},
+	        #{regDate, jdbcType=DATE}, 
+	        #{type},
+	        #{empId}
+	    )
+	</insert>
+</mapper>

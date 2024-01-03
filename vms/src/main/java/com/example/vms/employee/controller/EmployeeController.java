@@ -22,8 +22,11 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.xml.ws.Response;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,7 +59,7 @@ public class EmployeeController {
 	
 
 	@PostMapping("/login")
-	public String login(@RequestParam String empId, @RequestParam String password, Model model) {
+	public String login(@RequestParam String empId, @RequestParam String password, Model model, HttpServletResponse response) {
 		log.info("EMP_ID: {}", empId);
 
 		Employee employee = employeeService.selectEmployee(empId);
@@ -72,6 +75,13 @@ public class EmployeeController {
 			String token = tokenProvider.generateToken(employee);
 			System.out.println("토큰출력 : " + token);
 			model.addAttribute("token", token);
+			
+			System.out.println("토큰 쿠키에 저장");
+            Cookie cookie = new Cookie("jwtToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(60 * 30); // 30분 동안 유효
+            response.addCookie(cookie);
+            System.out.println("토큰 쿠키에서 저장 완료");
 		}
 
 		return "redirect:/employee/home";
