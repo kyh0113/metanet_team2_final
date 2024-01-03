@@ -7,6 +7,7 @@ import java.sql.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,12 +49,17 @@ public class CertificateController {
     @GetMapping("/search") 
     public CertificateResponseDTO[] searchCertificatesByEmpId(
     	@RequestParam(name = "emp_id", required=false, defaultValue = "") String emp_id,
-    	@RequestParam(name = "certificate_id", required = false) Integer certificate_id
+    	@RequestParam(name = "certificate_id", required = false) Integer certificate_id,
+    	Model model
     ) {
+    	CertificateResponseDTO[] certificates;
     	if (certificate_id != null) {
-    		return certificateService.searchCertificatesByCertificateId(certificate_id);
+    		certificates = certificateService.searchCertificatesByCertificateId(certificate_id);
+    	} else {
+    		certificates = certificateService.searchCertificatesByEmpId(emp_id);
     	}
-    	return certificateService.searchCertificatesByEmpId(emp_id);
+    	model.addAttribute("certificates", certificates);
+    	return certificates;
     }
     
 }
