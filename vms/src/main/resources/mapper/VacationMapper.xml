@@ -1,0 +1,50 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.vacation.repository.IVacationRepository">
+
+<resultMap id="RequestResultMap" type="com.example.vms.vacation.model.VacationEmployee">
+    	<id column="REG_ID" property="regId"/>
+    	<result column="STATE" property="state"/>
+    	<result column="START_DATE" property="startDate"/>
+    	<result column="END_DATE" property="endDate"/>
+    	<result column="REG_DATE" property="regDate"/>
+    	<result column="NAME" property="empName"/>
+  	</resultMap>
+
+<select id="selectRequestListByDept" parameterType="string" resultMap="RequestResultMap">
+		<![CDATA[
+			SELECT V.REG_ID,
+			       V.STATE,
+			       V.START_DATE,
+			       V.END_DATE,
+			       V.REG_DATE,
+			       E.NAME
+			FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+			WHERE V.STATE != '취소' AND E.DEPT_ID = ( SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
+		]]>		
+	</select>
+	
+<select id="selectRequestByRegId" parameterType="int" resultType="com.example.vms.vacation.model.Vacation">
+		<![CDATA[
+			SELECT REG_ID AS regId,
+			       STATE AS state,
+			       START_DATE AS startDate,
+			       END_DATE AS endDate,
+			       REG_DATE AS regDate,
+			       DENIED_CONTENT AS deniedContent,
+			       CONTENT AS content,
+			       EMP_ID AS empId,
+			       TYPE_ID AS typeId
+			FROM VACATION_REG
+			WHERE REG_ID = #{regId}
+		]]>		
+	</select>
+	
+	<update id="updateRequest" parameterType="com.example.vms.vacation.model.Vacation">
+		UPDATE VACATION_REG 
+		SET STATE = #{state}, DENIED_CONTENT = #{deniedContent} 
+		WHERE REG_ID = #{regId}
+	</update>
+    
+</mapper>
