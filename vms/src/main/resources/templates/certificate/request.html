@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>증명서 발급</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+</head>
+<style>
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 1px #ddd solid;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+    .container {
+        max-width: 570px;
+        height: 800px;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        position: relative;
+    }
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .content {
+        margin-bottom: 40px;
+    }
+    .signature {
+        text-align: center;
+        margin-top: auto;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+    #item {
+        width: 100px;
+    }
+    #contexttable {
+        border: 1px solid #ddd;
+    }
+    .certificateid {
+        text-align: left;
+        margin-left: 30px;
+        margin-bottom: 20px;
+    }
+    .blank {
+        height: 50px;
+    }
+    .context {
+        text-align: center;
+    }
+</style>
+<body>
+    <table>
+        <thead>
+            <th>양식명</th>
+            <th>양식설명</th>
+            <th></th>
+        </thead>
+        <tr>
+            <td>퇴직증명서</td>
+            <td><a href="#retirementcertificate" rel="modal:open">미리보기</button></td>
+            <td><button onclick="requestCertificate('퇴직증명서')">신청</button></td>
+        </tr>
+        <tr>
+            <td>경력증명서</td>
+            <td><a href="#careercertificate" rel="modal:open">미리보기</a></td>
+            <td><button onclick="requestCertificate('경력증명서')">신청</button></td>
+        </tr>
+        <tr>
+            <td>재직증명서</td>
+            <td><a href="#employmentcertificate" rel="modal:open">미리보기</a></td>
+            <td><button onclick="requestCertificate('재직증명서')">신청</button></td>
+        </tr>
+    </table>
+
+    <!-- 퇴직증명서 -->
+    <div id="retirementcertificate" class="modal">
+        <div class="container">
+            <div class="header">
+                <h1>퇴직 증명서</h1>
+            </div>
+            <div class="certificateid">
+                <p>제 1111호</p>
+            </div>
+            <div class="content">
+                <table>
+                    <tr>
+                        <td id="item">성명</td>
+                        <td colspan="3">홍길동</td>
+                    </tr>
+                    <tr>
+                        <td id="item">직책</td>
+                        <td colspan="3">팀원</td>
+                    </tr>
+                    <tr>
+                        <td id="item">부서</td>
+                        <td colspan="3">개발</td>
+                    </tr>
+                    <tr>
+                        <td>회사명</td>
+                        <td colspan="3">Metanet</td>
+                    </tr>
+                    <tr>
+                        <td>입사일</td>
+                        <td>2023-11-01</td>
+                        <td>퇴사일</td>
+                        <td>2023-12-23</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="context">
+                <p>상기와 같이 퇴직함을 증명합니다.</p>
+            </div>
+            <div class="signature">
+                <p>2023년 12월 29일</p>
+            </div>
+            <div class="blank"></div>
+        </div>
+    </div>
+    <!-- 경력증명서 -->
+    <div id="careercertificate" class="modal">
+        <div class="container">
+            <div class="header">
+                <h1>경력증명서</h1>
+            </div>
+            <div class="certificateid">
+                <p>제 1111호</p>
+            </div>
+            <div class="content">
+                <table>
+                    <tr>
+                        <td id="item">성명</td>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <td id="item">직책</td>
+                        <td>팀원</td>
+                    </tr>
+                    <tr>
+                        <td>회사명</td>
+                        <td>Metanet</td>
+                    </tr>
+                    <tr>
+                        <td>경력사항</td>
+                        <td>
+                            <p>2022년 7월 1일부터 개발부 근무(1년 04개월)</p>
+                            <p>2023년 11월 1일 사직</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="context">
+                <p>위 사람은 상기와 같이 근무하였음을 증명합니다.</p>
+            </div>
+            <div class="signature">
+                <p>2023년 12월 29일</p>
+            </div>
+            <div class="blank"></div>
+        </div>
+    </div>
+    <!-- 재직증명서 -->
+    <div id="employmentcertificate" class="modal">
+        <div class="container">
+            <div class="header">
+                <h1>재직증명서</h1>
+            </div>
+            <div class="certificateid">
+                <p>제 1111호</p>
+            </div>
+            <div class="content">
+                <table>
+                    <tr>
+                        <td id="item">성명</td>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <td id="item">직책</td>
+                        <td>팀원</td>
+                    </tr>
+                    <tr>
+                        <td id="item">부서</td>
+                        <td>개발</td>
+                    </tr>
+                    <tr>
+                        <td>회사명</td>
+                        <td>Metanet</td>
+                    </tr>
+                    <tr>
+                        <td>입사일</td>
+                        <td>2023-11-01</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="context">
+                <p>상기와 같이 재직함을 증명함</p>
+            </div>
+            <div class="signature">
+                <p>2023년 12월 29일</p>
+            </div>
+            <div class="blank"></div>
+        </div>
+    </div>
+
+    <script>
+        function requestCertificate(certifiateType) {
+			var url = 'http://localhost:8082/certificate/generate';
+			var requestBody = {
+			    emp_id: 'D180003',
+			    type: certifiateType
+			};
+			
+			// AJAX 요청 생성
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			// 요청 완료 시 실행될 함수 설정
+			xhr.onreadystatechange = function () {
+			    if (xhr.readyState == 4 && xhr.status == 200) {
+			        // 성공적으로 요청이 완료되었을 때 실행할 코드
+			        alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
+			    }
+			};
+			
+			// JSON 데이터를 문자열로 변환하여 요청 전송
+			xhr.send(JSON.stringify(requestBody));
+        }
+    </script>
+</body>
+</html>

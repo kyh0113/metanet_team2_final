@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퇴직 증명서</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            position: relative;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .container {
+            max-width: 570px;
+            height: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin-bottom: 40px;
+        }
+        .signature {
+            text-align: center;
+            margin-top: auto;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            font-size: 30px;
+        }
+        #item {
+            width: 100px;
+        }
+        #contexttable {
+            border: 1px solid #ddd;
+        }
+        .certificateid {
+            text-align: left;
+            margin-left: 30px;
+        }
+        .blank {
+            height: px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>퇴직 증명서</h1>
+        </div>
+        <div class="certificateid">
+            <p>제 1111호</p>
+        </div>
+        <div class="content">
+            <table>
+                <tr>
+                    <td id="item">성명</td>
+                    <td colspan="3">홍길동</td>
+                </tr>
+                <tr>
+                    <td id="item">직책</td>
+                    <td colspan="3">팀원</td>
+                </tr>
+                <tr>
+                    <td id="item">부서</td>
+                    <td colspan="3">개발</td>
+                </tr>
+                <tr>
+                    <td>회사명</td>
+                    <td colspan="3">Metanet</td>
+                </tr>
+                <tr>
+                    <td>입사일</td>
+                    <td>2023-11-01</td>
+                    <td>퇴사일</td>
+                    <td>2023-12-23</td>
+                </tr>
+            </table>
+        </div>
+        <div class="context">
+            <p>상기와 같이 퇴직함을 증명합니다.</p>
+        </div>
+        <div class="signature">
+            <p>2023년 12월 29일</p>
+        </div>
+        <div class="blank"></div>
+    </div>
+</body>
+</html>

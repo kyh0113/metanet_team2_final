@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경력 증명서</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            position: relative;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .container {
+            max-width: 570px;
+            height: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin-bottom: 40px;
+        }
+        .signature {
+            text-align: center;
+            margin-top: auto;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        #item {
+            width: 100px;
+        }
+        #contexttable {
+            border: 1px solid #ddd;
+        }
+        .certificateid {
+            text-align: left;
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .blank {
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>경력 증명서</h1>
+        </div>
+        <div class="certificateid">
+            <p>제 1111호</p>
+        </div>
+        <div class="content">
+            <table>
+                <tr>
+                    <td id="item">성명</td>
+                    <td>홍길동</td>
+                </tr>
+                <tr>
+                    <td id="item">직책</td>
+                    <td>팀원</td>
+                </tr>
+                <tr>
+                    <td>회사명</td>
+                    <td>Metanet</td>
+                </tr>
+                <tr>
+                    <td>경력사항</td>
+                    <td>
+                        <p>2022년 7월 1일부터 개발부 근무(1년 04개월)</p>
+                        <p>2023년 11월 1일 사직</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="context">
+            <p>위 사람은 상기와 같이 근무하였음을 증명합니다.</p>
+        </div>
+        <div class="signature">
+            <p>2023년 12월 29일</p>
+        </div>
+        <div class="blank"></div>
+    </div>
+</body>
+</html>

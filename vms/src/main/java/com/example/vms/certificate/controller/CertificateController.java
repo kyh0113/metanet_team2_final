@@ -48,12 +48,12 @@ public class CertificateController {
     ) {
     	return certificateService.createCertificate(certificateRequestDTO);
     }
-    
+  
     @GetMapping("/search") 
-    public String searchCertificatesByEmpId(
+    @ResponseBody
+    public CertificateResponseDTO[] searchCertificatesByEmpId(
     	@RequestParam(name = "emp_id", required=false, defaultValue = "") String emp_id,
-    	@RequestParam(name = "certificate_id", required = false, defaultValue = "") String certificate_id,
-    	Model model
+    	@RequestParam(name = "certificate_id", required = false, defaultValue = "") String certificate_id
     ) {
     	CertificateResponseDTO[] certificates;
     	if (!certificate_id.equals("")) {
@@ -61,8 +61,22 @@ public class CertificateController {
     	} else {
     		certificates = certificateService.searchCertificatesByEmpId(emp_id);
     	}
-    	model.addAttribute("certificates", certificates);
-    	return "certificate/search";
+    	return certificates;
     }
     
+    // 증명서 발급 페이지 
+    @GetMapping("/request")
+    public String requestCertificatePage() {
+        return "certificate/request";
+    }
+    
+    // 증명서 조회 페이지 
+    @GetMapping("view")
+    public String certificateView(
+    	@RequestParam(name = "emp_id", defaultValue = "") String emp_id,
+    	Model model
+    ) {
+    	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(emp_id));
+    	return "certificate/view";
+    }
 }
