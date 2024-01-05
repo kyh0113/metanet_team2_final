@@ -57,8 +57,10 @@
         .blank {
             height: 50px;
         }
-        #downloadbutton {
-            margin-top: 20px;
+        #downloadimage {
+			margin-top: 30px;
+            width: 40px;
+            height: 40px;
         }
     </style>
 </head>
@@ -102,8 +104,8 @@
         </div>
         <div class="blank"></div>
     </div>
-    <div>
-        <button id="downloadbutton" onclick="downloadbuttonTapped('78aebdb2-b7a4-4f82-b262-53c1ad54f121')">다운로드</button>
+    <div th:if="${download == null}" onclick="downloadbuttonTapped('78aebdb2-b7a4-4f82-b262-53c1ad54f121')">
+        <img id="downloadimage" src="https://github.com/kyh0113/metanet_team2_final/assets/76652929/00dd73f4-b994-484a-88a8-a9b449d9be04" alt="">
     </div>
     <script>
         function downloadbuttonTapped(ceritificateId) {

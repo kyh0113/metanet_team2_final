@@ -14,6 +14,7 @@ public class DataMapper {
 		Context context = new Context();
 		Map<String, Object> data = new HashMap<>();
 		data.put("certificate", certificateResponseDTO);
+		data.put("download", true);
 		context.setVariables(data);
 		return context;
 	}

@@ -54,7 +54,12 @@
             margin-left: 10px;
         }
         .blank {
-            height: px;
+            height: 10px;
+        }
+        #downloadimage {
+			margin-top: 30px;
+            width: 40px;
+            height: 40px;
         }
     </style>
 </head>
@@ -100,5 +105,30 @@
         </div>
         <div class="blank"></div>
     </div>
+
+  	<div th:if="${download == null}" onclick="downloadbuttonTapped('78aebdb2-b7a4-4f82-b262-53c1ad54f121')">
+        <img id="downloadimage" src="https://github.com/kyh0113/metanet_team2_final/assets/76652929/00dd73f4-b994-484a-88a8-a9b449d9be04" alt="">
+    </div>
+
+    <script>
+        function downloadbuttonTapped(ceritificateId) {
+
+            var url = '/certificate/download/generate?certificate_id='+ceritificateId
+
+			// AJAX 요청 생성
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			// 요청 완료 시 실행될 함수 설정
+			xhr.onreadystatechange = function () {
+			    if (xhr.readyState == 4 && xhr.status == 200) {
+			        // 성공적으로 요청이 완료되었을 때 실행할 코드
+			        alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
+			    }
+			};
+			
+			// JSON 데이터를 문자열로 변환하여 요청 전송
+			xhr.send();
+        }
+    </script>
 </body>
 </html>

@@ -88,8 +88,15 @@ public class CertificateController {
     	String finalHtml = null; 
     	CertificateResponseDTO certificate = certificateService.searchCertificatesByCertificateId(certificate_id)[0];
     	Context dataContext = dataMapper.setData(certificate);
-    	finalHtml = springTemplateEngine.process("/certificate/employmentcertificate", dataContext);
-    	System.out.println(finalHtml);
+    	String type = certificate.getType();
+    	if (type.equals("재직증명서")) {
+    		finalHtml = springTemplateEngine.process("/certificate/employmentcertificate", dataContext); 
+    	} else if (type.equals("퇴직증명서")) {
+    		finalHtml = springTemplateEngine.process("/certificate/retirementcertificate", dataContext); 
+    	} else if (type.equals("경력증명서")) {
+    		finalHtml = springTemplateEngine.process("/certificate/careercertificate", dataContext); 
+    	}
+    		
     	documentGenerator.htmlToPdf(finalHtml, certificate.getEmpName()+" "+certificate.getType());
     	return "Success";
     }
