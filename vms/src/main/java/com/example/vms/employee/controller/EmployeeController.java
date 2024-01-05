@@ -5,7 +5,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -78,15 +77,10 @@ public class EmployeeController {
 //	        // 헤더에 토큰 추가
 //	        response.setHeader("X-AUTH-TOKEN", token);
 	        
-	        
-	        ResponseCookie cookie = ResponseCookie.from("jwtToken", token)
-	        		.maxAge(7*24*60*60)
-	        		.path("/")
-	        		.secure(true)
-	        		.sameSite("None")
-	        		.httpOnly(true)
-	        		.build();
-	        response.setHeader("Set-Cookie", cookie.toString());
+	        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+	        cookie.setMaxAge(-1);
+	        cookie.setPath("/");
+	        response.addCookie(cookie);
 	        				
 	        return "employee/home";
 	    }

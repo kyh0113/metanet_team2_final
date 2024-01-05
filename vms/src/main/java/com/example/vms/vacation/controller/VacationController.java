@@ -11,6 +11,7 @@ import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.service.VacationService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -32,8 +33,19 @@ public class VacationController {
     @PostMapping("/request")
     public String requestVacation(HttpServletRequest request, HttpServletResponse response, @ModelAttribute Vacation vacation) {
         // 토큰 추출
-        String token = tokenProvider.resolveToken(request);
-        System.out.println("쿠키로 토큰 가져옴 "+token); // 쿠키로 토큰 가져옴
+//        String token = tokenProvider.resolveToken(request);
+//        System.out.println("쿠키로 토큰 가져옴 "+token); // 쿠키로 토큰 가져옴
+    	
+    	
+    	// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        //System.out.println(cookies.toString());
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
 
         // 토큰 유효성 검사
         if (tokenProvider.validateToken(token)) {
