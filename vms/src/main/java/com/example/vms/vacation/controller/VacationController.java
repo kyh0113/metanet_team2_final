@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
@@ -56,12 +58,17 @@ public class VacationController {
 	}
 	
 	//휴가 신청서 결재(팀장)
+	@ResponseBody
 	@PostMapping("/approval")
-	public String approvalRequest(@RequestBody Vacation vacation, Model model) {
+	public Result approvalRequest(@RequestBody Vacation vacation, Model model) {
+		System.out.println(vacation);
 		//role이 팀장인지 확인 필요
-		String result = vacationService.approvalRequest(vacation);
-		System.out.println(result);
-		model.addAttribute("resultmessage", result);
-		return "redirect:/vacation/request/"+vacation.getRegId();
+		String resultMsg = vacationService.approvalRequest(vacation);
+		System.out.println(resultMsg);
+		model.addAttribute("resultmessage", resultMsg);
+		Result result = new Result();
+		String urlString = "redirect:/vacation/request/"+vacation.getRegId();
+		result.setResultMessage(resultMsg);
+		return result;
 	}
 }

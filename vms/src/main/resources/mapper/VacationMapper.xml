@@ -43,7 +43,10 @@
 	
 	<update id="updateRequest" parameterType="com.example.vms.vacation.model.Vacation">
 		UPDATE VACATION_REG 
-		SET STATE = #{state}, DENIED_CONTENT = #{deniedContent} 
+		SET STATE = #{state} 
+		<if test="deniedContent != null">
+		, DENIED_CONTENT = #{deniedContent} 
+		</if>
 		WHERE REG_ID = #{regId}
 	</update>
    
