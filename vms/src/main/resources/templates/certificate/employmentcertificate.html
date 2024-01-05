@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,6 +41,7 @@
             position: absolute;
             bottom: 0;
             width: 100%;
+            font-size: 30px;
         }
         #item {
             width: 100px;
@@ -50,11 +51,14 @@
         }
         .certificateid {
             text-align: left;
-            margin-left: 30px;
+            margin-left: 10px;
             margin-bottom: 20px;
         }
         .blank {
             height: 50px;
+        }
+        #downloadbutton {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -64,21 +68,21 @@
             <h1>재직증명서</h1>
         </div>
         <div class="certificateid">
-            <p>제 1111호</p>
+		<div class="certificateid">제 <span th:text="${certificate.certificateId}"></span> 호</div>
         </div>
         <div class="content">
             <table>
                 <tr>
                     <td id="item">성명</td>
-                    <td>홍길동</td>
+                    <td th:text="${certificate.empName}"></td>
                 </tr>
                 <tr>
                     <td id="item">직책</td>
-                    <td>팀원</td>
+       				<td th:text="${certificate.position}"></td>
                 </tr>
                 <tr>
                     <td id="item">부서</td>
-                    <td>개발</td>
+       				<td th:text="${certificate.deptName}"></td>
                 </tr>
                 <tr>
                     <td>회사명</td>
@@ -86,7 +90,7 @@
                 </tr>
                 <tr>
                     <td>입사일</td>
-                    <td>2023-11-01</td>
+       				<td th:text="${certificate.hireDate}"></td>
                 </tr>
             </table>
         </div>
@@ -94,9 +98,32 @@
             <p>상기와 같이 재직함을 증명함</p>
         </div>
         <div class="signature">
-            <p>2023년 12월 29일</p>
+            <p th:text="${certificate.regDate}"></p>
         </div>
         <div class="blank"></div>
     </div>
+    <div>
+        <button id="downloadbutton" onclick="downloadbuttonTapped('78aebdb2-b7a4-4f82-b262-53c1ad54f121')">다운로드</button>
+    </div>
+    <script>
+        function downloadbuttonTapped(ceritificateId) {
+
+            var url = '/certificate/download/generate?certificate_id='+ceritificateId
+
+			// AJAX 요청 생성
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			// 요청 완료 시 실행될 함수 설정
+			xhr.onreadystatechange = function () {
+			    if (xhr.readyState == 4 && xhr.status == 200) {
+			        // 성공적으로 요청이 완료되었을 때 실행할 코드
+			        alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
+			    }
+			};
+			
+			// JSON 데이터를 문자열로 변환하여 요청 전송
+			xhr.send();
+        }
+    </script>
 </body>
 </html>

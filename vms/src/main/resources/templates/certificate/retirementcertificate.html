@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +51,7 @@
         }
         .certificateid {
             text-align: left;
-            margin-left: 30px;
+            margin-left: 10px;
         }
         .blank {
             height: px;
@@ -64,21 +64,21 @@
             <h1>퇴직 증명서</h1>
         </div>
         <div class="certificateid">
-            <p>제 1111호</p>
+		<div class="certificateid">제 <span th:text="${certificate.certificateId}"></span> 호</div>
         </div>
         <div class="content">
             <table>
                 <tr>
                     <td id="item">성명</td>
-                    <td colspan="3">홍길동</td>
+                    <td colspan="3" th:text="${certificate.empName}"></td>
                 </tr>
                 <tr>
                     <td id="item">직책</td>
-                    <td colspan="3">팀원</td>
+                    <td colspan="3" th:text="${certificate.position}"></td>
                 </tr>
                 <tr>
                     <td id="item">부서</td>
-                    <td colspan="3">개발</td>
+                    <td colspan="3" th:text="${certificate.deptName}"></td>
                 </tr>
                 <tr>
                     <td>회사명</td>
@@ -86,9 +86,9 @@
                 </tr>
                 <tr>
                     <td>입사일</td>
-                    <td>2023-11-01</td>
+                    <td th:text="${certificate.hireDate}"></td>
                     <td>퇴사일</td>
-                    <td>2023-12-23</td>
+                    <td th:text="${certificate.retireDate}"></td>
                 </tr>
             </table>
         </div>
@@ -96,7 +96,7 @@
             <p>상기와 같이 퇴직함을 증명합니다.</p>
         </div>
         <div class="signature">
-            <p>2023년 12월 29일</p>
+            <p th:text="${certificate.regDate}"></p>
         </div>
         <div class="blank"></div>
     </div>
