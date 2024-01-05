@@ -16,7 +16,7 @@ import com.itextpdf.layout.font.FontProvider;
 
 @Service
 public class DocumentGenerator {
-	public String htmlToPdf(String processedHtml) {
+	public String htmlToPdf(String processedHtml, String fileName) {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		
 		try {
@@ -35,7 +35,7 @@ public class DocumentGenerator {
 			
 	        String userHome = System.getProperty("user.home");
 	        String downloadFolderPath = userHome + "/Downloads";
-	        String filePath = downloadFolderPath + "/test.pdf";
+	        String filePath = downloadFolderPath + "/" + fileName + ".pdf";
 	        
 			FileOutputStream fout = new FileOutputStream(getUniqueFilePath(filePath));
 			

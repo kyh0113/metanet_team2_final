@@ -90,7 +90,7 @@ public class CertificateController {
     	Context dataContext = dataMapper.setData(certificate);
     	finalHtml = springTemplateEngine.process("/certificate/employmentcertificate", dataContext);
     	System.out.println(finalHtml);
-    	documentGenerator.htmlToPdf(finalHtml);
+    	documentGenerator.htmlToPdf(finalHtml, certificate.getEmpName()+" "+certificate.getType());
     	return "Success";
     }
     
