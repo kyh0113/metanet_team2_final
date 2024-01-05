@@ -5,11 +5,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,9 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,34 +58,48 @@ public class EmployeeController {
 	
 
 	@PostMapping("/login")
-	public String login(@RequestParam String empId, @RequestParam String password, Model model) {
-		log.info("EMP_ID: {}", empId);
+	public String login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
+	    log.info("EMP_ID: {}", empId);
 
-		Employee employee = employeeService.selectEmployee(empId);
-		if (employee == null) {
-			throw new IllegalArgumentException("사용자가 없습니다.");
-		}
+	    Employee employee = employeeService.selectEmployee(empId);
+	    if (employee == null) {
+	        throw new IllegalArgumentException("사용자가 없습니다.");
+	    }
 
-		if (!passwordEncoder.matches(password, employee.getPassword())) {
-			throw new IllegalArgumentException("비밀번호 오류");
-		} else {
-			log.info("로그인 성공");
+	    if (!passwordEncoder.matches(password, employee.getPassword())) {
+	        throw new IllegalArgumentException("비밀번호 오류");
+	    } else {
+	        log.info("로그인 성공");
 
-			String token = tokenProvider.generateToken(employee);
-			System.out.println("토큰출력 : " + token);
-			model.addAttribute("token", token);
-		}
+	        String token = tokenProvider.generateToken(employee);
+	        System.out.println("토큰 출력: " + token);
+	        
 
-		// 헤더에다가 토큰을 저장하는 코드를 삽입하면?
-		
-		return "vacation/request";
+	        // 헤더에 토큰 추가
+	        response.setHeader("X-AUTH-TOKEN", token);
+	        
+	        
+	        ResponseCookie cookie = ResponseCookie.from("jwtToken", token)
+	        		.maxAge(7*24*60*60)
+	        		.path("/")
+	        		.secure(true)
+	        		.sameSite("None")
+	        		.httpOnly(true)
+	        		.build();
+	        response.setHeader("Set-Cookie", cookie.toString());
+	        			
+
+	        return "employee/home";
+	    }
 	}
+
 
 	@GetMapping(value = "/test_jwt", produces = "text/plain")
 	@ResponseBody
 	public String testJwt(HttpServletRequest request) {
 	    try {
 	        String token = tokenProvider.resolveToken(request);
+	        System.out.println("랄랄랄랄랄");
 	        log.info("token {}", token); 
 	        Authentication auth = tokenProvider.getAuthentication(token);
 	        log.info("principal {}, name {}, authorities {}",
