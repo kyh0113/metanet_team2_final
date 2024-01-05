@@ -13,4 +13,8 @@ import com.example.vms.manager.model.Employee;
 public interface IEmployeeRepository {
 	Employee selectEmployee(String empId);
 	Set<String> getRolesByEmpId(String empId);
+	
+	String selectEmpIdByNameEmail(Employee employee);
+	Employee selectEmployeeInfoByIdNameEmail(Employee employee);
+	int updatePassword(Employee employee);
 }

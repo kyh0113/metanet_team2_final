@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Request Form</title>
+    <script src="/js/tokenHandler.js"></script>
+</head>
+<body>
+
+     <form id="vacationForm" onsubmit="submitVacationRequest(event)" 
+        th:action="@{/vacation/request}" method="post">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required><br>
+
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required><br>
+
+    <label for="regDate">Registration Date:</label>
+    <input type="date" id="regDate" name="regDate" required><br>
+
+    <label for="content">Content:</label>
+    <input type="text" id="content" name="content" required><br>
+
+    <label for="typeId">Type ID:</label>
+    <input type="text" id="typeId" name="typeId" required><br>
+
+    <input type="submit" value="제출">
+    </form>
+    <script>
+        async function submitVacationRequest(event) {
+            event.preventDefault();
+
+            try {
+                const token = getTokenFromCookie();
+                if (token) {
+                    // 폼에 토큰 추가
+                    setTokenInCookie(token);
+
+                    // 폼 제출
+                    document.getElementById("vacationForm").submit();
+                } else {
+                    console.error("토큰이 없습니다.");
+                }
+            } catch (error) {
+                console.error("오류:", error);
+            }
+        }
+    </script>
+
+</body>
+</html>

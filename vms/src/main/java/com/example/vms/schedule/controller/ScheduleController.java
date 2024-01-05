@@ -18,25 +18,6 @@ import com.example.vms.schedule.service.IScheduleService;
 
 import lombok.RequiredArgsConstructor;
 
-//@Controller
-//public class ScheduleController {
-//   @Autowired
-//   IScheduleService iScheduleService;
-//
-//   @GetMapping("/cal")
-//   public String calendar(Model model) {
-//      List<Schedule> schedules = iScheduleService.getSchedulebydeptId(1);
-//      
-//      for(Schedule schedule : schedules) {
-//         System.out.println(schedule);
-//      }
-//      
-//      model.addAttribute("schedules",schedules);
-//      
-//      return "calendar/calendar";
-//   }
-//}
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/full-calendar")
@@ -64,13 +45,25 @@ public class ScheduleController {
 			hash.put("title", schedules.get(i).getTitle());
 			hash.put("start", schedules.get(i).getStart_date());
 			hash.put("end", schedules.get(i).getEnd_date());
-			// 색깔지정: switch문 쓸것.
-			if((""+schedules.get(i).getType_id()).equals("1")) {
-				hash.put("color","#FF0000");
-			}if((""+schedules.get(i).getType_id()).equals("2")) {
+			hash.put("allDay",true);
+            // hash.put("time", listAll.get(i).getScheduleTime());
+			
+			int color = schedules.get(i).getType_id();
+			System.out.println(hash.get("start"));
+			switch(color) {
+			case 1:
 				hash.put("color","#0000FF");
+				break;
+			case 2:
+				hash.put("color","#00FF00");
+				break;
+			case 3:
+				hash.put("color","orange");
+				break;
+			default:
+				hash.put("color","#000000");
 			}
-//            hash.put("time", listAll.get(i).getScheduleTime());
+			
 			jsonObj = new JSONObject(hash);
 			jsonArr.add(jsonObj);
 		}

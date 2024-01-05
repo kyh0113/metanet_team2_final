@@ -1,9 +1,12 @@
 package com.example.vms.employee.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.vms.employee.model.Mail;
+import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,9 +53,7 @@ public class EmployeeController {
 	}
 
 	// 로그아웃 기능
-	// 비밀번호 변경 기능
-	// 아이디 찾기 기능
-	// 비밀번호 찾기 기능
+	
 
 	@PostMapping("/login")
 	public String login(@RequestParam String empId, @RequestParam String password, Model model) {
@@ -70,7 +74,9 @@ public class EmployeeController {
 			model.addAttribute("token", token);
 		}
 
-		return "redirect:/employee/home";
+		// 헤더에다가 토큰을 저장하는 코드를 삽입하면?
+		
+		return "vacation/request";
 	}
 
 	@GetMapping(value = "/test_jwt", produces = "text/plain")
@@ -89,5 +95,66 @@ public class EmployeeController {
 	        log.error("Exception during JWT test", e);
 	        return "JWT test failed: " + e.getMessage();
 	    }
+	}
+	
+	// 아이디 찾기 기능
+	@GetMapping("/find-employeeid")
+    public String findEmployeeId(){
+        return "employee/findEmpId";
+    }
+	
+	@ResponseBody
+	@PostMapping("/find-employeeid")
+    public Result findEmployeeId(Employee employee){
+		String msg = employeeService.findEmpId(employee);
+		Result rst = new Result();
+        rst.setResultMessage(msg);
+        return rst;
+    }
+	// 비밀번호 찾기 기능
+	@GetMapping("/find-password")
+    public String findPassword(){
+        return "employee/findPassword";
+    }
+	 
+	@ResponseBody
+	@PostMapping("/find-password")
+	public Mail findPassword(Employee employee, HttpSession session) {
+        Map<String, String> findPwdResult = employeeService.findPassword(employee);
+        Mail mail = new Mail();
+        mail.setSubject(findPwdResult.get("message"));
+        mail.setContent(findPwdResult.get("authCode"));
+        //session저장 -> 추후 변경해야 함
+        session.setAttribute("empId", employee.getEmpId());
+        session.setAttribute("name", employee.getName());
+        session.setAttribute("email", employee.getEmail());
+        return mail;
+	    
+	}
+	
+	// 비밀번호 변경 기능
+	@GetMapping("/change-password")
+    public String changePassword(){
+        return "employee/changePassword";
+    }
+	 
+	@ResponseBody
+	@PostMapping("/change-password")
+	public Result changePassword(String password, HttpSession session) {
+		//비밀번호 변경
+		Employee employee = new Employee();
+		employee.setEmpId((String)session.getAttribute("empId"));
+		employee.setName((String)session.getAttribute("name"));
+		employee.setEmail((String)session.getAttribute("email"));
+		// password 암호화
+		PasswordEncoder pwEncoder = 
+				PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		String encodedPw = pwEncoder.encode(password);
+		employee.setPassword(encodedPw);
+		
+		String result = employeeService.changePassword(employee);
+        Result rst = new Result();
+        rst.setResultMessage(result);
+        return rst;
 	}
 }
