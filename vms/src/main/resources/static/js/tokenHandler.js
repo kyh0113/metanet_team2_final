@@ -23,3 +23,4 @@ function getTokenFromCookie() {
     }
     return null;
 }
+

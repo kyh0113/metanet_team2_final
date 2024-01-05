@@ -36,6 +36,7 @@ public class VacationController {
 //        String token = tokenProvider.resolveToken(request);
 //        System.out.println("쿠키로 토큰 가져옴 "+token); // 쿠키로 토큰 가져옴
     	
+    		
     	
     	// 쿠키 정보
         Cookie[] cookies = request.getCookies();

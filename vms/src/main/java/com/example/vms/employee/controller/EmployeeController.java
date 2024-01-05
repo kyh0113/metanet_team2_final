@@ -73,9 +73,9 @@ public class EmployeeController {
 	        String token = tokenProvider.generateToken(employee);
 	        System.out.println("토큰 출력: " + token);
 	        
-
-//	        // 헤더에 토큰 추가
-//	        response.setHeader("X-AUTH-TOKEN", token);
+	        // 토큰을 클라이언트로 전송
+	        // 헤더에서 토큰을 읽어와서 sessionStorage에 저장하기 위함 
+	        //response.setHeader("X-AUTH-TOKEN", token); 
 	        
 	        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
 	        cookie.setMaxAge(-1);
