@@ -88,8 +88,8 @@
                 <tr>
                     <td>경력사항</td>
                     <td>
-                        <p>2022년 7월 1일부터 개발부 근무(1년 04개월)</p>
-                        <p>2023년 11월 1일 사직</p>
+						<p th:if="${certificate.hireDate != null}" th:text="${#dates.format(certificate.hireDate, 'yyyy년 MM월 dd일')} + ' 부터 ' + ${certificate.deptName} + ' 부서 근무'"></p>
+                        <p th:if="${certificate.retireDate != null}" th:text="${#dates.format(certificate.hireDate, 'yyyy년 MM월 dd일')} + ' 사직'"></p>
                     </td>
                 </tr>
             </table>
@@ -98,33 +98,37 @@
             <p>위 사람은 상기와 같이 근무하였음을 증명합니다.</p>
         </div>
         <div class="signature">
-            <p th:text="${certificate.regDate}"></p>
+            <p th:text="${#dates.format(certificate.regDate, 'yyyy년 MM월 dd일')}"></p>
         </div>
         <div class="blank"></div>
     </div>
-    <div th:if="${download == null}" onclick="downloadbuttonTapped('78aebdb2-b7a4-4f82-b262-53c1ad54f121')">
+    <div th:if="${download == null}" onclick="downloadbuttonTapped()">
         <img id="downloadimage" src="https://github.com/kyh0113/metanet_team2_final/assets/76652929/00dd73f4-b994-484a-88a8-a9b449d9be04" alt="">
     </div>
 
-    <script>
-        function downloadbuttonTapped(ceritificateId) {
-
-            var url = '/certificate/download/generate?certificate_id='+ceritificateId
-
-			// AJAX 요청 생성
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', url, true);
-			// 요청 완료 시 실행될 함수 설정
-			xhr.onreadystatechange = function () {
-			    if (xhr.readyState == 4 && xhr.status == 200) {
-			        // 성공적으로 요청이 완료되었을 때 실행할 코드
-			        alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
-			    }
-			};
-			
-			// JSON 데이터를 문자열로 변환하여 요청 전송
-			xhr.send();
-        }
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+	function downloadbuttonTapped() {
+	    const certificateId = /*[[${certificate.certificateId}]]*/;
+	    const url = '/certificate/download/generate?certificate_id=' + certificateId;
+	
+	    // AJAX 요청 생성
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', url, true);
+	
+	    // 요청 완료 시 실행될 함수 설정
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState == 4 && xhr.status == 200) {
+	            // 성공적으로 요청이 완료되었을 때 실행할 코드
+	            alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
+	        }
+	    };
+	
+	    // JSON 데이터를 문자열로 변환하여 요청 전송
+	    xhr.send();
+	}
+         /*]]>*/
     </script>
+    
 </body>
 </html>

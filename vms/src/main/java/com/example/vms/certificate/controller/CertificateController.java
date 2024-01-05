@@ -137,7 +137,7 @@ public class CertificateController {
     	if (certificate.getEmail().isEmpty()) {
     		return "redirect:/certificate/view?emp_id="+emp_id;
     	}
-    	model.addAttribute("certificate", certificateService.searchCertificatesByEmpId(emp_id)[0]);
+    	model.addAttribute("certificate", certificate);
     	if (type.equals("재직증명서")) {
     		return "/certificate/employmentcertificate";
     	} else if (type.equals("퇴직증명서")) {
