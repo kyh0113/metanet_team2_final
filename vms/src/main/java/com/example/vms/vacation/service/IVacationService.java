@@ -1,5 +1,8 @@
 package com.example.vms.vacation.service;
 
-public class IVacationService {
+import com.example.vms.vacation.model.Vacation;
 
+public interface IVacationService {
+   void requestVacation(Vacation vacation);
+   public int maxRegId();
 }
