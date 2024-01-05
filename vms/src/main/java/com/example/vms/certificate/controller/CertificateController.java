@@ -30,6 +30,7 @@ import com.example.vms.certificate.repository.ICertificateRepository;
 import com.example.vms.certificate.service.DataMapper;
 import com.example.vms.certificate.service.DocumentGenerator;
 import com.example.vms.certificate.service.ICertificateService;
+import com.example.vms.certificate.service.QRCodeGenerator;
 import com.example.vms.employee.controller.EmployeeController;
 
 import jakarta.websocket.server.PathParam;
@@ -51,6 +52,9 @@ public class CertificateController {
 	private DataMapper dataMapper;
 	@Autowired
 	private DocumentGenerator documentGenerator;
+	
+	@Autowired
+	private QRCodeGenerator grCodeGenerator;
 
     @GetMapping("")
     public String getMethodName() {
@@ -139,6 +143,14 @@ public class CertificateController {
     		return "redirect:/certificate/view?emp_id="+emp_id;
     	}
     	model.addAttribute("certificate", certificate);
+    	String qrImage;
+    	try {
+    		qrImage = grCodeGenerator.getQRCodeImage(certificate.getCertificateId(), 100, 100);
+        	model.addAttribute("qrImage", qrImage);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+
     	if (type.equals("재직증명서")) {
     		return "/certificate/employmentcertificate";
     	} else if (type.equals("퇴직증명서")) {

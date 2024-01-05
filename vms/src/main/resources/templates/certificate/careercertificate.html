@@ -35,14 +35,29 @@
         .content {
             margin-bottom: 40px;
         }
-        .signature {
-            text-align: center;
-            margin-top: auto;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            font-size: 30px;
-        }
+	    .signature {
+	        align-items: center;
+	        margin-top: auto;
+	        position: absolute;
+	        bottom: 0;
+	        width: 100%;
+	        font-size: 30px;
+	    }
+	
+	    .signature p {
+			margin-bottom: 30px;
+	        text-align: center; /* 텍스트 가운데 정렬 */
+	        width: 100%;
+	        display: inline-block;
+	    }
+	
+	    .signature img {
+	        margin-left: 10px; /* 이미지와 날짜 간격 조절을 위해 필요한 스타일 */
+	        position: absolute;
+	        right: 20px;
+	        bottom: 0px;
+	     }
+        
         #item {
             width: 100px;
         }
@@ -69,8 +84,6 @@
         <div class="header">
             <h1>경력 증명서</h1>
         </div>
-		<div class="certificateid">제 <span th:text="${certificate.certificateId}"></span> 호</div>
-
         <div class="content">
             <table>
                 <tr>
@@ -96,9 +109,13 @@
         </div>
         <div class="context">
             <p>위 사람은 상기와 같이 근무하였음을 증명합니다.</p>
+
+
+
         </div>
         <div class="signature">
             <p th:text="${#dates.format(certificate.regDate, 'yyyy년 MM월 dd일')}"></p>
+			<img class="certificateIdQrImage" th:src="@{'data:image/png;base64,'+${qrImage}}">
         </div>
         <div class="blank"></div>
     </div>
@@ -129,6 +146,21 @@
 	}
          /*]]>*/
     </script>
+
+<script>
+    function certificateViewDidLoad() {
+        var elements = document.getElementsByClassName('certificateIdQrImage');
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.width = '100px';
+            elements[i].style.height = '100px';
+        }
+
+        console.log(elements);
+    }
+
+    certificateViewDidLoad();
+</script>
     
 </body>
 </html>
