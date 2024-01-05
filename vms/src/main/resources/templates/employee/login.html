@@ -1,58 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login Page</title>
-<!--	<script src="/js/tokenHandler.js"></script>-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
 </head>
-
 <body>
 
-	<div th:if="${param.error}">
-		<p style="color: red;">Invalid id or password</p>
-	</div>
+<div th:if="${param.error}">
+    <p style="color: red;">Invalid id or password</p>
+</div>
 
-	<div th:if="${param.logout}">
-		<p style="color: green;">You have been logged out successfully</p>
-	</div>
+<div th:if="${param.logout}">
+    <p style="color: green;">You have been logged out successfully</p>
+</div>
 
-	<form id="login" th:action="@{/employee/login}" method="post" 
-<!--	onsubmit="submitEmployeeInfo(event)">-->
-		<label for="empId">ID:</label>
-		<input type="text" id="empId" name="empId" required autofocus />
+<form th:action="@{/employee/login}" method="post">
+    <label for="empId">ID:</label>
+    <input type="text" id="empId" name="empId" required autofocus/>
 
-		<label for="password">Password:</label>
-		<input type="password" id="password" name="password" required />
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required/>
 
-		<button type="submit">Login</button>
-	</form>
+    <button type="submit">Login</button>
+</form>
 
-	<a th:href="@{/employee/find-password}">비밀번호 찾기</a>
-	<a th:href="@{/employee/change-password}">비밀번호 변경하기</a>
-	<a th:href="@{/employee/find-employeeid}">사원번호(아이디) 찾기</a>
-	
-<!--	<script>-->
-<!--		async function submitEmployeeInfo(event) {-->
-<!--			event.preventDefault();-->
+<a th:href="@{/employee/forgot-password}">비밀번호 찾기</a>
+<a th:href="@{/employee/change-password}">비밀번호 변경하기</a>
+<a th:href="@{/employee/find-id}">사원번호(아이디) 찾기</a>
 
-<!--			try {-->
-<!--				const token = getTokenFromCookie();-->
-<!--				if (token) {-->
-<!--					// 폼에 토큰 추가-->
-<!--					setTokenInCookie(token);-->
-
-<!--					// 폼 제출-->
-<!--					document.getElementById("login").submit();-->
-<!--				} else {-->
-<!--					console.error("토큰이 없습니다.");-->
-<!--				}-->
-<!--			} catch (error) {-->
-<!--				console.error("오류:", error);-->
-<!--			}-->
-<!--		}-->
-<!--	</script>-->
 </body>
-
 </html>
