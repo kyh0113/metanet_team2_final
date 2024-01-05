@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Vacation {
-   private int regId;
+   private Integer regId;
     private String state;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
@@ -23,5 +23,5 @@ public class Vacation {
     private String deniedContent;
     private String content;
     private String empId;
-    private int typeId;
+    private Integer typeId;
 }
