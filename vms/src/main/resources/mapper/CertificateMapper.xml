@@ -92,4 +92,7 @@
     <delete id="deleteCertificate">
 		DELETE Certification WHERE certificate_id=#{certificateId}
 	</delete>
+	<select id="searchDepartNameByDeptId" resultType="java.lang.String">
+		SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID=#{deptId}
+	</select>
 </mapper>

@@ -31,4 +31,5 @@ public interface ICertificateRepository {
 		@Param("certificateId") String certificateId
 	);
 
+	public String searchDepartNameByDeptId(@Param("deptId") int deptId);
 }

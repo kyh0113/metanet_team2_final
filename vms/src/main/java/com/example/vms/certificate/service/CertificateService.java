@@ -64,4 +64,9 @@ public class CertificateService implements ICertificateService {
         return sqlDate;
 	}
 
+	@Override
+	public String searchDepartNameByDeptId(int deptId) {
+		return certificateRepository.searchDepartNameByDeptId(deptId);
+	}
+
 }

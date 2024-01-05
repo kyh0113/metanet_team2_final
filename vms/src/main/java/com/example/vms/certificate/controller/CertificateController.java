@@ -142,6 +142,7 @@ public class CertificateController {
         Employee employee = employeeService.selectEmployee(emp_id);
         model.addAttribute("employee", employee);
         model.addAttribute("today", certificateService.currentTime());
+        model.addAttribute("deptName", certificateService.searchDepartNameByDeptId(employee.getDeptId()));
 
     	if (type.equals("재직증명서")) {
     		return "/certificate/employmentcertificatePreView";
