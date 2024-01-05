@@ -63,10 +63,16 @@
 
 	<script th:inline="javascript">
 	    /*<![CDATA[*/
+	    var openedWindow;
+	
 	    function certificateDownload(type) {
+	        if (openedWindow && !openedWindow.closed) {
+	            openedWindow.close(); // 기존 창이 열려있다면 닫기
+	        }
+	
 	        const empId = /*[[${empId}]]*/;
 	        const previewUrl = '/certificate/download/view?emp_id=' + empId + '&type=' + type;
-	        window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+	        openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
 	    }
 	    /*]]>*/
 	</script>
