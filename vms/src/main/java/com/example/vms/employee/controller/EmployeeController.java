@@ -74,7 +74,9 @@ public class EmployeeController {
 			model.addAttribute("token", token);
 		}
 
-		return "redirect:/employee/home";
+		// 헤더에다가 토큰을 저장하는 코드를 삽입하면?
+		
+		return "vacation/request";
 	}
 
 	@GetMapping(value = "/test_jwt", produces = "text/plain")
