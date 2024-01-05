@@ -63,6 +63,14 @@
    		]]>
 	</select>
 	
+	<select id="selectDeptNameByEmpId" parameterType="java.lang.String" resultType="java.lang.String">
+	    SELECT D.NAME 
+	    FROM DEPARTMENTS D 
+	    JOIN EMPLOYEES E 
+	    ON D.DEPT_ID = E.DEPT_ID 
+	    WHERE E.EMP_ID=#{empId}
+	</select>
+	
 	<update id="updatePassword" parameterType="com.example.vms.manager.model.Employee">
 		UPDATE EMPLOYEES
       SET 

@@ -17,4 +17,6 @@ public interface IEmployeeRepository {
 	String selectEmpIdByNameEmail(Employee employee);
 	Employee selectEmployeeInfoByIdNameEmail(Employee employee);
 	int updatePassword(Employee employee);
+	String selectDeptNameByEmpId(String empId);
+	
 }
