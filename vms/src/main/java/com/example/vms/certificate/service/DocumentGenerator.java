@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.font.FontProvider;
 
 @Service
 public class DocumentGenerator {
@@ -16,12 +19,16 @@ public class DocumentGenerator {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		
 		try {
-			PdfWriter pdfwriter = new PdfWriter(byteArrayOutputStream);
 			
-			DefaultFontProvider defaultFont = new DefaultFontProvider(false, true, false);
+			String FONT = "src/main/resources/static/malgun.ttf";
+			
+			PdfWriter pdfwriter = new PdfWriter(byteArrayOutputStream);
+			FontProvider fontProvider = new DefaultFontProvider(false, false, false);
+			FontProgram fontProgram = FontProgramFactory.createFont(FONT);
+			fontProvider.addFont(fontProgram);
 			
 			ConverterProperties convertProperties = new ConverterProperties();
-			convertProperties.setFontProvider(defaultFont);
+			convertProperties.setFontProvider(fontProvider);
 			
 			HtmlConverter.convertToPdf(processedHtml, pdfwriter, convertProperties);
 			
@@ -36,7 +43,6 @@ public class DocumentGenerator {
 			return null;
 			
 		} catch(Exception e) {
-			//exception occured 
 			return null;
 		}
 	} 
