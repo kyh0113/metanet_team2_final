@@ -33,7 +33,7 @@ public class JwtTokenProvider {
 	private static MacAlgorithm alg = Jwts.SIG.HS256; // 복호키가 없어도 따로 상관 없음
 	private static SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
 
-    private long tokenValidTime = 48 * 30 * 60 * 1000L;
+    private long tokenValidTime = 30 * 60 * 1000L;
 
     @Autowired
     private IEmployeeService employeeService;

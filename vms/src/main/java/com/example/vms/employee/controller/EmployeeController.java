@@ -75,8 +75,8 @@ public class EmployeeController {
 	        System.out.println("토큰 출력: " + token);
 	        
 
-	        // 헤더에 토큰 추가
-	        response.setHeader("X-AUTH-TOKEN", token);
+//	        // 헤더에 토큰 추가
+//	        response.setHeader("X-AUTH-TOKEN", token);
 	        
 	        
 	        ResponseCookie cookie = ResponseCookie.from("jwtToken", token)
@@ -87,8 +87,7 @@ public class EmployeeController {
 	        		.httpOnly(true)
 	        		.build();
 	        response.setHeader("Set-Cookie", cookie.toString());
-	        			
-
+	        				
 	        return "employee/home";
 	    }
 	}
