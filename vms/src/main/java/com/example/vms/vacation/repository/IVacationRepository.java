@@ -11,9 +11,9 @@ import com.example.vms.vacation.model.VacationEmployee;
 @Repository
 @Mapper
 public interface IVacationRepository {
-   void requestVacation(Vacation vacation);
-   public int maxRegId();
-	
+	void requestVacation(Vacation vacation);
+	public int maxRegId();
+
 	List<VacationEmployee> selectRequestListByDept(String empId);
 	Vacation selectRequestByRegId(int regId);
 	int updateRequest(Vacation vacation);

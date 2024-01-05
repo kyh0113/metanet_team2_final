@@ -33,17 +33,17 @@ public class VacationService implements IVacationService{
 
    @Override
 	public List<VacationEmployee> getDeptRequestList(String empId) {
-		return vacationRepository.selectRequestListByDept(empId);
+		return vacationDao.selectRequestListByDept(empId);
 	}
 
 	@Override
 	public Vacation getRequestDetail(int regId) {
-		return vacationRepository.selectRequestByRegId(regId);
+		return vacationDao.selectRequestByRegId(regId);
 	}
 
 	@Override
 	public String approvalRequest(Vacation vacation) {
-		int result = vacationRepository.updateRequest(vacation);
+		int result = vacationDao.updateRequest(vacation);
 		if(result == 1) {
 			return "결재 완료";
 		}
