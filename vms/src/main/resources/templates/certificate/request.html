@@ -9,58 +9,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
 </head>
 <style>
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        border: 1px #ddd solid;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-    .container {
-        max-width: 570px;
-        height: 800px;
-        margin: 0 auto;
-        border: 1px solid #ddd;
-        position: relative;
-    }
-    .header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .content {
-        margin-bottom: 40px;
-    }
-    .signature {
-        text-align: center;
-        margin-top: auto;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-    }
-    #item {
-        width: 100px;
-    }
-    #contexttable {
-        border: 1px solid #ddd;
-    }
-    .certificateid {
-        text-align: left;
-        margin-left: 30px;
-        margin-bottom: 20px;
-    }
-    .blank {
-        height: 50px;
-    }
-    .context {
-        text-align: center;
-    }
+	table {
+	  border: 1px #a39485 solid;
+	  font-size: .9em;
+	  box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	  width: 100%;
+	  border-collapse: collapse;
+	  border-radius: 5px;
+	  overflow: hidden;
+	}
+	
+	th {
+	  text-align: left;
+	}
+	  
+	thead {
+	  font-weight: bold;
+	  color: #fff;
+	  background: #73685d;
+	}
+	  
+	 td, th {
+	  padding: 1em .5em;
+	  vertical-align: middle;
+	}
+	  
+	 td {
+	  border-bottom: 1px solid rgba(0,0,0,.1);
+	  background: #fff;
+	}
 </style>
 <body>
+	
+	 <h2>증명서 발급</h2>
     <table>
         <thead>
             <th>양식명</th>
@@ -69,17 +50,17 @@
         </thead>
         <tr>
             <td>퇴직증명서</td>
-            <td><a href="#retirementcertificate" rel="modal:open">미리보기</button></td>
-            <td><button onclick="requestCertificate('퇴직증명서')">신청</button></td>
+            <td><button th:if="${employee.retireDate != null}" onclick="certificatePreViewOpen('퇴직증명서')">미리보기</button></td>
+            <td><button th:if="${employee.retireDate != null}" onclick="requestCertificate('퇴직증명서')">신청</button></td>
         </tr>
         <tr>
             <td>경력증명서</td>
-            <td><a href="#careercertificate" rel="modal:open">미리보기</a></td>
+            <td><button onclick="certificatePreViewOpen('경력증명서')">미리보기</button></td>
             <td><button onclick="requestCertificate('경력증명서')">신청</button></td>
         </tr>
         <tr>
             <td>재직증명서</td>
-            <td><a href="#employmentcertificate" rel="modal:open">미리보기</a></td>
+            <td><button onclick="certificatePreViewOpen('재직증명서')">미리보기</button></td>
             <td><button onclick="requestCertificate('재직증명서')">신청</button></td>
         </tr>
     </table>
@@ -211,12 +192,26 @@
             <div class="blank"></div>
         </div>
     </div>
+    
+    <script th:inline="javascript">
+	    /*<![CDATA[*/
+	    var openedWindow;
+	
+	    function certificatePreViewOpen(type) {
+	        if (openedWindow && !openedWindow.closed) {
+	            openedWindow.close(); // 기존 창이 열려있다면 닫기
+	        }
 
-    <script>
-        function requestCertificate(certifiateType) {
+	        const empId = /*[[${employee.empId}]]*/;
+	        const previewUrl = '/certificate/request/view?emp_id=' + empId + '&type=' + type;
+	        openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+	    }
+	    
+	    function requestCertificate(certifiateType) {
 			var url = '/certificate/generate';
+			const empId = /*[[${employee.empId}]]*/;
 			var requestBody = {
-			    emp_id: 'D180003',
+			    emp_id: empId,
 			    type: certifiateType
 			};
 			
@@ -236,6 +231,7 @@
 			// JSON 데이터를 문자열로 변환하여 요청 전송
 			xhr.send(JSON.stringify(requestBody));
         }
-    </script>
+	    /*]]>*/
+	</script>
 </body>
 </html>

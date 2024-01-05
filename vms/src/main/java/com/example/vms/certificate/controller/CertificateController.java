@@ -32,6 +32,9 @@ import com.example.vms.certificate.service.DocumentGenerator;
 import com.example.vms.certificate.service.ICertificateService;
 import com.example.vms.certificate.service.QRCodeGenerator;
 import com.example.vms.employee.controller.EmployeeController;
+import com.example.vms.employee.service.EmployeeService;
+import com.example.vms.employee.service.IEmployeeService;
+import com.example.vms.manager.model.Employee;
 
 import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,8 @@ public class CertificateController {
 	
 	@Autowired
 	ICertificateService certificateService;
+	@Autowired
+	IEmployeeService employeeService;
 	
 	@Autowired
 	private SpringTemplateEngine springTemplateEngine;	
@@ -107,7 +112,12 @@ public class CertificateController {
     
     // 증명서 발급 페이지 
     @GetMapping("/request")
-    public String requestCertificatePage() {
+    public String requestCertificatePage(
+       @RequestParam(name = "emp_id", defaultValue = "") String emp_id,
+       Model model
+    ) {
+        Employee employee = employeeService.selectEmployee(emp_id);
+        model.addAttribute("employee", employee);
         return "certificate/request";
     }
     
@@ -122,7 +132,29 @@ public class CertificateController {
     	return "certificate/view";
     }
     
-    // 자격증 미리보기
+    // 증명서 미리보기 화면 
+    @GetMapping("/request/view")
+    public String getMethodName(
+        @RequestParam(name = "emp_id", defaultValue = "", required = false) String emp_id,
+        @RequestParam(name="type", defaultValue="", required = false) String type,
+        Model model
+    ) {
+        Employee employee = employeeService.selectEmployee(emp_id);
+        model.addAttribute("employee", employee);
+        model.addAttribute("today", certificateService.currentTime());
+
+    	if (type.equals("재직증명서")) {
+    		return "/certificate/employmentcertificatePreView";
+    	} else if (type.equals("퇴직증명서")) {
+    		return "/certificate/retirementcertificatePreView";
+    	} else if (type.equals("경력증명서")) {
+    		return "/certificate/careercertificatePreView";
+    	}
+		return null;
+    }
+    
+    
+    // 증명서 발급화면 
     @GetMapping("/download/view")
     public String certificateDownloadView(
     	@RequestParam(name = "emp_id", defaultValue = "", required = false) String emp_id,
@@ -158,7 +190,7 @@ public class CertificateController {
     	} else if (type.equals("경력증명서")) {
     		return "/certificate/careercertificate";
     	}
-		return "/certificate/employmentcertificate";
+		return null;
     }
    
 }

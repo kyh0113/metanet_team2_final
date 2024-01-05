@@ -51,11 +51,11 @@
             <tr th:each="certificate : ${certificates}">
                 <td th:text="${certificate.type}"></td>
                 <td th:text="${certificate.certificateId}"></td>
-                <td th:text="${certificate.regDate}"></td>
+                <td th:text="${#dates.format(certificate.regDate, 'yyyy년 MM월 dd일')}"></td>
                 <td>
-                    <button th:if="${certificate.type eq '재직증명서'}" onclick="certificateDownload('재직증명서')">발급하기</button>
-                    <button th:if="${certificate.type eq '경력증명서'}" onclick="certificateDownload('경력증명서')">발급하기</button>
-                    <button th:if="${certificate.type eq '퇴직증명서'}" onclick="certificateDownload('퇴직증명서')">발급하기</button>
+                    <button th:if="${certificate.type eq '재직증명서'}" onclick="certificateDownload('재직증명서')">발급받기</button>
+                    <button th:if="${certificate.type eq '경력증명서'}" onclick="certificateDownload('경력증명서')">발급받기</button>
+                    <button th:if="${certificate.type eq '퇴직증명서'}" onclick="certificateDownload('퇴직증명서')">발급받기</button>
                 </td>
             </tr>
         </tbody>

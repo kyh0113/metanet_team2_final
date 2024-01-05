@@ -56,7 +56,7 @@ public class CertificateService implements ICertificateService {
 		return certificateRepository.searchCertificatesByCertificateId(certificateId);
 	}
 	
-	private Date currentTime() {
+	public Date currentTime() {
         // 현재 날짜와 시간 얻기
         java.util.Date currentDate = new java.util.Date();
         // java.util.Date를 java.sql.Date로 변환
