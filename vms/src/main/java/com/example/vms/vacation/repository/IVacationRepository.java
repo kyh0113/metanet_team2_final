@@ -11,11 +11,10 @@ import com.example.vms.vacation.model.VacationEmployee;
 @Repository
 @Mapper
 public interface IVacationRepository {
+   void requestVacation(Vacation vacation);
+   public int maxRegId();
 	
-	//팀원 휴가 신청서 조회
 	List<VacationEmployee> selectRequestListByDept(String empId);
 	Vacation selectRequestByRegId(int regId);
-	//휴가 결재
 	int updateRequest(Vacation vacation);
-
 }

@@ -49,5 +49,19 @@
 		</if>
 		WHERE REG_ID = #{regId}
 	</update>
-   
+
+<insert id="requestVacation" parameterType="com.example.vms.vacation.model.Vacation">
+    INSERT INTO VACATION_REG (
+        reg_id, state, start_date, end_date, reg_date, denied_content, content, emp_id, type_id
+    ) VALUES (
+        #{regId}, #{state, jdbcType=VARCHAR}, #{startDate, jdbcType=DATE}, #{endDate, jdbcType=DATE},
+        #{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
+        #{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
+    )
+</insert>
+
+<select id ="maxRegId" resultType="int">
+    SELECT NVL(MAX(REG_ID),0) FROM VACATION_REG
+</select>
+
 </mapper>
