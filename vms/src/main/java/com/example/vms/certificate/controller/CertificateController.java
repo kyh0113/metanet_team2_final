@@ -113,6 +113,7 @@ public class CertificateController {
     	@RequestParam(name = "emp_id", defaultValue = "") String emp_id,
     	Model model
     ) {
+    	model.addAttribute("empId", emp_id);
     	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(emp_id));
     	return "certificate/view";
     }

@@ -53,19 +53,22 @@
                 <td th:text="${certificate.certificateId}"></td>
                 <td th:text="${certificate.regDate}"></td>
                 <td>
-                    <button th:if="${certificate.type eq '재직증명서'}" onclick="certificateDownload('D180003', '재직증명서')">발급하기</button>
-                    <button th:if="${certificate.type eq '경력증명서'}" onclick="certificateDownload('D180003', '경력증명서')">발급하기</button>
-                    <button th:if="${certificate.type eq '퇴직증명서'}" onclick="certificateDownload('D180003', '퇴직증명서')">발급하기</button>
+                    <button th:if="${certificate.type eq '재직증명서'}" onclick="certificateDownload('재직증명서')">발급하기</button>
+                    <button th:if="${certificate.type eq '경력증명서'}" onclick="certificateDownload('경력증명서')">발급하기</button>
+                    <button th:if="${certificate.type eq '퇴직증명서'}" onclick="certificateDownload('퇴직증명서')">발급하기</button>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <script>
-      function certificateDownload(empId, type) {
-        const previewUrl = '/certificate/download/view?emp_id=' + empId + '&type=' + type;
-        window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true')
-      }
-    </script>
+	<script th:inline="javascript">
+	    /*<![CDATA[*/
+	    function certificateDownload(type) {
+	        const empId = /*[[${empId}]]*/;
+	        const previewUrl = '/certificate/download/view?emp_id=' + empId + '&type=' + type;
+	        window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+	    }
+	    /*]]>*/
+	</script>
 </body>
 </html>
