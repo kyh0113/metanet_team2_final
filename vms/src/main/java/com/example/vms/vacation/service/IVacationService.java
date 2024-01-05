@@ -10,4 +10,5 @@ public interface IVacationService {
 	List<VacationEmployee> getDeptRequestList(String empId);
 	Vacation getRequestDetail(int regId);
 	String approvalRequest(Vacation vacation);
+	String getDeptNameByEmpId(String empId);
 }

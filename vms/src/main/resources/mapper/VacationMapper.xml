@@ -46,5 +46,5 @@
 		SET STATE = #{state}, DENIED_CONTENT = #{deniedContent} 
 		WHERE REG_ID = #{regId}
 	</update>
-    
+   
 </mapper>

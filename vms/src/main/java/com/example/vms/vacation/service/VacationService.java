@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.myapp.member.dao.IMemberRepository;
+import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 import com.example.vms.vacation.repository.IVacationRepository;
@@ -14,6 +16,8 @@ public class VacationService implements IVacationService {
 
 	@Autowired
 	IVacationRepository vacationRepository;
+	@Autowired
+	IEmployeeRepository employeeRepository;
 	
 	@Override
 	public List<VacationEmployee> getDeptRequestList(String empId) {
@@ -34,6 +38,11 @@ public class VacationService implements IVacationService {
 		else {
 			return "결재 실패";
 		}
+	}
+
+	@Override
+	public String getDeptNameByEmpId(String empId) {
+		return employeeRepository.selectDeptNameByEmpId(empId);
 	}
 
 }
