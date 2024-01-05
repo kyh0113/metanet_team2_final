@@ -1,5 +1,6 @@
 package com.example.vms.certificate.service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 
 import org.springframework.stereotype.Service;
@@ -32,7 +33,11 @@ public class DocumentGenerator {
 			
 			HtmlConverter.convertToPdf(processedHtml, pdfwriter, convertProperties);
 			
-			FileOutputStream fout = new FileOutputStream("/Users/KOSA/Desktop/test.pdf");
+	        String userHome = System.getProperty("user.home");
+	        String downloadFolderPath = userHome + "/Downloads";
+	        String filePath = downloadFolderPath + "/test.pdf";
+	        
+			FileOutputStream fout = new FileOutputStream(getUniqueFilePath(filePath));
 			
 			byteArrayOutputStream.writeTo(fout);
 			byteArrayOutputStream.close();
@@ -46,4 +51,22 @@ public class DocumentGenerator {
 			return null;
 		}
 	} 
+	
+    private static String getUniqueFilePath(String filePath) {
+        File file = new File(filePath);
+        String baseName = file.getName();
+        String parentPath = file.getParent();
+
+        int count = 1;
+        String uniqueFilePath = filePath;
+
+        while (new File(uniqueFilePath).exists()) {
+            String fileNameWithoutExtension = baseName.substring(0, baseName.lastIndexOf('.'));
+            String fileExtension = baseName.substring(baseName.lastIndexOf('.'));
+            uniqueFilePath = parentPath + "/" + fileNameWithoutExtension + "(" + count + ")" + fileExtension;
+            count++;
+        }
+
+        return uniqueFilePath;
+    }
 }
