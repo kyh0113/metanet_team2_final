@@ -49,16 +49,17 @@
     <script th:inline="javascript">
     /*<![CDATA[*/ 
     var numberOfEmployees = /*[[${numberOfEmployees}]]*/;
-    var currentPage = 0
+    var currentPage = parseInt(pageLoad()) || 1
     var start = 0 
     var end = 10 
     var step = 10 
     function loadEmployeesInformation(number) {
+        console.log(pageLoad());
         if (currentPage==-1) {
             return
         }
-        
         currentPage += number
+        pageSave()
         start = (currentPage - 1) * step 
         end = currentPage * step 
         updateButtonVisibility()
@@ -119,7 +120,13 @@
         preButton.style.display = currentPage <= 1 ? 'none' : 'inline-block';
         nextButton.style.display = end >= numberOfEmployees ? 'none' : 'inline-block';
     }
-    loadEmployeesInformation(1)
+    function pageSave() {
+        sessionStorage.setItem('currentPage', currentPage)
+    }
+    function pageLoad() {
+        return sessionStorage.getItem('currentPage')
+    }
+    loadEmployeesInformation(0)
     updateButtonVisibility()
     /*]]>*/
     </script>
