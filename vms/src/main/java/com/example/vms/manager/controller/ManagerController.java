@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import com.example.vms.manager.model.EmployeeResponseDTO;
 import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
 import com.example.vms.manager.repository.IManagerRepository;
 import com.example.vms.manager.service.IManagerService;
+import com.example.vms.manager.service.ManagerService;
 
 @Controller
 @RequestMapping("/manager")
@@ -27,9 +29,6 @@ public class ManagerController {
 	
 	@Autowired
 	IManagerService managerService;
-	
-	@Autowired
-	IManagerRepository managerRepository;
 	
 	@PostMapping("/create")
 	@ResponseBody
@@ -73,8 +72,8 @@ public class ManagerController {
 	public Employee updateEmployee(
 		@RequestBody EmployeeUpdateRequestDTO employeeRequest
 	) {
-		managerRepository.updateEmployee(employeeRequest);
-		return managerService.selectEmployee(employeeRequest.getEmpId());
+		managerService.updateEmployee(employeeRequest);
+	    return managerService.selectEmployee(employeeRequest.getEmpId());
 	}
 	
 	// 직원 조회 페이지 
@@ -85,4 +84,19 @@ public class ManagerController {
 		model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
 		return "/manager/list";
 	}
+	
+	// 직원 수정 페이지 
+	@GetMapping("/employee/update/{empId}")
+	public String updateEmployeePage(
+		@PathVariable String empId,
+		Model model 
+	) {
+		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
+		String[] positions = {"팀원", "팀장"};
+		model.addAttribute("employee", employee);
+		model.addAttribute("departments", managerService.searchDepartments());
+		model.addAttribute("positions", positions);
+		return "/manager/employeeupdate";
+	}
+	
 }

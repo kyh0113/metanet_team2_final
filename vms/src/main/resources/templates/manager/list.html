@@ -106,8 +106,8 @@
             var editButton = document.createElement('button')
        		editButton.classList.add('btn', 'btn-warning');
             editButton.textContent = '수정'
-            editButton.addEventListener('click', function() {
-				
+            editButton.addEventListener('click', function() { 
+				location.href = '/manager/employee/update/'+item.empId
 			})
 			editButtonCol.appendChild(editButton);
         })
