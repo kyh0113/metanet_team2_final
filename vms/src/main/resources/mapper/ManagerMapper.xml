@@ -134,5 +134,11 @@
         EMP_ID=#{empId}
 </update>
 
+<select id="searchDepartments" resultType="com.example.vms.manager.model.Department">
+	SELECT 
+		DEPT_ID AS deptId, 
+		NAME AS name 
+	FROM DEPARTMENTS
+</select>
 
 </mapper>

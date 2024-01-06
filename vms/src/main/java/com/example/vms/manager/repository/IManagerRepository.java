@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import com.example.vms.manager.model.Department;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.model.EmployeeResponseDTO;
 import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
@@ -28,4 +29,5 @@ public interface IManagerRepository {
     int numberOfEmployees();
 	EmployeeResponseDTO searchEmployeeByEmpId(@Param("empId") String empId);
 	void updateEmployee(EmployeeUpdateRequestDTO employee);
+	Department[] searchDepartments();
 }
