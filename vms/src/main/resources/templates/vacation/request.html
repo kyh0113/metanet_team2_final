@@ -1,30 +1,105 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vacation Request Form</title>
+    <!-- 부트스트랩 4 링크 추가 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .custom-container {
+            max-width: 60%; /* 최대 가로 길이를 90%로 설정 */
+            margin: 0 auto; /* 가운데 정렬을 위해 auto 사용 */
+        }
+
+        #content {
+            height: 150px; /* 내용 란의 세로 길이를 150px로 설정 */
+        }
+        
+    </style>
 </head>
+
 <body>
+    <div class="container mt-5 custom-container"
+    style="margin-right:150px;">
+        <form id="vacationForm" th:action="@{/vacation/request}" method="post" enctype="multipart/form-data"
+            class="needs-validation border p-3" novalidate> <!-- border 및 p-3 클래스 추가 -->
+			<h3>휴가신청서</h3>
+			<br>
+            <div class="form-group">
+                <label for="typeId">휴가 유형</label>
+                <select id="typeId" name="typeId" class="form-control" required>
+                    <option value="" selected disabled>휴가 유형을 선택하세요</option>
+                    <option th:each="type, stat : ${vacationTypes}" th:value="${type.typeId}" th:text="${type.name}"
+                        th:selected="${stat.index eq 0}"></option>
+                </select>
+                <div class="invalid-feedback">휴가 유형을 선택하세요.</div>
+            </div>
 
-     <form id="vacationForm" th:action="@{/vacation/request}" method="post">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required><br>
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" class="form-control" required>
+                <div class="invalid-feedback">시작 날짜를 선택하세요.</div>
+            </div>
 
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required><br>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" class="form-control" required>
+                <div class="invalid-feedback">종료 날짜를 선택하세요.</div>
+            </div>
 
-    <label for="regDate">Registration Date:</label>
-    <input type="date" id="regDate" name="regDate" required><br>
+            <div class="form-group">
+                <label for="regDate">Registration Date</label>
+                <input type="date" id="regDate" name="regDate" class="form-control" required>
+                <div class="invalid-feedback">등록 날짜를 선택하세요.</div>
+            </div>
 
-    <label for="content">Content:</label>
-    <input type="text" id="content" name="content" required><br>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" class="form-control" rows="8" required></textarea>
+                <!-- rows 속성 조절 -->
+                <div class="invalid-feedback">내용을 입력하세요.</div>
+            </div>
 
-    <label for="typeId">Type ID:</label>
-    <input type="text" id="typeId" name="typeId" required><br>
+            <div class="form-group">
+                <label for="file">파일 업로드</label>
+                <input type="file" id="file" name="files" class="form-control-file" multiple>
+            </div>
 
-    <input type="submit" value="제출">
-    </form>
+            <button type="submit" class="btn btn-primary">제출</button>
+        </form>
+    </div>
+
+    <!-- 부트스트랩 4 스크립트 추가 -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- 폼 유효성 검사 스크립트 추가 -->
+    <script>
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // 폼 유효성 검사를 적용합니다.
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
 
 </body>
+
 </html>
