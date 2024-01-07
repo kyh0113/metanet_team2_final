@@ -14,6 +14,9 @@ public class VacationService implements IVacationService{
 
    @Override
    public void requestVacation(Vacation vacation) {
+	   
+	  Integer typeId = vacation.getTypeId(); // 폼에서 받아온 값
+	  vacation.setTypeId(typeId);
       vacation.setRegId(vacationDao.maxRegId()+1);
       vacationDao.requestVacation(vacation);
    }

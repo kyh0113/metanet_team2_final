@@ -1,0 +1,11 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.vacation.repository.IVacationTypeRepository">
+
+<select id ="getAllVacationType" resultType="com.example.vms.vacation.model.VacationType">
+    SELECT TYPE_ID AS typeId, NAME AS name FROM VACATION_TYPE
+    
+</select>
+
+</mapper>

@@ -1,7 +1,10 @@
 package com.example.vms.vacation.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.vacation.model.Vacation;
+import com.example.vms.vacation.model.VacationType;
 import com.example.vms.vacation.service.VacationService;
+import com.example.vms.vacation.service.VacationTypeService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,9 +29,14 @@ public class VacationController {
 
     @Autowired
     private VacationService vacationService;
+    
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @GetMapping("/request")
-    public String requestVacation() {
+    public String requestVacation(Model model) {
+    	List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
+    	model.addAttribute("vacationTypes", vacationTypes);
         return "vacation/request";
     }
 
@@ -37,7 +47,6 @@ public class VacationController {
 //        System.out.println("쿠키로 토큰 가져옴 "+token); // 쿠키로 토큰 가져옴
     	
     		
-    	
     	// 쿠키 정보
         Cookie[] cookies = request.getCookies();
         //System.out.println(cookies.toString());
@@ -47,6 +56,11 @@ public class VacationController {
               token = cookie.getValue();
            }
         }
+        
+        // 휴가 유형 확인을 위한 로그 추가
+        System.out.println("Received typeId from form: " + vacation);
+       
+        
 
         // 토큰 유효성 검사
         if (tokenProvider.validateToken(token)) {
