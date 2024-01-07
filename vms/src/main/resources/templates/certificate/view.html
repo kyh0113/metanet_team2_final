@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>증명서 조회</title>
+</head>
+<style>
+	table {
+	  border: 1px #a39485 solid;
+	  font-size: .9em;
+	  box-shadow: 0 2px 5px rgba(0,0,0,.25);
+	  width: 100%;
+	  border-collapse: collapse;
+	  border-radius: 5px;
+	  overflow: hidden;
+	}
+	
+	th {
+	  text-align: left;
+	}
+	  
+	thead {
+	  font-weight: bold;
+	  color: #fff;
+	  background: #73685d;
+	}
+	  
+	 td, th {
+	  padding: 1em .5em;
+	  vertical-align: middle;
+	}
+	  
+	 td {
+	  border-bottom: 1px solid rgba(0,0,0,.1);
+	  background: #fff;
+	}
+</style>
+<body>
+
+    <h2>발급한 증명서 조회</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>문서명</th>
+                <th>접수 번호</th>
+                <th colspan="3">발급 날짜</th>
+                <!-- Add more headers as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="certificate : ${certificates}">
+                <td th:text="${certificate.type}"></td>
+                <td th:text="${certificate.certificateId}"></td>
+                <td th:text="${#dates.format(certificate.regDate, 'yyyy년 MM월 dd일')}"></td>
+                <td>
+                    <button th:if="${certificate.type eq '재직증명서'}" onclick="certificateDownload('재직증명서')">발급받기</button>
+                    <button th:if="${certificate.type eq '경력증명서'}" onclick="certificateDownload('경력증명서')">발급받기</button>
+                    <button th:if="${certificate.type eq '퇴직증명서'}" onclick="certificateDownload('퇴직증명서')">발급받기</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+	<script th:inline="javascript">
+	    /*<![CDATA[*/
+	    var openedWindow;
+	
+	    function certificateDownload(type) {
+	        if (openedWindow && !openedWindow.closed) {
+	            openedWindow.close(); // 기존 창이 열려있다면 닫기
+	        }
+	
+	        const empId = /*[[${empId}]]*/;
+	        const previewUrl = '/certificate/download/view?emp_id=' + empId + '&type=' + type;
+	        openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+	    }
+	    /*]]>*/
+	</script>
+</body>
+</html>
