@@ -4,7 +4,7 @@
 <mapper namespace="com.example.vms.vacation.repository.IVacationTypeRepository">
 
 <select id ="getAllVacationType" resultType="com.example.vms.vacation.model.VacationType">
-    SELECT TYPE_ID AS typeId, NAME AS name FROM VACATION_TYPE
+    SELECT TYPE_ID AS typeId, NAME AS name, DAYS AS days FROM VACATION_TYPE
     
 </select>
 

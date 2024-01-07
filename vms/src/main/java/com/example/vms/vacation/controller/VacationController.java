@@ -1,5 +1,6 @@
 package com.example.vms.vacation.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.vms.jwt.JwtTokenProvider;
+import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationType;
 import com.example.vms.vacation.service.VacationService;
@@ -54,8 +58,13 @@ public class VacationController {
         return "vacation/request";
     }
 
-    @PostMapping("/request")
-    public String requestVacation(HttpServletRequest request, HttpServletResponse response, @ModelAttribute Vacation vacation) {
+    @PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
+    public String requestVacation(HttpServletRequest request, HttpServletResponse response, @ModelAttribute Vacation vacation,
+            @RequestParam(value = "files", required = false) MultipartFile[] files) {
+    	
+    	// 종료 날짜 설정
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+        vacation.setEndDate(endDate);
         // 토큰 추출
 //        String token = tokenProvider.resolveToken(request);
 //        System.out.println("쿠키로 토큰 가져옴 "+token); // 쿠키로 토큰 가져옴
@@ -73,9 +82,9 @@ public class VacationController {
         
         // 휴가 유형 확인을 위한 로그 추가
         System.out.println("Received typeId from form: " + vacation);
-       
-        
 
+       
+     
         // 토큰 유효성 검사
         if (tokenProvider.validateToken(token)) {
         	System.out.println("유효성 검사 들어옴");
@@ -84,11 +93,10 @@ public class VacationController {
 
             // 휴가 정보 설정
             vacation.setEmpId(empId);
+            
 
             // 휴가 등록
-            vacationService.requestVacation(vacation);
-
-            // 성공적으로 등록되었으면 리스트 페이지로 리다이렉트
+            vacationService.requestVacation(vacation, files);
 
             // 쿠키에 토큰을 설정 (클라이언트 사이드에서 사용)
             response.setHeader("Set-Cookie", "X-AUTH-TOKEN=" + token + "; Path=/; HttpOnly");

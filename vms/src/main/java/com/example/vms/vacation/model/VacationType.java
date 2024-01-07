@@ -10,4 +10,5 @@ import lombok.ToString;
 public class VacationType {
 	Integer typeId;
 	String name;
+	Integer days;
 }
