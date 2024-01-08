@@ -19,4 +19,9 @@ public class VacationTypeService implements IVacationTypeService{
 		return vacationTypeDao.getAllVacationType();
 	}
 
+	@Override
+	public int findDaysByTypeId(int typeId) {
+		return vacationTypeDao.findDaysByTypeId(typeId);
+	}
+
 }

@@ -11,4 +11,5 @@ import com.example.vms.vacation.model.VacationType;
 @Mapper
 public interface IVacationTypeRepository {
 	List<VacationType> getAllVacationType();
+	int findDaysByTypeId(int typeId);
 }

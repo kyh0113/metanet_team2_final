@@ -9,6 +9,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.vms.jwt.JwtAuthenticationFilter;
 import com.example.vms.jwt.JwtTokenProvider;
@@ -56,6 +59,9 @@ public class SecurityConfig {
 		http.addFilterBefore(authenticationFilter(), // 인증필터
 				UsernamePasswordAuthenticationFilter.class); // 스프링시큐리티에서 제공해주는거
 		// 패스워드와 이름으로 인증
+		
+		// CORS 설정 추가
+        http.cors();
             
 
         return http.build();
@@ -64,5 +70,19 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+    
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
