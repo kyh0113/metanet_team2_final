@@ -8,4 +8,8 @@
     
 </select>
 
+<select id="findDaysByTypeId" resultType="int">
+    SELECT DAYS AS days FROM VACATION_TYPE WHERE TYPE_ID = #{typeId}
+</select>
+
 </mapper>

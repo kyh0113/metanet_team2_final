@@ -1,11 +1,15 @@
 package com.example.vms.vacation.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +41,7 @@ import com.example.vms.vacation.service.VacationService;
 
 @Controller
 @RequestMapping("/vacation")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VacationController {
 
     @Autowired
@@ -56,6 +61,18 @@ public class VacationController {
     	List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
     	model.addAttribute("vacationTypes", vacationTypes);
         return "vacation/request";
+    }
+    
+    @GetMapping("/getDaysForVacationType")
+    @ResponseBody
+    public ResponseEntity<Map<String, Integer>> getDaysForVacationType(@RequestParam int typeId) {
+        System.out.println("하이헬로");
+        int days = vacationTypeService.findDaysByTypeId(typeId);
+        System.out.println(days);
+        Map<String, Integer> response = new HashMap<>();
+        response.put("days", days);
+        System.out.println(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
