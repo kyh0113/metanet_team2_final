@@ -17,7 +17,7 @@
        document.addEventListener('DOMContentLoaded', function () {
             $(function () {
                 var request = $.ajax({
-                    url: "/full-calendar/calendar-admin", // 변경하기
+                    url: "/calendar/calendar-admin", // 변경하기
                     method: "GET",
                     dataType: "json"
                 });
@@ -44,14 +44,19 @@
                                 arg.draggedEl.parentNode.removeChild(arg.draggedEl);
                             }
                         },
-                        /**
-                         * data 로 값이 넘어온다. log 값 전달.
-                         */
+                        eventClick: function(arg){
+							insertModalOpen(arg);
+						},
                         events: data
                     });
  
                     calendar.render();
                 });
+                
+                function insertModalOpen(arg){
+					alert("암거나");
+					location.href="/vacation/request";
+				}
  
                 request.fail(function( jqXHR, textStatus ) {
                     alert( "Request failed: " + textStatus );
