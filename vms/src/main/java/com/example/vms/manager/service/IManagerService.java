@@ -20,4 +20,6 @@ public interface IManagerService {
 	EmployeeResponseDTO searchEmployeeByEmpId(String empId);
 	void updateEmployee(EmployeeUpdateRequestDTO employee);
 	Department[] searchDepartments();
+	
+	int searchEmployeeRemains();
 }

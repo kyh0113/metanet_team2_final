@@ -110,4 +110,9 @@ public class ManagerService implements IManagerService {
 	public Department[] searchDepartments() {
 		return managerDao.searchDepartments();
 	}
+
+	@Override
+	public int searchEmployeeRemains() {
+		return 0;
+	}
 }
