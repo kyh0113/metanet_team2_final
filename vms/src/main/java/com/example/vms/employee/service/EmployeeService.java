@@ -66,7 +66,7 @@ public class EmployeeService implements IEmployeeService{
 			message.setSubject(mailSubject);
 	        String body = "";
 	        body += "<h3>" + mailMessage + "</h3>";
-	        body += "<h1>" + content + "</h1>";
+	        body += "<h3>" + content + "</h3>";
 	        message.setText(body,"UTF-8", "html");
 	        
 	        //메일 전송

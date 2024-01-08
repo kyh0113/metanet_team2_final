@@ -3,7 +3,7 @@
 
 <mapper namespace="com.example.vms.vacation.repository.IVacationRepository">
 
-<resultMap id="RequestResultMap" type="com.example.vms.vacation.model.VacationEmployee">
+<!--  <resultMap id="RequestResultMap" type="com.example.vms.vacation.model.VacationEmployee">
     	<id column="REG_ID" property="regId"/>
     	<result column="STATE" property="state"/>
     	<result column="START_DATE" property="startDate"/>
@@ -11,18 +11,40 @@
     	<result column="REG_DATE" property="regDate"/>
     	<result column="NAME" property="empName"/>
   	</resultMap>
+-->
 
-<select id="selectRequestListByDept" parameterType="string" resultMap="RequestResultMap">
-		<![CDATA[
-			SELECT V.REG_ID,
-			       V.STATE,
-			       V.START_DATE,
-			       V.END_DATE,
-			       V.REG_DATE,
-			       E.NAME
+<select id="selectCountRequestListByDept" resultType="int">
+			SELECT count(*)
 			FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
-			WHERE V.STATE != '취소' AND E.DEPT_ID = ( SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
-		]]>		
+			WHERE V.STATE != '취소'
+			<if test="state != null">
+			AND V.STATE = #{state}
+			</if>
+			AND E.DEPT_ID = ( SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})	
+	</select>
+	
+<select id="selectRequestListByDept" resultType="com.example.vms.vacation.model.VacationEmployee">
+			SELECT *
+			FROM (
+			    SELECT rownum as num, r.*
+			    FROM (
+					SELECT V.REG_ID AS regId,
+					       V.STATE AS state,
+					       V.START_DATE AS startDate,
+					       V.END_DATE AS endDate,
+					       V.REG_DATE AS regDate,
+					       E.NAME AS empName,
+					       ROWNUM AS rnum
+					FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+					WHERE V.STATE != '취소'
+					<if test="state != null">
+					AND V.STATE = #{state}
+					</if>
+					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
+			        ORDER BY regDate DESC
+			    ) r
+			) WHERE num BETWEEN #{startNum} AND #{endNum}
+					
 	</select>
 	
 <select id="selectRequestByRegId" parameterType="int" resultType="com.example.vms.vacation.model.Vacation">
@@ -54,7 +76,7 @@
     INSERT INTO VACATION_REG (
         reg_id, state, start_date, end_date, reg_date, denied_content, content, emp_id, type_id
     ) VALUES (
-        #{regId}, #{state, jdbcType=VARCHAR}, #{startDate, jdbcType=DATE}, #{endDate, jdbcType=DATE},
+        #{regId}, #{state, jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
         #{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
         #{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
     )
@@ -62,6 +84,25 @@
 
 <select id ="maxRegId" resultType="int">
     SELECT NVL(MAX(REG_ID),0) FROM VACATION_REG
+</select>
+
+<select id ="selectTypeName" resultType="string" parameterType="int">
+    SELECT NAME FROM VACATION_TYPE WHERE TYPE_ID=#{typeId}
+</select>
+
+<select id ="selectFileListByRegId" resultType="string" parameterType="int">
+    SELECT NAME FROM UPLOAD_FILES WHERE REG_ID=#{regId}
+</select>
+
+<select id="selectFile" parameterType="int" resultType="com.example.vms.vacation.model.UploadFile">
+	SELECT FILE_ID AS fileId,
+		   NAME AS name,
+		   FILE_SIZE AS fileSize,
+		   CONTENT_TYPE AS contentType,
+	 	   FILE_DATA AS fileData,
+		   REG_ID AS reg_id
+	FROM UPLOAD_FILES
+	WHERE REG_ID = #{regId}
 </select>
 
 </mapper>

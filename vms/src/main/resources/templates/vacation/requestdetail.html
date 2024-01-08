@@ -64,20 +64,31 @@
     .text-right {
       text-align: right;
     }
-
-    /* 아래 간격 조절을 위한 스타일 */
+    
     .table-container {
       margin-bottom: 20px;
     }
+    
+    .attachment-link {
+      display: inline-block;
+      padding: 5px 10px;
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: underline;
+      margin: 0px 0px;
+    }
+
+    .attachment-link:hover {
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
   </style>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script>
+  <script th:inline="javascript">
+	/*<![CDATA[*/
     $(document).ready(function(){
       $('.approval-btn').click(function(){
-        console.log("test");
-        console.log($(this).text());
-        console.log($("#reg-id").text());
-        console.log($("#denied-content").val());
         $.ajax({
           url:"/vacation/approval",
           type:"post",
@@ -85,14 +96,36 @@
           timeout : 5000,
           contentType : 'application/json; charset=utf-8',
           data:JSON.stringify({ 
-            "regId": parseInt($("#reg-id").text()),
+            "regId": '[[${vacation.regId}]]',
             "state": $(this).text(),
             "deniedContent": $("#denied-content").val()
           }),
           success: function(data){ 
-            console.log(data.resultMessage);
             alert(data.resultMessage);
             location.reload();
+            
+            $.ajax({
+	          url:"/vacation/send-mail",
+	          type:"post",
+	          dataType:"json",
+	          timeout : 25000,
+	          contentType : 'application/json; charset=utf-8',
+	          data:JSON.stringify({ 
+	            "content": '결재번호 : [[${vacation.regId}]] <br> '+window.location.href ,
+	            "subject": "결재 알림입니다.",
+	            "message": "요청하신 휴가 결재 결과입니다.",
+	            "receiver": '[[${employee.email}]]'
+	          }),
+	          success: function(data){ 
+	            alert(data.resultMessage);
+	            //location.reload();
+	            //location.href("http://localhost:8082/vacation/request/I760001");
+	          },
+	          error : function(xhr, ajaxSettings, thrownError) {
+	            alert(thrownError);
+	          }
+	        });
+	        
           },
           error : function(xhr, ajaxSettings, thrownError) {
             alert(thrownError);
@@ -100,6 +133,7 @@
         });
       });
     });
+    /*]]>*/
   </script>
 </head>
 <body>
@@ -107,7 +141,7 @@
     <div class="title">
       <h4>휴가신청서</h4>
       <div class="btn-container text-right">
-        <button th:text="${vacation.state}" type="button" class="btn btn-primary" disabled></button>
+        <button th:text="${vacation.state}" type="button" class="btn btn-primary" id="state" disabled></button>
       </div>
     </div>
     <hr>
@@ -128,12 +162,11 @@
       <div class="col-sm-9" th:text="${vacation.regDate}"/>
     </div>
     <div class="container table-container"> <!-- 수정된 부분 -->
-      <div id="reg-id" th:text="${vacation.regId}" hidden/>
       <table class="table table-bordered">
         <tbody>
           <tr>
             <th th:text="|휴가 유형|"/>
-            <td th:text="${vacation.typeId}"/>
+            <td th:text="${typeName}"/>
           </tr>
           <tr>
             <th th:text="|휴가 기간|"/>
@@ -141,15 +174,17 @@
           </tr>
           <tr>
             <th th:text="|휴가 일수|"/>
-            <td th:text="${vacation.endDate}"/>
+            <td th:text="${vacationPeriod}"/>
           </tr>
           <tr>
             <th th:text="|사유|"/>
             <td th:text="${vacation.content}"/>
           </tr>
-          <tr>
+          <tr th:if="${files.size() != 0}">
             <th th:text="|첨부파일|"/>
-            <td th:text="${vacation.endDate}"/>
+            <td>
+				<a th:each="filename : ${files}" th:text="${filename}" onclick="showDetail(this)" class="attachment-link"></a>
+			</td>
           </tr>
         </tbody>
       </table>

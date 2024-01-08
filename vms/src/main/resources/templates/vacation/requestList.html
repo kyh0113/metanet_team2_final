@@ -32,7 +32,6 @@
 
     .table th, .table td {
       text-align: center;
-      text
     }
 
     .status-btn {
@@ -67,18 +66,157 @@
       margin-left: 10px;
       cursor: pointer;
     }
+    
+    .waiting.active {
+	  font-size: small;
+      font-weight: bold;
+      color: black;
+      margin-left: 10px;
+      cursor: pointer;
+	}
   </style>
-  <script>
+  
+  <script th:inline="javascript">
+	/*<![CDATA[*/
+	window.onload = function() {
+    	pagination(false);
+	}
+	
+	function pagination(waiting) {
+		// 전체 행 수를 Thymeleaf를 통해 가져오기
+    let rowNum = '[[${rowNum}]]';
+    if(waiting) {
+		rowNum = '[[${waitingRowNum}]]';
+	}
+
+    // 페이지당 행 수 및 현재 페이지 등의 변수 설정
+    let rowsPerPage = 10;
+    let currentPage = 1;
+
+    // 전체 페이지 수 계산
+    let totalPages = Math.ceil(rowNum / rowsPerPage);
+
+    // 페이지 번호를 동적으로 생성하여 HTML에 추가
+    let pagination = document.querySelector('.pagination');
+    pagination.innerHTML = '';  // 기존 페이지 번호 제거
+
+    for (var i = 1; i <= totalPages; i++) {
+        var li = document.createElement('li');
+        li.classList.add('page-item');
+
+        var a = document.createElement('a');
+        a.classList.add('page-link');
+ 
+        if(waiting) {
+			a.href = '/vacation/request/state?curpage='+i+'&state=결재대기';  // 각 페이지 번호의 링크 설정
+		} else {
+			a.href = '/vacation/request/list?curpage='+i;  // 각 페이지 번호의 링크 설정
+		}
+        
+
+        // 페이지 번호 텍스트 설정
+        a.textContent = i;
+
+        // 클릭 이벤트 핸들러 등록
+        a.addEventListener('click', function() {
+            currentPage = i;
+            // 선택된 페이지에 대한 데이터 로딩 등의 동작 수행
+        });
+
+        li.appendChild(a);
+        pagination.appendChild(li);
+    }
+	}
+	
+	let httpReq=null;
+    
     function showDetail(row) {
       let url = row.getAttribute('url');
       location.href = url;
     }
+    
+   	function getInstance(){
+      if(window.XMLHttpRequest){
+         httpReq = new XMLHttpRequest(); //현재 브라우져 XMLHttpRequest 내장
+      }else if(window.ActiveXObject){ //IE6 이하   //지금 필요없어요
+         httpReq = new ActiveXObject("Msxml2.XMLHTTP");
+      }else{
+        throw new Error("AJAX 지원하지 않습니다"); 
+      }
+      return httpReq;  
+   	}
+   	function handlerStateChange(){
+       if(httpReq.readyState == 4){ //1. 서버에서 응답이 왔다면
+          if(httpReq.status >= 200 && httpReq.status < 300){
+    
+             data = JSON.parse(httpReq.responseText)
+             reloadTable(data);
+
+          }else{
+             alert("status Text : " + httpReq.status);
+          }
+       }
+   }
+   
+   function reloadTable(requestData) {
+        const tbody = document.getElementById('requestTableBody');
+        tbody.innerHTML = '';
+
+        requestData.forEach(function (item) {
+            row = tbody.insertRow(); 
+            regId = row.insertCell(0);
+            empName = row.insertCell(1);
+            period = row.insertCell(2);
+            regDate = row.insertCell(3);
+            state = row.insertCell(4);
+            
+
+            regId.textContent = item.regId;
+            empName.textContent = item.empName;
+            period.textContent = item.startDate +"~"+item.endDate;
+            regDate.textContent = item.regDate;
+            //state.textContent = item.state;
+            
+           	//row.classList.add('aaa');
+           	row.setAttribute('url', '/vacation/requestd/'+item.regId);
+           	row.setAttribute('onclick', "showDetail(this)");
+           	
+            const statebtn = document.createElement('button')
+            statebtn.classList.add('status-btn', 'status-'+item.state);
+            statebtn.textContent = item.state;
+            state.appendChild(statebtn);
+        })
+    }
+
+   function showWaiting(){
+	  
+	  let waitingBtn = document.querySelector(".waiting");
+	  let isShowingPending = waitingBtn.classList.contains("active");
+
+	  if (isShowingPending) {
+		pagination(false);
+	    url = "/vacation/request/state?state=";
+	  } else {
+		pagination(true);
+	    url = "/vacation/request/state?state=결재대기";
+	  }
+	  waitingBtn.classList.toggle("active");
+      
+      httpReq = getInstance();
+      httpReq.onreadystatechange = handlerStateChange;  // x >> ()
+      
+      httpReq.open("GET",url); //form 태그 구성
+      httpReq.send(); // form submit 버튼 클릭
+   }
+   
+	
+    /*]]>*/
   </script>
 </head>
 <body>
 
 <div class="container">
-  <h4>휴가 신청 내역 <span class="waiting">결재 대기 중인 것만 보기</span></h4>
+  <h4>휴가 신청 내역 <span class="waiting" onclick="showWaiting()">결재 대기 중인 것만 보기</span></h4>
 
   <table class="table">
     <thead>
@@ -90,18 +228,26 @@
         <th>상태</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id = "requestTableBody">
       <tr th:each="req : ${requestList}" th:attr="url=|/vacation/requestd/${req.regId}|" onclick="showDetail(this)">
         <td th:text="${req.regId}"/>
         <td th:text="${req.empName}"/>
         <td th:text="|${req.startDate} ~ ${req.endDate}|"/>
         <td th:text="${req.regDate}"/>
         <td>
-          <button class="status-btn" th:class="|status-btn status-${req.state.toLowerCase()}|" th:text="${req.state}"></button>
+          <button th:class="|status-btn status-${req.state}|" th:text="${req.state}"></button>
         </td>
       </tr>
     </tbody>
   </table>
+  <ul class="pagination justify-content-center">
+    <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
+   	<div class="page-num page-item">
+    <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
+    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+    </div>
+    <li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
+  </ul>
 </div>
 
 </body>
