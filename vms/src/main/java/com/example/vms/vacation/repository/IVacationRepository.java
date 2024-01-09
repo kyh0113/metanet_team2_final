@@ -23,7 +23,7 @@ public interface IVacationRepository {
 	int updateRequest(Vacation vacation);
 	String selectTypeName(int typeId);
 	int selectCountRequestListByEmpId(@Param("empId") String empId, @Param("state") String state);
-	List<VacationVacationType> selectRequestListByEmpId(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
+	List<VacationEmployee> selectRequestListByEmpId(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
 	//List<String> selectFileListByRegId(int regId);
 	//UploadFile selectFile(int fileId);
 }

@@ -22,5 +22,5 @@ public interface IVacationService {
 	List<UploadFile> getFileList(int regId);
 	UploadFile getFile(int fileId);
 	int getCountRequestList(String empId, String state);
-	List<VacationVacationType> getRequestList(String empId, String state, String curPage);
+	List<VacationEmployee> getRequestList(String empId, String state, String curPage);
 }

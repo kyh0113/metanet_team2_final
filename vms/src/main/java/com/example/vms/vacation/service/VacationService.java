@@ -131,7 +131,7 @@ public class VacationService implements IVacationService {
 	}
 
 	@Override
-	public List<VacationVacationType> getRequestList(String empId, String state, String curPage) {
+	public List<VacationEmployee> getRequestList(String empId, String state, String curPage) {
 		int curPageNum = Integer.parseInt(curPage);
 		int startNum = curPageNum*10 - 9;
 		int endNum = curPageNum*10;

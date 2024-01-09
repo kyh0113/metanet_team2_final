@@ -93,9 +93,9 @@
 		//let rowNum = null;
 		//console.log(waiting);
 		
-		let getRowNumUrl = "/vacation/request/rownum";
+		let getRowNumUrl = "/vacation/request/getrow";
 		if(waiting) {
-			getRowNumUrl = "/vacation/request/rownum?state=결재대기"
+			getRowNumUrl = "/vacation/request/getrow?state=결재대기"
 		}
 		// 전체 행 수를 Thymeleaf를 통해 가져오기
 	    fetch(getRowNumUrl)
@@ -190,8 +190,7 @@
             regDate.textContent = item.regDate;
             //state.textContent = item.state;
             
-           	//row.classList.add('aaa');
-           	row.setAttribute('url', '/vacation/requestd/'+item.regId);
+           	row.setAttribute('url', '/vacation/request/list/team/'+item.regId);
            	row.setAttribute('onclick', "showDetail(this)");
            	
             const statebtn = document.createElement('button')

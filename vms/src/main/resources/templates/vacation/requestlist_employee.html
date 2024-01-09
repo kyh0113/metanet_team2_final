@@ -92,9 +92,9 @@
 		//let rowNum = null;
 		//console.log(waiting);
 		
-		let getRowNumUrl = "/vacation/list/rownum";
+		let getRowNumUrl = "/vacation/request/getrow";
 		if(waiting) {
-			getRowNumUrl = "/vacation/list/rownum?state=취소"
+			getRowNumUrl = "/vacation/request/getrow?state=취소"
 		}
 		// 전체 행 수를 Thymeleaf를 통해 가져오기
 	    fetch(getRowNumUrl)
@@ -184,7 +184,7 @@
             
 
             regId.textContent = item.regId;
-            typeName.textContent = item.typeName;
+            typeName.textContent = item.empName;
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
             //state.textContent = item.state;
@@ -218,10 +218,10 @@
 	  
 	  if (isShowingPending) {
 		//pagination(false);
-	    url = "/vacation/list/getlist?curpage="+currPage+"&state=취소";
+	    url = "/vacation/request/getlist?curpage="+currPage+"&state=취소";
 	  } else {
 		//pagination(true);
-	    url = "/vacation/list/getlist?curpage="+currPage+"&state=";
+	    url = "/vacation/request/getlist?curpage="+currPage+"&state=";
 	  }
 	 
 	  //waitingBtn.classList.toggle("active");
