@@ -73,10 +73,12 @@
             </div>
         </form>
     </div>
-
-    <script type="text/javascript">
+</body>
+    <script>
+		var managerEmployeeCurrentPage = parseInt(sessionStorage.getItem('managerEmployeeCurrentPage'))
+		sessionStorage.removeItem('managerEmployeeCurrentPage')
         function updateEmployee(event){
-            event.preventDefault();
+            event.preventDefault()
             var requestBody = {
                 "empId": $("#empId").val(),
                 "name": $("#name").val(),
@@ -89,19 +91,17 @@
             }
             $.ajax({
                 url:"/manager/employee/update",
-                type:"post",
-                contentType: "application/json", // Specify content type here
+                type:"POST",
+                contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify(requestBody), 
                 success: function(data){ 
-                    alert('수정에 성공했습니다.');
+                    alert('수정에 성공했습니다.')
                 },
                 error : function(xhr, ajaxSettings, thrownError) {
-                   alert('수정에 실패했습니다.');
+                   alert('수정에 실패했습니다.')
                }
-            });
+            })
         }
     </script>
-
-</body>
 </html>

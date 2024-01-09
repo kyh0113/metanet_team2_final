@@ -8,22 +8,21 @@
     <style>
         #employeeTable {
             text-align: center;
-
         }
         #pageButton {
-			margin-top: 20px;
-		}
+            margin-top: 20px;
+        }
         .currentPage {
-			margin-left: 15px;
-			margin-right: 15px;
-		}
+            margin-left: 15px;
+            margin-right: 15px;
+        }
     </style>
 </head>
 <body>
     <div id="employeeTable">
         <table class="table">
             <thead>
-                <tr>          
+                <tr>
                     <th scope="col">사원번호</th>
                     <th scope="col">사원이름</th>
                     <th scope="col">부서</th>
@@ -34,101 +33,105 @@
                 </tr>
             </thead>
             <tbody id="employeeTableBody">
-                
+
             </tbody>
         </table>
     
-        <div id="pageButton">
-            <button id="preButotn" class="btn btn-primary btn-lg" onclick="loadEmployeesInformation(-1)">이전</button>
-            <span class="currentPage"></span>
+		<div id="pageButton">
+		    <button id="preButotn" class="btn btn-primary btn-lg" onclick="loadEmployeesInformation(-1)">이전</button>
+		                <span class="currentPage"></span>
             <button id="nextButton" class="btn btn-primary btn-lg" onclick="loadEmployeesInformation(1)">다음</button>
-        </div>
+		</div>
     </div>
 
 
     <script th:inline="javascript">
-    /*<![CDATA[*/ 
-    var numberOfEmployees = /*[[${numberOfEmployees}]]*/;
-    var currentPage = parseInt(pageLoad()) || 1
-    var start = 0 
-    var end = 10 
-    var step = 10 
-    function loadEmployeesInformation(number) {
-        console.log(pageLoad());
+        /*<![CDATA[*/
+        var numberOfEmployees = /*[[${numberOfEmployees}]]*/;
+        var currentPage = parseInt(pageLoad()) || 1
+        var start = 0
+        var end = 10 
+    var step = 10
+        function loadEmployeesInformation(number) {
+            console.log(pageLoad());
         if (currentPage==-1) {
-            return
-        }
-        currentPage += number
-        pageSave()
-        start = (currentPage - 1) * step 
-        end = currentPage * step 
-        updateButtonVisibility()
-
-        var url = '/manager/employees?start='+start+'&end='+end
-
-        document.querySelector('.currentPage').textContent = currentPage
-
-        var xhr = new XMLHttpRequest()
-        xhr.open('GET', url, true)
-
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-               var data = JSON.parse(xhr.responseText)
-               reloadTable(data)
-            } else {
-                console.error('Failed to load data')
+                return
             }
+            currentPage += number
+        pageSave()
+            start = (currentPage - 1) * step
+            end = currentPage * step
+            updateButtonVisibility()
+
+			var url = '/manager/employees?start='+start+'&end='+end
+
+            document.querySelector('.currentPage').textContent = currentPage
+
+            var xhr = new XMLHttpRequest()
+            xhr.open('GET', url, true)
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText)
+                    reloadTable(data)
+                } else {
+                    console.error('Failed to load data')
+                }
+            }
+
+            xhr.send()
+
+        }
+        function reloadTable(employees) {
+            var tbody = document.getElementById('employeeTableBody')
+            tbody.innerHTML = ''
+
+            employees.forEach(function (item) {
+                var row = tbody.insertRow() 
+                var empCol = row.insertCell(0);
+                var nameCol = row.insertCell(1);
+                var deptNameCol = row.insertCell(2);
+                var emailCol = row.insertCell(3);
+                var phoneCol = row.insertCell(4);
+                var hireDateCol = row.insertCell(5);
+                var editButtonCol = row.insertCell(6);
+
+                empCol.textContent = item.empId;
+                nameCol.textContent = item.name;
+                deptNameCol.textContent = item.deptName;
+                emailCol.textContent = item.email;
+                phoneCol.textContent = item.phone;
+                hireDateCol.textContent = item.hireDate;
+                
+                var editButton = document.createElement('button')
+                editButton.classList.add('btn', 'btn-warning');
+                editButton.textContent = '수정'
+                editButton.addEventListener('click', function() { 
+                    pageSave()
+                    location.href = '/manager/employee/update/'+item.empId
+                })
+                editButtonCol.appendChild(editButton);
+            })
+        }
+        function updateButtonVisibility() {
+            var preButton = document.getElementById('preButotn');
+            var nextButton = document.getElementById('nextButton');
+
+            preButton.style.display = currentPage <= 1 ? 'none' : 'inline-block';
+            nextButton.style.display = end >= numberOfEmployees ? 'none' : 'inline-block';
+    }
+                function pageSave() {
+            sessionStorage.setItem('managerEmployeeCurrentPage', currentPage)
         }
 
-        xhr.send()
-
-    }    
-    function reloadTable(employees) {
-        var tbody = document.getElementById('employeeTableBody')
-        tbody.innerHTML = ''
-
-        employees.forEach(function (item) {
-            var row = tbody.insertRow() 
-            var empCol = row.insertCell(0);
-            var nameCol = row.insertCell(1);
-            var deptNameCol = row.insertCell(2);
-            var emailCol = row.insertCell(3);
-            var phoneCol = row.insertCell(4);
-            var hireDateCol = row.insertCell(5);
-            var editButtonCol = row.insertCell(6);
-
-            empCol.textContent = item.empId;
-            nameCol.textContent = item.name;
-            deptNameCol.textContent = item.deptName;
-            emailCol.textContent = item.email;
-            phoneCol.textContent = item.phone;
-            hireDateCol.textContent = item.hireDate;
-            
-            var editButton = document.createElement('button')
-       		editButton.classList.add('btn', 'btn-warning');
-            editButton.textContent = '수정'
-            editButton.addEventListener('click', function() { 
-				location.href = '/manager/employee/update/'+item.empId
-			})
-			editButtonCol.appendChild(editButton);
-        })
-    }
-    function updateButtonVisibility() {
-        var preButton = document.getElementById('preButotn');
-        var nextButton = document.getElementById('nextButton');
-
-        preButton.style.display = currentPage <= 1 ? 'none' : 'inline-block';
-        nextButton.style.display = end >= numberOfEmployees ? 'none' : 'inline-block';
-    }
-    function pageSave() {
-        sessionStorage.setItem('currentPage', currentPage)
-    }
-    function pageLoad() {
-        return sessionStorage.getItem('currentPage')
-    }
-    loadEmployeesInformation(0)
-    updateButtonVisibility()
-    /*]]>*/
+        function pageLoad() {
+            let currentPage = sessionStorage.getItem('managerEmployeeCurrentPage')
+            sessionStorage.removeItem('managerEmployeeCurrentPage')
+            return currentPage
+        }
+        loadEmployeesInformation(0)
+        updateButtonVisibility()
+        /*]]>*/
     </script>
 
 </body>
