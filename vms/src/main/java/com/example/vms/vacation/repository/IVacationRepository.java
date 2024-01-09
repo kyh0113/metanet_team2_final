@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
+import com.example.vms.vacation.model.VacationVacationType;
 
 @Repository
 @Mapper
@@ -21,6 +22,8 @@ public interface IVacationRepository {
 	Vacation selectRequestByRegId(int regId);
 	int updateRequest(Vacation vacation);
 	String selectTypeName(int typeId);
+	int selectCountRequestListByEmpId(@Param("empId") String empId, @Param("state") String state);
+	List<VacationVacationType> selectRequestListByEmpId(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
 	//List<String> selectFileListByRegId(int regId);
 	//UploadFile selectFile(int fileId);
 }
