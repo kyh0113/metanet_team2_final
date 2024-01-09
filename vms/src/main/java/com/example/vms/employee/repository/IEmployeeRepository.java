@@ -31,4 +31,8 @@ public interface IEmployeeRepository {
 	EmployeeVacationCountPerMonthResponseDTO[] searchEmployeeVacationCountPerMonth(
 		@Param("empId") String empId
 	);
+	
+	int numberOfVacationUsagesSearchByYear(
+		@Param("year") String year
+	);
 }

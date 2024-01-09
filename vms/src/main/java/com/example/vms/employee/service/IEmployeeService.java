@@ -24,4 +24,6 @@ public interface IEmployeeService {
 	);
 	
 	List<EmployeeVacationCountPerMonth> vacationCountPerMonth(String empId);
+	
+	int numberOfVacationUsagesSearchByYear(String year);
 }

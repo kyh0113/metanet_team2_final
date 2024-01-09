@@ -268,6 +268,11 @@ public class EmployeeService implements IEmployeeService{
 		monthList.add(currentMonth);
         return monthList;
 	}
+
+	@Override
+	public int numberOfVacationUsagesSearchByYear(String year) {
+		return employeeDao.numberOfVacationUsagesSearchByYear(year);
+	}
 	
 
 }
