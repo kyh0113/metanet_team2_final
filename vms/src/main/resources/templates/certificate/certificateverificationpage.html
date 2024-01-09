@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>증명서 진위 확인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        video {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        #QRVerificate {
+            text-align: center;
+        }
+        #verificationResult {
+            margin-top: 20px;
+        }
+        #QRVerificate button {
+            display: inline-block;
+            margin-top: 10px; /* 원하는 여백 조절 */
+            padding: 10px 20px; /* 패딩 조절 */
+            font-size: 16px; /* 폰트 크기 조절 */
+            background-color: #007bff; /* 배경색 설정 */
+            color: #fff; /* 글자색 설정 */
+            border: none; /* 테두리 없애기 */
+            border-radius: 5px; /* 버튼 테두리 둥글게 만들기 */
+            cursor: pointer;
+        }
+
+        #QRVerificate button:hover {
+            background-color: #0056b3; /* 마우스 호버 시 배경색 변경 */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="QRVerificate">
+        <h1>증명서 진위 확인</h1>
+        <video id="video" playsinline class="mb-3"></video>
+        <br>
+        <button onclick="scanQRCode()">QR 코드 스캔 시작</button>
+        <p id="verificationResult"></p>
+    </div>
+
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script>
+        const video = document.getElementById('video');
+        const qrResultElement = document.getElementById('verificationResult');
+        let scanner;
+
+        async function scanQRCode() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+
+                video.srcObject = stream;
+
+                scanner = new Instascan.Scanner({ video: video, charset: 'UTF-8' });
+
+                scanner.addListener('scan', function (result) {
+                    verifyCertificate(result);
+                    // 스캔이 완료되면 카메라 정지
+                    stopCamera();
+                });
+
+                Instascan.Camera.getCameras().then(cameras => {
+                    if (cameras.length > 0) {
+                        scanner.start(cameras[0]);
+                    } else {
+                        console.error('사용 가능한 카메라가 없습니다.');
+                    }
+                });
+            } catch (error) {
+                console.error('카메라에 접근할 수 없습니다:', error);
+            }
+        }
+
+        function verifyCertificate(qrCodeData) {
+            // 실제로는 서버로 데이터를 전송하여 검증하는 로직이 들어가야 함
+            // 여기서는 간단한 예시로 '인증 성공' 또는 '인증 실패' 메시지를 반환함
+            
+            let datas = qrCodeData.split(',')
+            let certificateId = datas[0]
+            let empId = datas[1]
+            certificateView(empId, certificateId)
+            
+            return 
+        }
+
+        function stopCamera() {
+            if (scanner) {
+                scanner.stop();
+            }
+            if (video.srcObject) {
+                const tracks = video.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+        
+        var openedWindow;
+    
+        function certificateView(empId, certificateId) {
+            if (openedWindow && !openedWindow.closed) {
+                openedWindow.close(); // 기존 창이 열려있다면 닫기
+            }
+    
+            const previewUrl = '/certificate/verificate/view?empId=' + empId + '&certificateId=' + certificateId;
+            openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+        }
+    </script>
+
+</body>
+</html>
