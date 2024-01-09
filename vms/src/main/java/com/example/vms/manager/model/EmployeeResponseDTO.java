@@ -19,7 +19,7 @@ public class EmployeeResponseDTO {
     private Date retireDate;
     private String phone;
     private String status;
-    private String remains;
+    private int remains;
     private int deptId;
     private String deptName;
 }
