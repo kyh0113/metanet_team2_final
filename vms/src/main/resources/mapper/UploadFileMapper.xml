@@ -14,4 +14,23 @@
 <select id="maxFileId" resultType="int">
 	SELECT NVL(MAX(FILE_ID), 0) FROM UPLOAD_FILES
 </select>
+
+<select id ="selectFileListByRegId" resultType="com.example.vms.vacation.model.UploadFile" parameterType="int">
+    SELECT FILE_ID AS fileId,
+     	   NAME AS name
+    FROM UPLOAD_FILES 
+    WHERE REG_ID=#{regId}
+</select>
+
+<select id="selectFile" parameterType="int" resultType="com.example.vms.vacation.model.UploadFile">
+	SELECT FILE_ID AS fileId,
+		   NAME AS name,
+		   FILE_SIZE AS fileSize,
+		   CONTENT_TYPE AS contentType,
+	 	   FILE_DATA AS fileData,
+		   REG_ID AS reg_id
+	FROM UPLOAD_FILES
+	WHERE FILE_ID = #{fileId}
+</select>
+
 </mapper>

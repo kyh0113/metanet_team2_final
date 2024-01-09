@@ -2,7 +2,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.vms.employee.repository.IEmployeeRepository">
-<select id="selectEmployee" parameterType="String" resultType="com.example.vms.manager.model.Employee">
+<select id="selectEmployee" parameterType="string" resultType="com.example.vms.manager.model.Employee">
 		<![CDATA[
 			SELECT 
 				EMP_ID AS empId,
