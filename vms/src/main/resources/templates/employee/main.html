@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <title>메인 페이지</title>
+    <style>
+        .clipBoard {
+            border: 1px solid #000000;
+            border-radius: 15px;
+            display: inline-block;
+            padding-right: 20px;
+            padding-left: 20px;
+            color: #252C58;
+            box-sizing: border-box;
+            margin: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .todayTime {
+            font-size: 24px;
+            font-weight: 300px;
+            line-height: 30px;
+            opacity: 0.5;
+        }
+
+        .todayDateBody, .todayDateTitle {
+            font-size: 18px;
+            font-weight: 300px;
+        }
+
+        .infoCountLabel {
+            font-size: 38px;
+            font-weight: 600px;
+            margin: 15px; /* 마진을 0으로 설정 */
+            align-items: center;
+        }
+        
+        #myCertificateInfo, #approvalVacationRequestInfo, #myVacationInfo {
+			padding-top: 20px;
+		}
+        
+        #myCertificateInfo img {
+			position: relative;
+			left: 36%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+			box-sizing: content-box; /* 변경된 부분 */
+		}
+
+        #approvalVacationRequestInfo img {
+			position: relative;
+			left: 60%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+		
+		#myVacationInfo img {
+			position: relative;
+			left: 24%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+
+        .infoLabel {
+            font-size: 16px;
+            font-weight: 300px;
+        }
+
+        .infoButton {
+            margin-left: 15px;
+        }
+
+		#graphContainer {
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		    padding: 10px;
+		}
+		
+		.infoBox {
+            display: flex;
+            flex-wrap: wrap;
+        }
+		
+		#calendar {
+		    flex: 1; /* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+		    max-width: 43%; /* 최대 너비 설정 */
+		    max-height: 53%;
+		}
+	
+		#myChart {
+		    flex: 1; /* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+		    max-width: 45%; /* 최대 너비 설정 */
+		    max-height: 95%;
+		}
+		span {
+			position: relative;
+			top: -8px;
+		}
+    </style>
+</head>
+<body>
+    <div class="infoBox">
+        <div id="todoayInfo" class="clipBoard">
+            <p class="todayDateTitle">오늘의 날짜</p>
+            <p class="todayDateBody"></p>
+            <p class="todayTime"></p>
+        </div>
+        <div id="myCertificateInfo" class="clipBoard">
+            <div class="infoTop">
+                <p class="infoCountLabel">
+					<span><label th:text="${numberOfMyCertificates}"></label></span>
+                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')"> 
+                </p>
+            </div>
+            <p class="infoLabel">나의 증명서</p>
+        </div>
+        <div id="approvalVacationRequestInfo" class="clipBoard">
+            <div class="infoTop">
+                <p class="infoCountLabel">
+					<span><label th:text="${numberOfVacationApproval}"></label></span>
+                    <img src="/images/category.svg" onclick="moveView('vacationApprove')">
+                </p>
+            </div>
+            <p class="infoLabel">내가 결재해야할 문서</p>
+        </div>
+        <div id="myVacationInfo" class="clipBoard">
+            <div class="infoTop">
+                <p class="infoCountLabel">
+					<span><label th:text="${numberOfYearUsage}"></label></span>
+                    <img src="/images/person.svg" onclick="moveView('vacation')"> 
+                </p>
+            </div>
+            <p class="infoLabel">나의 휴가 정보</p>
+        </div>
+    </div>
+
+    <div id="graphContainer">
+        <div id='calendar'></div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+	<script th:inline="javascript">
+	    /*<![CDATA[*/
+	    // 데이터 정의
+	    let employeeVacationInfos = /*[[${employeeVacationInfos}]]*/;
+	    let empId = /*[[${employee.empId}]]*/;
+	    var calendarEl = document.getElementById('calendar');
+	    var calendar = new FullCalendar.Calendar(calendarEl, {
+	    	initialView: 'dayGridMonth'
+	    });
+	    calendar.render();
+	    
+	    var data = {
+	        labels: [
+	         	employeeVacationInfos[0].month,
+	         	employeeVacationInfos[1].month, 
+	         	employeeVacationInfos[2].month,
+	         	employeeVacationInfos[3].month,
+	            employeeVacationInfos[4].month, 
+	            employeeVacationInfos[5].month],
+	        datasets: [{
+	        label: '월별 사용 휴가 일수',
+	        data: [
+	        	employeeVacationInfos[0].monthPerCount,
+	        	employeeVacationInfos[1].monthPerCount, 
+	        	employeeVacationInfos[2].monthPerCount, 
+	        	employeeVacationInfos[3].monthPerCount, 
+	        	employeeVacationInfos[4].monthPerCount, 
+	        	employeeVacationInfos[5].monthPerCount
+	        ], // 각 막대의 높이
+	        backgroundColor: 'rgba(75, 192, 192, 0.2)', // 막대 색상
+	        borderColor: 'rgba(75, 192, 192, 1)', // 막대 테두리 색상
+	        borderWidth: 1 // 막대 테두리 너비
+	        }]
+	    };
+	
+	    // 차트 옵션 정의
+	    var options = {
+	        scales: {
+	        y: {
+	            beginAtZero: true
+	        }
+	        }
+	    };
+	
+	    // 막대 그래프 생성
+	    var ctx = document.getElementById('myChart').getContext('2d');
+	    var myChart = new Chart(ctx, {
+	        type: 'bar',
+	        data: data,
+	        options: options
+	    });
+	    
+
+	
+	    function updateDateTime() {
+	        var todayDateBodyTag = document.querySelector('.todayDateBody');
+	        var now = new Date();
+	
+	        var year = now.getFullYear();
+	        var month = ('0' + (now.getMonth() + 1)).slice(-2);
+	        var day = ('0' + now.getDate()).slice(-2);
+	        var dayOfWeek = getDayOfWeek(now.getDay());
+	
+	        todayDateBodyTag.innerHTML = year + '년 ' + month + '월 ' + day + '일 (' + dayOfWeek + ')';
+	    }   
+	
+	    function getDayOfWeek(dayIndex) {
+	        var daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+	        return daysOfWeek[dayIndex];
+	    }
+	
+	    function updateClock() {
+	        var todayTimeTag = document.querySelector('.todayTime');
+	        var now = new Date();
+	        var hours = ('0' + now.getHours()).slice(-2);
+	        var minutes = ('0' + now.getMinutes()).slice(-2);
+	        var seconds = ('0' + now.getSeconds()).slice(-2);
+	
+	        todayTimeTag.innerHTML = hours + ':' + minutes + ':' + seconds;
+	
+	        updateDateTime(); // 시간이 업데이트될 때마다 날짜와 요일도 함께 업데이트
+	    }
+	
+	    function viewDidLoad() {
+	        updateClock(); // 페이지 로드시 한번 호출
+	        setInterval(updateClock, 1000); // 1초마다 업데이트
+	    }
+	    
+	    function moveView(viewName) {
+			switch (viewName) {
+				case 'certificate':
+					window.location.href="/certificate/view"
+					break
+				case 'vacationApprove':
+					window.location.href="/vacation/request/"+empId
+					break
+				default:
+					console.log(viewName)
+			}
+		}
+	    
+		viewDidLoad()
+	    /*]]>*/
+    </script>
+</body>
+</html>

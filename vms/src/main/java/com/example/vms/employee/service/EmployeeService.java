@@ -1,6 +1,10 @@
 package com.example.vms.employee.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -9,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.example.vms.employee.model.EmployeeVacationCountPerMonth;
+import com.example.vms.employee.model.EmployeeVacationCountPerMonthResponseDTO;
+import com.example.vms.employee.model.VacationApprovalWaiting;
 import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.manager.model.Employee;
 
@@ -126,4 +133,146 @@ public class EmployeeService implements IEmployeeService{
 			return "비밀번호가 변경되었습니다.";
 		}
 	}
+
+	@Override
+	public VacationApprovalWaiting[] searchVacationApprovalWaiting(String empId) {
+		return employeeDao.searchVacationApprovalWaiting(empId, "결재대기", "팀장");
+	}
+
+	@Override
+	public List<EmployeeVacationCountPerMonth> vacationCountPerMonth(String empId) {
+		List<EmployeeVacationCountPerMonth> monthVacationCountInformations = new ArrayList<>();
+		List<String> monthList = previousSixMonthsList();
+		for (String monthText: monthList) {
+			EmployeeVacationCountPerMonth employeeVacationCountPerMonth = new EmployeeVacationCountPerMonth();
+			employeeVacationCountPerMonth.setMonth(monthText);
+			monthVacationCountInformations.add(employeeVacationCountPerMonth);
+		}
+		EmployeeVacationCountPerMonthResponseDTO[] vacationInformations = employeeDao.searchEmployeeVacationCountPerMonth(empId);
+		for (EmployeeVacationCountPerMonthResponseDTO vacationInformation: vacationInformations) {
+			String startMonth = vacationInformation.getStartMonth();
+			int startMonthCount = vacationInformation.getStartMonthDays();
+			String endMonth = vacationInformation.getEndMonth();
+			int endMonthCount = vacationInformation.getEndMonthDays();
+	        for (EmployeeVacationCountPerMonth item : monthVacationCountInformations) {
+	            if (item.getMonth().equals(startMonth)) {
+	                item.setMonthPerCount(item.getMonthPerCount()+startMonthCount);
+	            }
+	            if (item.getMonth().equals(endMonth)) {
+	                item.setMonthPerCount(item.getMonthPerCount()+endMonthCount);
+	            }
+	        }
+		}
+		return monthVacationCountInformations;
+	}
+	
+	
+	List<String> previousSixMonthsList() {
+        // 현재 날짜를 가져옴
+        LocalDate currentDate = LocalDate.now();
+        // 날짜 포매터를 사용하여 '월' 형식으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월");
+        String currentMonth = currentDate.format(formatter);
+        
+        List<String> monthList = new ArrayList<>();
+        
+        switch (currentMonth) {
+		case "1월":
+			monthList.add("8월");
+			monthList.add("9월");
+			monthList.add("10월");
+			monthList.add("11월");
+			monthList.add("12월");
+			break;
+		case "2월":
+			monthList.add("9월");
+			monthList.add("10월");
+			monthList.add("11월");
+			monthList.add("12월");
+			monthList.add("1월");
+			break;
+		case "3월":
+			monthList.add("10월");
+			monthList.add("11월");
+			monthList.add("12월");
+			monthList.add("1월");
+			monthList.add("2월");
+			break;
+		case "4월":
+			monthList.add("11월");
+			monthList.add("12월");
+			monthList.add("1월");
+			monthList.add("2월");
+			monthList.add("3월");
+			break;
+		case "5월":
+			monthList.add("12월");
+			monthList.add("1월");
+			monthList.add("2월");
+			monthList.add("3월");
+			monthList.add("4월");
+			break;
+		case "6월":
+			monthList.add("1월");
+			monthList.add("2월");
+			monthList.add("3월");
+			monthList.add("4월");
+			monthList.add("5월");
+			break;
+		case "7월":
+			monthList.add("2월");
+			monthList.add("3월");
+			monthList.add("4월");
+			monthList.add("5월");
+			monthList.add("6월");
+			break;
+		case "8월":
+			monthList.add("3월");
+			monthList.add("4월");
+			monthList.add("5월");
+			monthList.add("6월");
+			monthList.add("7월");
+			break;
+		case "9월":
+			monthList.add("4월");
+			monthList.add("5월");
+			monthList.add("6월");
+			monthList.add("7월");
+			monthList.add("8월");
+			break;
+		case "10월":
+			monthList.add("5월");
+			monthList.add("6월");
+			monthList.add("7월");
+			monthList.add("8월");
+			monthList.add("9월");
+			break;
+		case "11월":
+			monthList.add("6월");
+			monthList.add("7월");
+			monthList.add("8월");
+			monthList.add("9월");
+			monthList.add("10월");
+			break;
+		case "12월":
+			monthList.add("7월");
+			monthList.add("8월");
+			monthList.add("9월");
+			monthList.add("10월");
+			monthList.add("11월");
+			break;
+			
+		default:
+			break;
+		}
+		monthList.add(currentMonth);
+        return monthList;
+	}
+
+	@Override
+	public int numberOfVacationUsagesSearchByYear(String year) {
+		return employeeDao.numberOfVacationUsagesSearchByYear(year);
+	}
+	
+
 }

@@ -5,7 +5,10 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import com.example.vms.manager.model.Department;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.manager.model.EmployeeResponseDTO;
+import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
 
 @Repository
 @Mapper
@@ -22,7 +25,9 @@ public interface IManagerRepository {
     @Select("SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID = #{deptId}")
     String departmentName(@Param("deptId") int deptId);
 	
-	
-				
-	
+    EmployeeResponseDTO[] searchEmployees(@Param("start") int start, @Param("end") int end);
+    int numberOfEmployees();
+	EmployeeResponseDTO searchEmployeeByEmpId(@Param("empId") String empId);
+	void updateEmployee(EmployeeUpdateRequestDTO employee);
+	Department[] searchDepartments();
 }
