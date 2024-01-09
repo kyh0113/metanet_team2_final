@@ -20,13 +20,13 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/full-calendar")
+@RequestMapping("/calendar")
 public class ScheduleController {
 
 	private final IScheduleService iScheduleService;
 
 	@GetMapping("/look")
-	public String calendar(Model model) {
+	public String calendar(Model model) {	
 
 		return "calendar/calendar";
 	}
