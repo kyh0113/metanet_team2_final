@@ -9,11 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.employee.service.EmployeeService;
-
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
-import com.example.vms.vacation.model.VacationVacationType;
 import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
 

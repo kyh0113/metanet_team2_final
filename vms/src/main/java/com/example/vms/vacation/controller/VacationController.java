@@ -1,7 +1,5 @@
 package com.example.vms.vacation.controller;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
@@ -41,7 +39,6 @@ import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 import com.example.vms.vacation.model.VacationType;
-import com.example.vms.vacation.model.VacationVacationType;
 import com.example.vms.vacation.service.VacationService;
 import com.example.vms.vacation.service.VacationTypeService;
 
