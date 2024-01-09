@@ -120,12 +120,27 @@ public class CertificateController {
     // 증명서 발급 페이지 
     @GetMapping("/request")
     public String requestCertificatePage(
-       @RequestParam(name = "emp_id", defaultValue = "") String emp_id,
+       HttpServletRequest request,
        Model model
     ) {
-        Employee employee = employeeService.selectEmployee(emp_id);
-        model.addAttribute("employee", employee);
-        return "certificate/request";
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+            String empId = tokenProvider.getEmpId(token);
+            Employee employee = employeeService.selectEmployee(empId);
+            model.addAttribute("employee", employee);
+            return "certificate/request";
+        } else {
+        	return "redirect:/employee/login";
+        }
+        
     }
     
     // 증명서 조회 페이지 
