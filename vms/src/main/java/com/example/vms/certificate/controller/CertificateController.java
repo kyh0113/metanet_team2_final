@@ -70,7 +70,7 @@ public class CertificateController {
 
     @GetMapping("")
     public String getMethodName() {
-        return "certificate/home";
+        return "certificate/certificateverificationpage";
     }
     
     @PostMapping("/generate")
@@ -215,7 +215,7 @@ public class CertificateController {
     	model.addAttribute("certificate", certificate);
     	String qrImage;
     	try {
-    		qrImage = grCodeGenerator.getQRCodeImage(certificate.getCertificateId(), 100, 100);
+    		qrImage = grCodeGenerator.getQRCodeImage(certificate.getCertificateId()+","+certificate.getEmpId(), 100, 100);
         	model.addAttribute("qrImage", qrImage);
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -229,6 +229,50 @@ public class CertificateController {
     		return "/certificate/careercertificate";
     	}
 		return null;
+    }
+    
+    // 증명서 진위 확인 화면 
+    @GetMapping("/verificate")
+    public String verificatePage() {
+        return "certificate/certificateverificationpage";
+    }
+    
+    // 증명서 검색 화면 
+    @GetMapping("/verificate/view") 
+    public String verificateCeritificateView(
+    	@RequestParam("certificateId") String certificateId,
+    	@RequestParam("empId") String empId,
+    	Model model
+    ) {
+    	CertificateResponseDTO[] certificates = certificateService.searchCertificatesByCertificateId(certificateId);
+    	if (certificates.length==0) {
+    		return "/certificate/certificateverificateerror";
+    	} else {
+
+    		for (CertificateResponseDTO cert: certificates) {
+    			if (cert.getEmpId().equals(empId)) {
+    	    		String type = cert.getType();
+    	        	model.addAttribute("certificate", cert);
+    	        	model.addAttribute("download", true);
+    	        	String qrImage;
+    	        	try {
+    	        		qrImage = grCodeGenerator.getQRCodeImage(certificateId+","+empId, 100, 100);
+    	            	model.addAttribute("qrImage", qrImage);
+    	        	} catch (Exception e) {
+    	        		e.printStackTrace();
+    	        	}
+    	        	if (type.equals("재직증명서")) {
+    	        		return "/certificate/employmentcertificate";
+    	        	} else if (type.equals("퇴직증명서")) {
+    	        		return "/certificate/retirementcertificate";
+    	        	} else if (type.equals("경력증명서")) {
+    	        		return "/certificate/careercertificate";
+    	        	}
+    			}
+    		}
+    		return "/certificate/certificateverificateerror";
+    	}
+   
     }
    
 }
