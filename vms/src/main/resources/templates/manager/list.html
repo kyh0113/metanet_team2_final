@@ -33,14 +33,26 @@
                 </tr>
             </thead>
             <tbody id="employeeTableBody">
-
+				
             </tbody>
         </table>
     
-		<div id="pageButton">
-		    <button id="preButotn" class="btn btn-primary btn-lg" onclick="loadEmployeesInformation(-1)">이전</button>
-		                <span class="currentPage"></span>
-            <button id="nextButton" class="btn btn-primary btn-lg" onclick="loadEmployeesInformation(1)">다음</button>
+		<div id="pageButton" class="d-flex justify-content-center">
+		    <nav aria-label="Page navigation example">
+		        <ul class="pagination">
+		            <li class="page-item" id="preButton">
+		                <a class="page-link" href="#" onclick="previousButtonTapped()">이전</a>
+		            </li>
+		            <th:block th:each="pageNum : ${#numbers.sequence(1, (numberOfEmployees/10)+1)}">
+		                <li class="page-item" th:classappend="${pageNum == currentPage} ? 'active' : ''">
+							<a class="page-link" href="#" th:attr="data-page=${pageNum}" th:text="${pageNum}" onclick="loadEmployeesInformation(this.getAttribute('data-page'))"></a>
+		                </li>
+		            </th:block>
+		            <li class="page-item" id="nextButton">
+		                <a class="page-link" href="#" onclick="nextButtonTapped()">다음</a>
+		            </li>
+		        </ul>
+		    </nav>
 		</div>
     </div>
 
@@ -51,21 +63,19 @@
         var currentPage = parseInt(pageLoad()) || 1
         var start = 0
         var end = 10 
-    var step = 10
+    	var step = 10
         function loadEmployeesInformation(number) {
-            console.log(pageLoad());
-        if (currentPage==-1) {
-                return
+	        if (currentPage==-1) {
+	             return
             }
-            currentPage += number
-        pageSave()
+            currentPage = number
+        	pageSave()
             start = (currentPage - 1) * step
             end = currentPage * step
             updateButtonVisibility()
 
 			var url = '/manager/employees?start='+start+'&end='+end
 
-            document.querySelector('.currentPage').textContent = currentPage
 
             var xhr = new XMLHttpRequest()
             xhr.open('GET', url, true)
@@ -114,13 +124,21 @@
             })
         }
         function updateButtonVisibility() {
-            var preButton = document.getElementById('preButotn');
+            var preButton = document.getElementById('preButton');
             var nextButton = document.getElementById('nextButton');
 
             preButton.style.display = currentPage <= 1 ? 'none' : 'inline-block';
             nextButton.style.display = end >= numberOfEmployees ? 'none' : 'inline-block';
-    }
-                function pageSave() {
+            
+            // 선택된 페이지에 "active" 클래스 추가
+            var pageItems = document.querySelectorAll('.pagination .page-item')
+            pageItems.forEach(function(item) {
+                item.classList.remove('active')
+            });
+		    pageItems[currentPage].classList.add('active')
+		    
+    	}
+         function pageSave() {
             sessionStorage.setItem('managerEmployeeCurrentPage', currentPage)
         }
 
@@ -129,7 +147,13 @@
             sessionStorage.removeItem('managerEmployeeCurrentPage')
             return currentPage
         }
-        loadEmployeesInformation(0)
+        function previousButtonTapped() {
+			loadEmployeesInformation(parseInt(currentPage)-1)
+		}
+		function nextButtonTapped() {
+			loadEmployeesInformation(parseInt(currentPage)+1)
+		}
+        loadEmployeesInformation(1)
         updateButtonVisibility()
         /*]]>*/
     </script>
