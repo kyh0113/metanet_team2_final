@@ -90,19 +90,4 @@
     SELECT NAME FROM VACATION_TYPE WHERE TYPE_ID=#{typeId}
 </select>
 
-<select id ="selectFileListByRegId" resultType="string" parameterType="int">
-    SELECT NAME FROM UPLOAD_FILES WHERE REG_ID=#{regId}
-</select>
-
-<select id="selectFile" parameterType="int" resultType="com.example.vms.vacation.model.UploadFile">
-	SELECT FILE_ID AS fileId,
-		   NAME AS name,
-		   FILE_SIZE AS fileSize,
-		   CONTENT_TYPE AS contentType,
-	 	   FILE_DATA AS fileData,
-		   REG_ID AS reg_id
-	FROM UPLOAD_FILES
-	WHERE REG_ID = #{regId}
-</select>
-
 </mapper>

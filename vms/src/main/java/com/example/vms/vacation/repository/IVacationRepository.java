@@ -21,6 +21,6 @@ public interface IVacationRepository {
 	Vacation selectRequestByRegId(int regId);
 	int updateRequest(Vacation vacation);
 	String selectTypeName(int typeId);
-	List<String> selectFileListByRegId(int regId);
-	UploadFile selectFile(int fileId);
+	//List<String> selectFileListByRegId(int regId);
+	//UploadFile selectFile(int fileId);
 }

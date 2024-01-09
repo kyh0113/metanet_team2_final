@@ -132,7 +132,29 @@
           }
         });
       });
+      
+      
+	  
     });
+    
+    function fileDownload(fileId) {
+		$.ajax({
+	          url:"/vacation/file-download/"+fileId,
+	          type:"post",
+	          dataType:"json",
+	          timeout : 5000,
+	          contentType : 'application/json; charset=utf-8',
+	          success: function(data){ 
+	            alert(data.file);
+	            console.log(data.file);
+	            //location.reload();
+	            //location.href("http://localhost:8082/vacation/request/I760001");
+	          },
+	          error : function(xhr, ajaxSettings, thrownError) {
+	            alert(thrownError);
+	          }
+	    });
+	}
     /*]]>*/
   </script>
 </head>
@@ -183,7 +205,7 @@
           <tr th:if="${files.size() != 0}">
             <th th:text="|첨부파일|"/>
             <td>
-				<a th:each="filename : ${files}" th:text="${filename}" onclick="showDetail(this)" class="attachment-link"></a>
+				<a th:each="file : ${files}" th:text="${file.name}" th:href="@{/vacation/file-download/{fileId}(fileId=${file.fileId})}" class="attachment-link"></a>
 			</td>
           </tr>
         </tbody>

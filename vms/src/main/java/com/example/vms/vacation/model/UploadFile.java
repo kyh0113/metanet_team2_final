@@ -1,13 +1,21 @@
 package com.example.vms.vacation.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class UploadFile {
-	private int fileId;
+	private Integer fileId;
 	private String name;
-	private long fileSize;
+	private Integer fileSize;
 	private String contentType;
-	private byte[] fileData;	
-	private int regId;
+	private byte[] fileData;
+	private Integer regId; // 신청서 아이디
+	
+	public void setFileSize(Long fileSize) {
+	    this.fileSize = fileSize != null ? fileSize.intValue() : null;
+	}
 }

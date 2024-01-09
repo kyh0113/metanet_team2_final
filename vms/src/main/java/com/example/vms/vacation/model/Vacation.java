@@ -24,5 +24,9 @@ public class Vacation {
     private String deniedContent;
     private String content;
     private String empId;
-    private Integer typeId;
+    private Integer typeId; // 휴가 유형
+    
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 }
