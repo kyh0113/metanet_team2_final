@@ -242,7 +242,11 @@
 	    function moveView(viewName) {
 			switch (viewName) {
 				case 'certificate':
-					window.location.href="/certificate/view?emp_Id="+empId
+					window.location.href="/certificate/view"
+					break
+				case 'vacationApprove':
+					window.location.href="/vacation/request/"+empId
+					break
 				default:
 					console.log(viewName)
 			}
