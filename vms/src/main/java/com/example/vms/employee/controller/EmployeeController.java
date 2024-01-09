@@ -1,5 +1,6 @@
 package com.example.vms.employee.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,17 +10,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.vms.certificate.service.ICertificateService;
+import com.example.vms.employee.model.EmployeeVacationCountPerMonth;
 import com.example.vms.employee.model.Mail;
 import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.manager.model.EmployeeResponseDTO;
+import com.example.vms.manager.service.IManagerService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +50,12 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private IManagerService managerService;
+	
+	@Autowired
+	private ICertificateService certificateService;
 
 	@GetMapping("/login")
 	public String showLoginPage() {
@@ -166,5 +179,46 @@ public class EmployeeController {
         Result rst = new Result();
         rst.setResultMessage(result);
         return rst;
+	}
+	
+	// 메인 페이지 
+	@GetMapping("/main")
+	public String mainPage(
+		HttpServletRequest request,
+		Model model 
+	) {
+		
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        //System.out.println(cookies.toString());
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+        	System.out.println("유효성 검사 들어옴");
+            // 토큰에서 empId 추출
+            String empId = tokenProvider.getEmpId(token);
+    		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
+    		model.addAttribute("employee", employee);
+    		int vacationUsageThisYear = employeeService.numberOfVacationUsagesSearchByYear("2024");
+    		model.addAttribute("numberOfYearUsage", vacationUsageThisYear+"/"+(vacationUsageThisYear+employee.getRemains()));
+    		int numberOfVacationApproval = employeeService.searchVacationApprovalWaiting(empId).length;
+    		model.addAttribute("numberOfVacationApproval", numberOfVacationApproval);
+    		int numberOfMyCertificates = certificateService.searchCertificatesByEmpId(empId).length;
+    		model.addAttribute("numberOfMyCertificates", numberOfMyCertificates);
+    		List<EmployeeVacationCountPerMonth> employeeVacationInfos = employeeService.vacationCountPerMonth(empId);
+    		model.addAttribute("employeeVacationInfos", employeeVacationInfos);
+    		return "/employee/main";
+
+        } else {
+            // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
+            return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
+        }
+		
 	}
 }

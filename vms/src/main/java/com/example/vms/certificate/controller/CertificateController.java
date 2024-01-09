@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +35,11 @@ import com.example.vms.certificate.service.QRCodeGenerator;
 import com.example.vms.employee.controller.EmployeeController;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.employee.service.IEmployeeService;
+import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,6 +64,9 @@ public class CertificateController {
 	
 	@Autowired
 	private QRCodeGenerator grCodeGenerator;
+	
+	@Autowired
+	private JwtTokenProvider tokenProvider;
 
     @GetMapping("")
     public String getMethodName() {
@@ -124,12 +131,27 @@ public class CertificateController {
     // 증명서 조회 페이지 
     @GetMapping("/view")
     public String certificateView(
-    	@RequestParam(name = "emp_id", defaultValue = "") String emp_id,
+    	HttpServletRequest request,
     	Model model
     ) {
-    	model.addAttribute("empId", emp_id);
-    	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(emp_id));
-    	return "certificate/view";
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+            // 토큰에서 empId 추출
+            String empId = tokenProvider.getEmpId(token);
+        	model.addAttribute("empId", empId);
+        	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(empId));
+        	return "certificate/view";
+        } else {
+        	return "redirect:/employee/login";
+        }
     }
     
     // 증명서 미리보기 화면 
