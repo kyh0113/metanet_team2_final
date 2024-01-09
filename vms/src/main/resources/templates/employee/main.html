@@ -7,14 +7,12 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <title>메인 페이지</title>
     <style>
-		.infoBox {
-			align-items: flex-start;
-		}
         .clipBoard {
             border: 1px solid #000000;
             border-radius: 15px;
             display: inline-block;
-            padding: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
             color: #252C58;
             box-sizing: border-box;
             margin: 20px;
@@ -22,24 +20,61 @@
 
         .todayTime {
             font-size: 24px;
-            font-weight: 300;
+            font-weight: 300px;
             line-height: 30px;
             opacity: 0.5;
         }
 
         .todayDateBody, .todayDateTitle {
             font-size: 18px;
-            font-weight: 300;
+            font-weight: 300px;
         }
 
-        .infoCount {
-            font-size: 38;
-            font-weight: 600;
+        .infoCountLabel {
+            font-size: 38px;
+            font-weight: 600px;
+            margin: 15px; /* 마진을 0으로 설정 */
+            align-items: center;
         }
+        
+        #myCertificateInfo, #approvalVacationRequestInfo, #myVacationInfo {
+			padding-top: 20px;
+		}
+        
+        #myCertificateInfo img {
+			position: relative;
+			left: 36%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+			box-sizing: content-box; /* 변경된 부분 */
+		}
+
+        #approvalVacationRequestInfo img {
+			position: relative;
+			left: 60%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+		
+		#myVacationInfo img {
+			position: relative;
+			left: 24%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
 
         .infoLabel {
-            font-size: 16;
-            font-weight: 300;
+            font-size: 16px;
+            font-weight: 300px;
         }
 
         .infoButton {
@@ -53,6 +88,11 @@
 		    padding: 10px;
 		}
 		
+		.infoBox {
+            display: flex;
+            flex-wrap: wrap;
+        }
+		
 		#calendar {
 		    flex: 1; /* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
 		    max-width: 43%; /* 최대 너비 설정 */
@@ -63,6 +103,10 @@
 		    flex: 1; /* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
 		    max-width: 45%; /* 최대 너비 설정 */
 		    max-height: 95%;
+		}
+		span {
+			position: relative;
+			top: -8px;
 		}
     </style>
 </head>
@@ -76,26 +120,26 @@
         <div id="myCertificateInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
-                    <label th:text="${numberOfMyCertificates}"></label>
-                    <button class="infoButton">증명서버튼</button>
+					<span><label th:text="${numberOfMyCertificates}"></label></span>
+                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')"> 
                 </p>
             </div>
             <p class="infoLabel">나의 증명서</p>
         </div>
-        <div id="myCertificateInfo" class="clipBoard">
+        <div id="approvalVacationRequestInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
-                    <label th:text="${numberOfVacationApproval}"></label>
-                    <button class="infoButton">결재 버튼</button>
+					<span><label th:text="${numberOfVacationApproval}"></label></span>
+                    <img src="/images/category.svg" onclick="moveView('vacationApprove')">
                 </p>
             </div>
-            <p class="infoLabel">내가 결제해야할 문서</p>
+            <p class="infoLabel">내가 결재해야할 문서</p>
         </div>
-        <div id="myCertificateInfo" class="clipBoard">
+        <div id="myVacationInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
-                    <label th:text="${employee.remains}"></label>
-                    <button class="infoButton">남은 휴가 일수</button>
+					<span><label th:text="${numberOfYearUsage}"></label></span>
+                    <img src="/images/person.svg" onclick="moveView('vacation')"> 
                 </p>
             </div>
             <p class="infoLabel">나의 휴가 정보</p>
@@ -111,6 +155,7 @@
 	    /*<![CDATA[*/
 	    // 데이터 정의
 	    let employeeVacationInfos = /*[[${employeeVacationInfos}]]*/;
+	    let empId = /*[[${employee.empId}]]*/;
 	    var calendarEl = document.getElementById('calendar');
 	    var calendar = new FullCalendar.Calendar(calendarEl, {
 	    	initialView: 'dayGridMonth'
@@ -193,6 +238,16 @@
 	        updateClock(); // 페이지 로드시 한번 호출
 	        setInterval(updateClock, 1000); // 1초마다 업데이트
 	    }
+	    
+	    function moveView(viewName) {
+			switch (viewName) {
+				case 'certificate':
+					window.location.href="/certificate/view?emp_Id="+empId
+				default:
+					console.log(viewName)
+			}
+		}
+	    
 		viewDidLoad()
 	    /*]]>*/
     </script>
