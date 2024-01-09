@@ -8,12 +8,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UploadFile {
-	Integer fileId;
-	String name;
-	Integer fileSize;
-	String contentType;
-	byte[] fileData;
-	Integer regId; // 신청서 아이디
+	private Integer fileId;
+	private String name;
+	private Integer fileSize;
+	private String contentType;
+	private byte[] fileData;
+	private Integer regId; // 신청서 아이디
 	
 	public void setFileSize(Long fileSize) {
 	    this.fileSize = fileSize != null ? fileSize.intValue() : null;

@@ -12,8 +12,12 @@ public interface IVacationService {
 	void requestVacation(Vacation vacation, MultipartFile[] files);
 	public int maxRegId();
 
-	List<VacationEmployee> getDeptRequestList(String empId);
+	int getCountDeptRequestList(String empId, String state);
+	List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage);
 	Vacation getRequestDetail(int regId);
 	String approvalRequest(Vacation vacation);
 	String getDeptNameByEmpId(String empId);
+	String getVacationTypeName(int typeId);
+	List<UploadFile> getFileList(int regId);
+	UploadFile getFile(int fileId);
 }
