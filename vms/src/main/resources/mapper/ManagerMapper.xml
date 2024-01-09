@@ -45,4 +45,100 @@
         #{deptId}
     )
 </insert>
+
+<select id="searchEmployees" resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		A.EMP_ID AS empId,
+		A.NAME,
+		A.PASSWORD,
+		A.EMAIL,
+		A.POSITION,
+		A.GENDER,
+		A.BIRTH,
+		A.HIRE_DATE AS hireDate,
+		A.RETIRE_DATE AS retireDate,
+		A.PHONE,
+		A.STATUS,
+		A.REMAINS,
+		A.DEPT_ID AS deptId,
+		A.DEPTNAME
+	FROM (
+	    SELECT 
+	        E.EMP_ID,
+	        E.NAME,
+	        E.PASSWORD,
+	        E.EMAIL,
+	        E.POSITION,
+	        E.GENDER,
+	        E.BIRTH,
+	        E.HIRE_DATE, 
+	        E.RETIRE_DATE,
+	        E.PHONE, 
+	        E.STATUS,
+	        E.REMAINS, 
+	        E.DEPT_ID, 
+	        D.NAME AS DEPTNAME,
+	        ROW_NUMBER() OVER (ORDER BY E.EMP_ID) AS ROW_NUM
+	    FROM 
+	        EMPLOYEES E
+	    JOIN 
+	        DEPARTMENTS D ON E.DEPT_ID = D.DEPT_ID
+	) A
+	WHERE 
+	ROW_NUM BETWEEN #{start} AND #{end}
+]]>		
+</select>
+
+<select id="searchEmployeeByEmpId" resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		E.EMP_ID AS empId,
+		E.NAME,
+		E.PASSWORD,
+		E.EMAIL,
+		E.POSITION,
+		E.GENDER,
+		E.BIRTH,
+		E.HIRE_DATE AS hireDate, 
+		E.RETIRE_DATE AS retireDate,
+		E.PHONE, 
+		E.STATUS,
+		E.REMAINS, 
+		E.DEPT_ID AS deptId,
+		D.NAME AS DEPTNAME
+	from EMPLOYEES E
+	JOIN DEPARTMENTS D on E.DEPT_ID = D.DEPT_ID 
+	where E.EMP_ID = #{empId}
+]]>		
+</select>
+
+<select id="numberOfEmployees" resultType="int">
+    SELECT COUNT(*) FROM EMPLOYEES
+</select>
+
+
+<update id="updateEmployee" parameterType="com.example.vms.manager.model.EmployeeUpdateRequestDTO">
+    UPDATE EMPLOYEES
+    SET
+        EMP_ID=#{empId},
+        NAME=#{name},
+        EMAIL=#{email},
+        POSITION=#{position},
+        RETIRE_DATE=#{retireDate, jdbcType=DATE},
+        PHONE=#{phone},
+        STATUS=#{status},
+        REMAINS=#{remains},
+        DEPT_ID=#{deptId} 
+    WHERE 
+        EMP_ID=#{empId}
+</update>
+
+<select id="searchDepartments" resultType="com.example.vms.manager.model.Department">
+	SELECT 
+		DEPT_ID AS deptId, 
+		NAME AS name 
+	FROM DEPARTMENTS
+</select>
+
 </mapper>

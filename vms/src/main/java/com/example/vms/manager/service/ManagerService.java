@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.vms.manager.model.Department;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.manager.model.EmployeeResponseDTO;
+import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
 import com.example.vms.manager.repository.IManagerRepository;
 
 @Service
@@ -81,5 +84,30 @@ public class ManagerService implements IManagerService {
 	@Override
 	public Employee selectEmployee(String empId) {
 		return managerDao.selectEmployee(empId);
+	}
+
+	@Override
+	public EmployeeResponseDTO[] searchEmployees(int start, int end) {
+		return managerDao.searchEmployees(start, end);
+	}
+
+	@Override
+	public int numberOfEmployees() {
+		return managerDao.numberOfEmployees();
+	}
+
+	@Override
+	public EmployeeResponseDTO searchEmployeeByEmpId(String empId) {
+		return managerDao.searchEmployeeByEmpId(empId);
+	}
+
+	@Override
+	public void updateEmployee(EmployeeUpdateRequestDTO employee) {
+		managerDao.updateEmployee(employee);
+	}
+
+	@Override
+	public Department[] searchDepartments() {
+		return managerDao.searchDepartments();
 	}
 }
