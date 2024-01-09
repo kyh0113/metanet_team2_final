@@ -231,7 +231,7 @@ public class CertificateController {
     ) {
     	CertificateResponseDTO[] certificates = certificateService.searchCertificatesByCertificateId(certificateId);
     	if (certificates.length==0) {
-    		return "/certificate/home";
+    		return "/certificate/certificateverificateerror";
     	} else {
 
     		for (CertificateResponseDTO cert: certificates) {
@@ -255,7 +255,7 @@ public class CertificateController {
     	        	}
     			}
     		}
-    		return "/certificate/home";
+    		return "/certificate/certificateverificateerror";
     	}
    
     }
