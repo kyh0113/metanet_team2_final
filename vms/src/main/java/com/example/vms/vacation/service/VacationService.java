@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.employee.service.EmployeeService;
+import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
+import com.example.vms.schedule.repository.IScheduleRepository;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -29,6 +32,9 @@ public class VacationService implements IVacationService {
 
 	@Autowired
 	IUploadFileRepository uploadFileDao;
+	
+	@Autowired
+	IScheduleRepository scheduleDao;
 
 	@Override
 	public void requestVacation(Vacation vacation, MultipartFile[] files) {
@@ -134,6 +140,16 @@ public class VacationService implements IVacationService {
 		int startNum = curPageNum*10 - 9;
 		int endNum = curPageNum*10;
 		return vacationDao.selectRequestListByEmpId(empId, state, startNum, endNum);
+	}
+
+	@Override
+	public List<ScheduleEmpDeptType> getScheduleListByOption(int option) {
+		return scheduleDao.getAllSchedule();
+	}
+
+	@Override
+	public int getCountScheduleByOption(int option) {
+		return scheduleDao.getCountAllSchedule();
 	}
 
 }

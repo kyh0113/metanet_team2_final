@@ -78,10 +78,10 @@
   
   <script th:inline="javascript">
 	/*<![CDATA[*/
-	
-	let first = true;
-	//let currPage = parseInt(pageLoad()) || 1;
-	let currPage = 1;
+
+	let httpReq=null;
+	let currentPage = parseInt(pageLoad()) || 1;
+	//let currentPage = 1;
 	
 	window.onload = function() {	
     	showList();
@@ -89,58 +89,50 @@
 	}
 	
 	function pagination(waiting) {
-		//let rowNum = null;
-		//console.log(waiting);
-		
+	
 		let getRowNumUrl = "/vacation/request/getrow";
 		if(waiting) {
 			getRowNumUrl = "/vacation/request/getrow?state=취소"
 		}
-		// 전체 행 수를 Thymeleaf를 통해 가져오기
+		
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
   		.then((data) => {console.log(data); 
-  		//rowNum = data;
-  		let rowNum = data;
-	
-	    // 페이지당 행 수 및 현재 페이지 등의 변수 설정
-	    let rowsPerPage = 10;
-	    let currentPage = 1;
-	
-	    // 전체 페이지 수 계산
-	    let totalPages = Math.ceil(rowNum / rowsPerPage);
-	
-	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
-	    let pagination = document.querySelector('.pagination');
-	    pagination.innerHTML = '';  // 기존 페이지 번호 제거
-	
-	    for (var i = 1; i <= totalPages; i++) {
-	        var li = document.createElement('li');
-	        li.classList.add('page-item');
-	
-	        var a = document.createElement('a');
-	        a.classList.add('page-link');
-	 
-	 		a.addEventListener('click', (event) => showList(event));
-	      
-	        // 페이지 번호 텍스트 설정
-	        a.textContent = i;
-	
-	        // 클릭 이벤트 핸들러 등록
-	        a.addEventListener('click', function() {
-	            currentPage = i;
-	            // 선택된 페이지에 대한 데이터 로딩 등의 동작 수행
-	        });
-	
-	        li.appendChild(a);
-	        pagination.appendChild(li);
-	    }
+  		
+	  		let rowNum = data;
+		
+		    // 페이지당 행 수 설정
+		    let rowsPerPage = 10;
+		
+		    // 전체 페이지 수 계산
+		    let totalPages = Math.ceil(rowNum / rowsPerPage);
+		
+		    // 페이지 번호를 동적으로 생성하여 HTML에 추가
+		    let pagination = document.querySelector('.pagination');
+		    pagination.innerHTML = '';  // 기존 페이지 번호 제거
+		
+		    for (var i = 1; i <= totalPages; i++) {
+		        var li = document.createElement('li');
+		        li.classList.add('page-item');
+		
+		        var a = document.createElement('a');
+		        a.classList.add('page-link');
+		 
+		        // 페이지 번호 텍스트 설정
+		        a.textContent = i;
+		
+		        a.addEventListener('click', (event) => {
+					showList(event);
+					pageSave();
+				});
+		
+		        li.appendChild(a);
+		        pagination.appendChild(li);
+	    	}
   
   		})
 	}
 	
-	let httpReq=null;
-    
     function showDetail(row) {
       let url = row.getAttribute('url');
       location.href = url;
@@ -148,8 +140,8 @@
     
    	function getInstance(){
       if(window.XMLHttpRequest){
-         httpReq = new XMLHttpRequest(); //현재 브라우져 XMLHttpRequest 내장
-      }else if(window.ActiveXObject){ //IE6 이하   //지금 필요없어요
+         httpReq = new XMLHttpRequest(); 
+      }else if(window.ActiveXObject){ 
          httpReq = new ActiveXObject("Msxml2.XMLHTTP");
       }else{
         throw new Error("AJAX 지원하지 않습니다"); 
@@ -181,13 +173,11 @@
             period = row.insertCell(2);
             regDate = row.insertCell(3);
             state = row.insertCell(4);
-            
 
             regId.textContent = item.regId;
             typeName.textContent = item.empName;
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
-            //state.textContent = item.state;
             
            	//row.classList.add('aaa');
            	//row.setAttribute('url', '/vacation/requestd/'+item.regId);   //상세페이지 경로
@@ -201,15 +191,14 @@
     }
 
    function showList(e){
-	   //let pagenum;
-	   //let isShowingPending = true;
+	   
 	   let url = "";
 	   
 	   //페이지 이동 시
 	   if(e != null) {
 		   //console.log(e.target.text);
-		   currPage = e.target.text;
-		   //pageSave();
+		   currentPage = e.target.text;
+		   pageSave();
 	   }
 	   
 	  let waitingBtn = document.querySelector(".waiting");
@@ -217,15 +206,11 @@
 
 	  
 	  if (isShowingPending) {
-		//pagination(false);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=취소";
+	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=취소";
 	  } else {
-		//pagination(true);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=";
+	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
 	  }
-	 
-	  //waitingBtn.classList.toggle("active");
-      
+	  
       httpReq = getInstance();
       httpReq.onreadystatechange = handlerStateChange;  // x >> ()
       
@@ -234,7 +219,9 @@
    }
    
    function showWaiting() {
-	  currPage = 1;
+	
+	  currentPage = 1;
+	  
 	  let waitingBtn = document.querySelector(".waiting");
 	  waitingBtn.classList.toggle("active");
 	  showList();
@@ -244,7 +231,7 @@
    }
    
    function pageSave() {
-		sessionStorage.setItem('currentPage', currPage)
+		sessionStorage.setItem('currentPage', currentPage)
 	}
 
 	function pageLoad() {

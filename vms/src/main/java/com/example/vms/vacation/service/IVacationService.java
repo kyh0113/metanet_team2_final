@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -22,4 +24,7 @@ public interface IVacationService {
 	UploadFile getFile(int fileId);
 	int getCountRequestList(String empId, String state);
 	List<VacationEmployee> getRequestList(String empId, String state, String curPage);
+	
+	int getCountScheduleByOption(int option);
+	List<ScheduleEmpDeptType> getScheduleListByOption(int option);
 }

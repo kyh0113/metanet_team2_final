@@ -35,6 +35,8 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
+import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -137,7 +139,7 @@ public class VacationController {
     
   //휴가 신청서 목록 조회
   	@GetMapping("/request/list")
-  	public String getRequestList(HttpServletRequest request, 
+  	public String getRequest(HttpServletRequest request, 
   			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
   			Model model) {
 
@@ -169,7 +171,7 @@ public class VacationController {
 
     @ResponseBody
 	@GetMapping("/request/getrow")
-	public int getListRowNum(HttpServletRequest request, 
+	public int getRequestRowNum(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state) {
 		
     	int rowNum = 0;
@@ -211,10 +213,9 @@ public class VacationController {
  
 	}
 	
-	//팀원 휴가 신청서 목록 조회(비동기)
 	@ResponseBody
 	@GetMapping("/request/getlist")
-	public List<VacationEmployee> getList(HttpServletRequest request, 
+	public List<VacationEmployee> getRequestList(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state, 
 			@RequestParam(name="curpage", defaultValue = "1") String curpage) {
 		
@@ -309,8 +310,7 @@ public class VacationController {
 		return result;
 	}
 	
-	//파일 다운로드(비동기)
-	@ResponseBody
+	//파일 다운로드
 	@GetMapping("/file-download/{fileId}") 
 	public ResponseEntity<byte[]> getFile(@PathVariable int fileId) {
 		UploadFile file = vacationService.getFile(fileId);
@@ -326,6 +326,70 @@ public class VacationController {
 			throw new RuntimeException(e);
 		}
 		return new ResponseEntity<byte[]>(file.getFileData(), headers, HttpStatus.OK);
+	}
+	
+	//모든 사원 일정 조회(관리자)
+	@GetMapping("/schedule/list") 
+	public String getSchedule(HttpServletRequest request) {
+		
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+        	//관리자인지 확인
+        	Authentication auths = tokenProvider.getAuthentication(token);
+        	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+        	for (GrantedAuthority authority : authorities) {
+        	    //String authorityName = authority.getAuthority();
+        	    if(authority.getAuthority().equals("팀장")) {
+        	    	return "manager/schedulelist";
+        	    }
+        	}
+        	return "redirect:/employee/login";
+        
+        } else {
+        	return "redirect:/employee/login";
+        }
+	}
+	
+	@ResponseBody
+	@GetMapping("/schedule/getrow")
+	public int getScheduleRowNum() {
+		
+    	int rowNum = 0;
+		
+		// 쿠키 정보
+//        Cookie[] cookies = request.getCookies();
+//        String token = "";
+//        for(Cookie cookie : cookies) {
+//           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+//              token = cookie.getValue();
+//           }
+//        }
+             	
+        // 토큰에서 empId 추출
+        //String empId = tokenProvider.getEmpId(token);
+        
+		rowNum = vacationService.getCountScheduleByOption(1);
+
+    	return rowNum;
+	}
+	
+	@ResponseBody
+	@GetMapping("/schedule/getlist")
+	public List<ScheduleEmpDeptType> getScheduleList() {
+		
+		
+		List<ScheduleEmpDeptType> schedulList =  vacationService.getScheduleListByOption(1);
+		
+		System.out.println("schedule"+schedulList);
+		return schedulList;
 	}
 	
 }
