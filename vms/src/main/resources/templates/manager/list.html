@@ -74,10 +74,16 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         var numberOfEmployees = /*[[${numberOfEmployees}]]*/;
+        var searchText;
         var currentPage = parseInt(pageLoad()) || 1
         var start = 0
         var end = 10 
     	var step = 10
+    	if (searchText === null || searchText === undefined || searchText !== '') {
+			searchButtonTapped()
+		} else {
+			loadEmployeesInformation(currentPage)
+		}
         function loadEmployeesInformation(number) {
 	        if (currentPage==-1) {
 	             return
@@ -162,11 +168,16 @@
     	}
          function pageSave() {
             sessionStorage.setItem('managerEmployeeCurrentPage', currentPage)
+            let searchText = document.getElementById('emp_id_form').value
+            sessionStorage.setItem('searchText', searchText)
         }
 
         function pageLoad() {
             let currentPage = sessionStorage.getItem('managerEmployeeCurrentPage')
             sessionStorage.removeItem('managerEmployeeCurrentPage')
+            searchText = sessionStorage.getItem('searchText')
+            sessionStorage.removeItem('searchText')
+            document.getElementById('emp_id_form').value = searchText
             return currentPage
         }
         function previousButtonTapped() {
@@ -176,7 +187,7 @@
 			loadEmployeesInformation(parseInt(currentPage)+1)
 		}
 		function searchButtonTapped() {
-			let searchEmpId = document.getElementById('emp_id_form').value; 
+			let searchEmpId = document.getElementById('emp_id_form').value;
 			currentPage = 1
 			start = (currentPage - 1) * step
             end = currentPage * step
@@ -199,11 +210,8 @@
                     console.error('Failed to load data')
                 }
             }
-
             xhr.send()
-			  
 		}
-        loadEmployeesInformation(currentPage)
         /*]]>*/
     </script>
 
