@@ -43,9 +43,31 @@
 					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
 			        ORDER BY regDate DESC
 			    ) r
-			) WHERE num BETWEEN #{startNum} AND #{endNum}
-					
-	</select>
+			) WHERE num BETWEEN #{startNum} AND #{endNum}					
+</select>
+
+<select id="getApprDeptRequestList" resultType="com.example.vms.vacation.model.VacationEmployee">
+			SELECT *
+			    FROM (
+					SELECT V.REG_ID AS regId,
+					       V.STATE AS state,
+					       V.START_DATE AS startDate,
+					       V.END_DATE AS endDate,
+					       V.REG_DATE AS regDate,
+					       E.NAME AS empName,
+					       ROWNUM AS rnum
+					FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+					WHERE V.STATE != '취소'
+					<if test="state != null">
+					AND V.STATE = #{state}
+					</if>
+					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
+			        ORDER BY regDate DESC
+			     ) 					
+</select>
+
+
+
 	
 <select id="selectRequestByRegId" parameterType="int" resultType="com.example.vms.vacation.model.Vacation">
 		<![CDATA[
@@ -90,4 +112,36 @@
     SELECT NAME FROM VACATION_TYPE WHERE TYPE_ID=#{typeId}
 </select>
 
+<select id="selectCountRequestListByEmpId" resultType="int">
+		SELECT count(*)
+		FROM VACATION_REG
+		WHERE EMP_ID = #{empId}
+		<if test="state != null">
+		AND STATE = #{state}
+		</if>
+</select>
+
+<select id="selectRequestListByEmpId" resultType="com.example.vms.vacation.model.VacationVacationType">
+		SELECT *
+		FROM (
+		    SELECT rownum as num, r.*
+		    FROM (
+				SELECT V.REG_ID AS regId,
+				       V.STATE AS state,
+				       V.START_DATE AS startDate,
+				       V.END_DATE AS endDate,
+				       V.REG_DATE AS regDate,
+				       T.NAME AS typeName,
+				       ROWNUM AS rnum
+				FROM VACATION_REG V JOIN VACATION_TYPE T ON V.TYPE_ID = T.TYPE_ID
+				WHERE EMP_ID = #{empId}
+				<if test="state != null">
+				AND STATE = #{state}
+				</if>
+		        ORDER BY regDate DESC
+		    ) r
+		) WHERE num BETWEEN #{startNum} AND #{endNum}
+	
+</select>
+	
 </mapper>

@@ -90,6 +90,51 @@
 ]]>		
 </select>
 
+<select id="searchEmployeesWithEmpId" resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		A.EMP_ID AS empId,
+		A.NAME,
+		A.PASSWORD,
+		A.EMAIL,
+		A.POSITION,
+		A.GENDER,
+		A.BIRTH,
+		A.HIRE_DATE AS hireDate,
+		A.RETIRE_DATE AS retireDate,
+		A.PHONE,
+		A.STATUS,
+		A.REMAINS,
+		A.DEPT_ID AS deptId,
+		A.DEPTNAME
+	FROM (
+	    SELECT 
+	        E.EMP_ID,
+	        E.NAME,
+	        E.PASSWORD,
+	        E.EMAIL,
+	        E.POSITION,
+	        E.GENDER,
+	        E.BIRTH,
+	        E.HIRE_DATE, 
+	        E.RETIRE_DATE,
+	        E.PHONE, 
+	        E.STATUS,
+	        E.REMAINS, 
+	        E.DEPT_ID, 
+	        D.NAME AS DEPTNAME,
+	        ROW_NUMBER() OVER (ORDER BY E.EMP_ID) AS ROW_NUM
+	    FROM 
+	        EMPLOYEES E
+	    JOIN 
+	        DEPARTMENTS D ON E.DEPT_ID = D.DEPT_ID
+		WHERE E.EMP_ID=#{empId}
+	) A
+	WHERE 
+	ROW_NUM BETWEEN #{start} AND #{end}
+]]>		
+</select>
+
 <select id="searchEmployeeByEmpId" resultType="com.example.vms.manager.model.EmployeeResponseDTO">
 <![CDATA[
 	SELECT 

@@ -129,14 +129,15 @@
 	
 	<select id="numberOfVacationUsagesSearchByYear" resultType="int">
 		SELECT 
+		    NVL (
 		    SUM(
 		        CASE 
 		            WHEN TO_CHAR(START_DATE, 'YYYY') = TO_CHAR(END_DATE, 'YYYY') THEN END_DATE - START_DATE + 1
 		            ELSE LAST_DAY(TO_DATE(#{year})) - START_DATE + 1 
 		        END
-		    )
+		    ), 0)
 		    AS TOTAL_DAYS
 		FROM SCHEDULE  
-		WHERE EMP_ID = 'D120004' AND TO_CHAR(START_DATE, 'YYYY') = #{year}
+		WHERE EMP_ID = 'M760001' AND TO_CHAR(START_DATE, 'YYYY') = #{year}
 	</select> 
 </mapper>

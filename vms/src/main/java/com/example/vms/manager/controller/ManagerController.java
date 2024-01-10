@@ -50,11 +50,12 @@ public class ManagerController {
 	@ResponseBody
 	public EmployeeResponseDTO[] searchEmployees(
 		@RequestParam(name = "start", defaultValue = "0") int start,
-		@RequestParam(name = "end", defaultValue = "10") int end 
+		@RequestParam(name = "end", defaultValue = "10") int end,
+		@RequestParam(name = "empId", required = false) String empId
 	) {
 		EmployeeResponseDTO[] employees = null;
 		if (start <= end) {
-			employees = managerService.searchEmployees(start, end);
+			employees = managerService.searchEmployees(start, end, empId);
 		} 
 		return employees;
 	}

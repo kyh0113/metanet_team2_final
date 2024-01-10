@@ -18,6 +18,16 @@ public class ScheduleService implements IScheduleService{
 	public List<Schedule> getSchedulebydeptId(int dept_id) {
 		return iScheduleRepository.getSchedulebydeptId(dept_id);
 	}
+
+	@Override
+	public void insertSchedule(Schedule schedule) {
+		iScheduleRepository.insertSchedule(schedule);
+	}
+
+	@Override
+	public int maxScheduleId() {
+		return iScheduleRepository.maxScheduleId();
+	}
 	
 
 }

@@ -80,6 +80,7 @@
 	/*<![CDATA[*/
 	
 	let first = true;
+	//let currPage = parseInt(pageLoad()) || 1;
 	let currPage = 1;
 	
 	window.onload = function() {	
@@ -91,9 +92,9 @@
 		//let rowNum = null;
 		//console.log(waiting);
 		
-		let getRowNumUrl = "/vacation/request/rownum";
+		let getRowNumUrl = "/vacation/list/rownum";
 		if(waiting) {
-			getRowNumUrl = "/vacation/request/rownum?state=결재대기"
+			getRowNumUrl = "/vacation/list/rownum?state=취소"
 		}
 		// 전체 행 수를 Thymeleaf를 통해 가져오기
 	    fetch(getRowNumUrl)
@@ -176,21 +177,21 @@
         requestData.forEach(function (item) {
             row = tbody.insertRow(); 
             regId = row.insertCell(0);
-            empName = row.insertCell(1);
+            typeName = row.insertCell(1);
             period = row.insertCell(2);
             regDate = row.insertCell(3);
             state = row.insertCell(4);
             
 
             regId.textContent = item.regId;
-            empName.textContent = item.empName;
+            typeName.textContent = item.typeName;
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
             //state.textContent = item.state;
             
            	//row.classList.add('aaa');
-           	row.setAttribute('url', '/vacation/requestd/'+item.regId);
-           	row.setAttribute('onclick', "showDetail(this)");
+           	//row.setAttribute('url', '/vacation/requestd/'+item.regId);   //상세페이지 경로
+           	//row.setAttribute('onclick', "showDetail(this)");
            	
             const statebtn = document.createElement('button')
             statebtn.classList.add('status-btn', 'status-'+item.state);
@@ -208,6 +209,7 @@
 	   if(e != null) {
 		   //console.log(e.target.text);
 		   currPage = e.target.text;
+		   //pageSave();
 	   }
 	   
 	  let waitingBtn = document.querySelector(".waiting");
@@ -216,10 +218,10 @@
 	  
 	  if (isShowingPending) {
 		//pagination(false);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=결재대기";
+	    url = "/vacation/list/getlist?curpage="+currPage+"&state=취소";
 	  } else {
 		//pagination(true);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=";
+	    url = "/vacation/list/getlist?curpage="+currPage+"&state=";
 	  }
 	 
 	  //waitingBtn.classList.toggle("active");
@@ -241,20 +243,26 @@
 	  pagination(isShowingPending);
    }
    
-	
+   function pageSave() {
+		sessionStorage.setItem('currentPage', currPage)
+	}
+
+	function pageLoad() {
+    	return sessionStorage.getItem('currentPage')
+	}
     /*]]>*/
   </script>
 </head>
 <body>
 
 <div class="container">
-  <h4>휴가 신청 내역 <span class="waiting" onclick="showWaiting()">결재 대기 중인 것만 보기</span></h4>
+  <h4>휴가 신청 내역 <span class="waiting" onclick="showWaiting()">취소 내역</span></h4>
 
   <table class="table">
     <thead>
       <tr>
         <th>번호</th>
-        <th>신청자</th>
+        <th>휴가 유형</th>
         <th>기간</th>
         <th>신청일</th>
         <th>상태</th>

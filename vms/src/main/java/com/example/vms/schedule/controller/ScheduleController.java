@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/calendar")
 public class ScheduleController {
 
+	@Autowired
 	private final IScheduleService iScheduleService;
 
 	@GetMapping("/look")
@@ -34,7 +35,9 @@ public class ScheduleController {
 	@GetMapping("/calendar-admin")
 	@ResponseBody
 	public List<Map<String, Object>> monthPlan() {
+		//List<Schedule> schedules = iScheduleService.getSchedulebydeptId(deptid);
 		List<Schedule> schedules = iScheduleService.getSchedulebydeptId(2);
+		//List<Schedule> schedules = iVacationService.getApprDeptRequestList(empId,"승인");
 
 		JSONObject jsonObj = new JSONObject();
 		JSONArray jsonArr = new JSONArray();
@@ -46,7 +49,6 @@ public class ScheduleController {
 			hash.put("start", schedules.get(i).getStart_date());
 			hash.put("end", schedules.get(i).getEnd_date());
 			hash.put("allDay",true);
-            // hash.put("time", listAll.get(i).getScheduleTime());
 			
 			int color = schedules.get(i).getType_id();
 			System.out.println(hash.get("start"));

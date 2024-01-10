@@ -87,8 +87,13 @@ public class ManagerService implements IManagerService {
 	}
 
 	@Override
-	public EmployeeResponseDTO[] searchEmployees(int start, int end) {
-		return managerDao.searchEmployees(start, end);
+	public EmployeeResponseDTO[] searchEmployees(int start, int end, String empId) {
+		if (empId==null || empId.equals("")) {
+			return managerDao.searchEmployees(start, end);
+		} else {
+			System.out.println(empId);
+			return managerDao.searchEmployeesWithEmpId(start, end, empId);
+		}
 	}
 
 	@Override
