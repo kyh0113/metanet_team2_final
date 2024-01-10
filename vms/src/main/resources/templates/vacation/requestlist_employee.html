@@ -59,7 +59,7 @@
       color: #fff;
     }
 
-    .waiting {
+    .cancel {
       font-size: small;
       font-weight: lighter;
       color: rgb(163, 163, 163);
@@ -67,7 +67,7 @@
       cursor: pointer;
     }
     
-    .waiting.active {
+    .cancel.active {
 	  font-size: small;
       font-weight: bold;
       color: black;
@@ -80,27 +80,36 @@
 	/*<![CDATA[*/
 
 	let httpReq=null;
-	let currentPage = parseInt(pageLoad()) || 1;
-	//let currentPage = 1;
+	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
+	let isCancel = getSessionItem('isCancel') || false;
 	
-	window.onload = function() {	
-    	showList();
-    	pagination(false);
+	if(isCancel === "true") {
+		isCancel = true;
+	} else {
+		isCancel = false;
 	}
 	
-	function pagination(waiting) {
+	window.onload = function() {	
+    	let cancelBtn = document.querySelector(".cancel");
+		if(isCancel) cancelBtn.classList.add('active');
+		else cancelBtn.classList.remove('active');
+		
+    	showList();
+    	pagination(isCancel);
+	}
+	
+	function pagination(cancel) {
 	
 		let getRowNumUrl = "/vacation/request/getrow";
-		if(waiting) {
+		if(cancel) {
 			getRowNumUrl = "/vacation/request/getrow?state=취소"
 		}
 		
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
-  		.then((data) => {console.log(data); 
-  		
+  		.then((data) => {
+			 
 	  		let rowNum = data;
-		
 		    // 페이지당 행 수 설정
 		    let rowsPerPage = 10;
 		
@@ -110,7 +119,23 @@
 		    // 페이지 번호를 동적으로 생성하여 HTML에 추가
 		    let pagination = document.querySelector('.pagination');
 		    pagination.innerHTML = '';  // 기존 페이지 번호 제거
-		
+			
+			//이전 페이지 이동 버튼
+			let prev = document.createElement('li');
+		    prev.classList.add('page-item');
+		    
+			let prevLink = document.createElement('a');
+		    prevLink.classList.add('page-link');
+		    prevLink.textContent = '<';
+		    prevLink.addEventListener('click', (event) => {
+				currentPage--;
+				if(currentPage < 1) currentPage = 1;
+				showList();
+				movePage();
+			});
+		    prev.appendChild(prevLink);
+		    pagination.appendChild(prev);
+		    
 		    for (var i = 1; i <= totalPages; i++) {
 		        var li = document.createElement('li');
 		        li.classList.add('page-item');
@@ -121,21 +146,42 @@
 		        // 페이지 번호 텍스트 설정
 		        a.textContent = i;
 		
+				// 현재 페이지 active
+		        if(i == currentPage) {
+					li.classList.add('active');
+				}
+				
 		        a.addEventListener('click', (event) => {
 					showList(event);
-					pageSave();
+					movePage();
 				});
 		
 		        li.appendChild(a);
 		        pagination.appendChild(li);
 	    	}
+	    	//다음 페이지 이동 버튼
+			let next = document.createElement('li');
+		    next.classList.add('page-item');
+		    
+			let nextLink = document.createElement('a');
+		    nextLink.classList.add('page-link');
+		    nextLink.textContent = '>';
+		    nextLink.addEventListener('click', (event) => {
+				currentPage++;
+				if(currentPage > totalPages) currentPage--;
+				showList();
+				movePage();
+			});
+		    next.appendChild(nextLink);
+		    pagination.appendChild(next);
   
   		})
 	}
 	
     function showDetail(row) {
-      let url = row.getAttribute('url');
-      location.href = url;
+		setSessionItem();
+		let url = row.getAttribute('url');
+		location.href = url;
     }
     
    	function getInstance(){
@@ -194,18 +240,14 @@
 	   
 	   let url = "";
 	   
-	   //페이지 이동 시
+	   //페이지 번호 클릭 이동
 	   if(e != null) {
-		   //console.log(e.target.text);
 		   currentPage = e.target.text;
-		   pageSave();
 	   }
 	   
-	  let waitingBtn = document.querySelector(".waiting");
-	  let isShowingPending = waitingBtn.classList.contains("active");
-
+	  let cancelBtn = document.querySelector(".waiting");
 	  
-	  if (isShowingPending) {
+	  if (isCancel) {
 	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=취소";
 	  } else {
 	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
@@ -219,31 +261,42 @@
    }
    
    function showWaiting() {
-	
 	  currentPage = 1;
-	  
-	  let waitingBtn = document.querySelector(".waiting");
-	  waitingBtn.classList.toggle("active");
+	  let cancelBtn = document.querySelector(".cancel");
+	  cancelBtn.classList.toggle("active");
+	  isCancel = !isCancel;
 	  showList();
 	  
-	  let isShowingPending = waitingBtn.classList.contains("active");
-	  pagination(isShowingPending);
+	  pagination(isCancel);
    }
    
-   function pageSave() {
-		sessionStorage.setItem('currentPage', currentPage)
+   function setSessionItem() {
+		sessionStorage.setItem('currentPage', currentPage);
+		sessionStorage.setItem('isCancel', getInstance);
 	}
 
-	function pageLoad() {
-    	return sessionStorage.getItem('currentPage')
+	function getSessionItem(key) {
+    	return sessionStorage.getItem(key)
 	}
+	
+	function movePage() {
+		let pageItems = document.querySelectorAll('.pagination .page-item');
+  		pageItems.forEach((item, index) => {
+			if(item.firstChild.text == currentPage) {
+				item.classList.add('active');
+			} else {
+				item.classList.remove('active');	
+			}
+	   	});
+	}
+	
     /*]]>*/
   </script>
 </head>
 <body>
 
 <div class="container">
-  <h4>휴가 신청 내역 <span class="waiting" onclick="showWaiting()">취소 내역</span></h4>
+  <h4>휴가 신청 내역 <span class="cancel" onclick="showWaiting()">취소 내역</span></h4>
 
   <table class="table">
     <thead>
@@ -256,24 +309,9 @@
       </tr>
     </thead>
     <tbody id = "requestTableBody">
-      <tr th:each="req : ${requestList}" th:attr="url=|/vacation/requestd/${req.regId}|" onclick="showDetail(this)">
-        <td th:text="${req.regId}"/>
-        <td th:text="${req.empName}"/>
-        <td th:text="|${req.startDate} ~ ${req.endDate}|"/>
-        <td th:text="${req.regDate}"/>
-        <td>
-          <button th:class="|status-btn status-${req.state}|" th:text="${req.state}"></button>
-        </td>
-      </tr>
     </tbody>
   </table>
   <ul class="pagination justify-content-center">
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
-   	<div class="page-num page-item">
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
-    </div>
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
   </ul>
 </div>
 

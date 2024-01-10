@@ -40,7 +40,7 @@
 			    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
 			    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID
 		]]>
-
+	</select>
 	<insert id="insertSchedule" parameterType="com.example.vms.schedule.model.Schedule">
 	    <![CDATA[
 		    INSERT INTO 

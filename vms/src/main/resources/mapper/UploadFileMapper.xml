@@ -19,7 +19,8 @@
     SELECT FILE_ID AS fileId,
      	   NAME AS name
     FROM UPLOAD_FILES 
-    WHERE REG_ID=#{regId}
+    WHERE FILE_SIZE != 0 
+    AND REG_ID=#{regId}
 </select>
 
 <select id="selectFile" parameterType="int" resultType="com.example.vms.vacation.model.UploadFile">
