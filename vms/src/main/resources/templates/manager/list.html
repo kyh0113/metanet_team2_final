@@ -83,7 +83,6 @@
 	             return
             }
             currentPage = number
-        	pageSave()
             start = (currentPage - 1) * step
             end = currentPage * step
             updateButtonVisibility()
@@ -178,7 +177,9 @@
 		}
 		function searchButtonTapped() {
 			let searchEmpId = document.getElementById('emp_id_form').value; 
-			
+			currentPage = 1
+			start = (currentPage - 1) * step
+            end = currentPage * step
 			let url = '/manager/employees?start='+start+'&end='+end+'&empId='+searchEmpId
 
             var xhr = new XMLHttpRequest()
@@ -192,7 +193,6 @@
 					} else {
 						numberOfEmployees = /*[[${numberOfEmployees}]]*/;
 					}
-					currentPage = 1
                     reloadTable(data)
                  
                 } else {
@@ -203,7 +203,7 @@
             xhr.send()
 			  
 		}
-        loadEmployeesInformation(1)
+        loadEmployeesInformation(currentPage)
         /*]]>*/
     </script>
 
