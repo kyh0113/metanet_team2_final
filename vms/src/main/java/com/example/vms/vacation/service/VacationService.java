@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.vms.employee.repository.IEmployeeRepository;
@@ -12,6 +13,8 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
 import com.example.vms.schedule.repository.IScheduleRepository;
+
+import com.example.vms.schedule.service.ScheduleService;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -21,11 +24,11 @@ import com.example.vms.vacation.repository.IVacationRepository;
 @Service
 public class VacationService implements IVacationService {
 
-   @Autowired
-   IEmployeeRepository employeeRepository;
-   
-   @Autowired
-   EmployeeService employeeService;
+	@Autowired
+	IEmployeeRepository employeeRepository;
+
+	@Autowired
+	EmployeeService employeeService;
 
 	@Autowired
 	IVacationRepository vacationDao;
@@ -35,6 +38,9 @@ public class VacationService implements IVacationService {
 	
 	@Autowired
 	IScheduleRepository scheduleDao;
+
+	@Autowired
+	ScheduleService scheduleservice;
 
 	@Override
 	public void requestVacation(Vacation vacation, MultipartFile[] files) {
@@ -64,28 +70,43 @@ public class VacationService implements IVacationService {
 	public int maxRegId() {
 		return vacationDao.maxRegId();
 	}
-  
-   @Override
+
+	@Override
 	public List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage) {
-	 //int rownum = vacationDao.selectCountRequestListByDept(empId, state);
-	   int curPageNum = Integer.parseInt(curPage);
-	   int startNum = curPageNum*10 - 9;
-	   int endNum = curPageNum*10;
-	   return vacationDao.selectRequestListByDept(empId, state, startNum, endNum);
+		// int rownum = vacationDao.selectCountRequestListByDept(empId, state);
+		int curPageNum = Integer.parseInt(curPage);
+		int startNum = curPageNum * 10 - 9;
+		int endNum = curPageNum * 10;
+		return vacationDao.selectRequestListByDept(empId, state, startNum, endNum);
 	}
-   
+
 	@Override
 	public Vacation getRequestDetail(int regId) {
 		return vacationDao.selectRequestByRegId(regId);
 	}
 
 	@Override
+	@Transactional
 	public String approvalRequest(Vacation vacation) {
-		int result = vacationDao.updateRequest(vacation);
+		int result;
+		Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
+		Schedule schedule = new Schedule();
+		schedule.setCalender_Id(scheduleservice.maxScheduleId()+1);
+		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
+		schedule.setEmp_id(realvacation.getEmpId());
+		schedule.setEnd_date(realvacation.getEndDate());
+		schedule.setStart_date(realvacation.getStartDate());
+		schedule.setTitle("["+getVacationTypeName(realvacation.getTypeId())+"] "
+				+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
+		schedule.setType_id(realvacation.getTypeId());
 
-		if(result == 1) {
-			//알림 메일 전송
-			//사원 이메일 검색
+		result = vacationDao.updateRequest(vacation);
+		
+		scheduleservice.insertSchedule(schedule);
+		
+		if (result == 1) {
+			// 알림 메일 전송
+			// 사원 이메일 검색
 //			Vacation requestVacation = vacationDao.selectRequestByRegId(vacation.getRegId());
 //			Employee employee = employeeRepository.selectEmployee(requestVacation.getEmpId());
 //			String email = employee.getEmail();
@@ -123,7 +144,7 @@ public class VacationService implements IVacationService {
 	public List<UploadFile> getFileList(int regId) {
 		return uploadFileDao.selectFileListByRegId(regId);
 	}
-	
+
 	@Override
 	public UploadFile getFile(int fileId) {
 		return uploadFileDao.selectFile(fileId);

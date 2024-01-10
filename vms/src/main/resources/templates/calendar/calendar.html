@@ -54,7 +54,7 @@
 
 						eventDidMount: function (info) {
 							tippy(info.el, {
-								content: "<strong>제목</strong>:"+info.event.title+"<hr>"+
+								content: "<strong>제목:</strong>"+info.event.title+"<hr>"+
 								"시작날짜: "+info.event.start+"<br>"
 								+"종료날짜: "+info.event.end,
 								placement: 'bottom',
@@ -68,12 +68,6 @@
 					calendar.render();
 				});
 
-				function insertModalOpen(arg) {
-					alert("암거나" + arg);
-
-
-					$(".fc-event-title-container").css("display", "none");
-				}
 
 				request.fail(function (jqXHR, textStatus) {
 					alert("Request failed: " + textStatus);

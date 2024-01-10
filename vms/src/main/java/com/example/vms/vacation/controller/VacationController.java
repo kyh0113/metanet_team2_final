@@ -37,6 +37,9 @@ import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
+
+import com.example.vms.schedule.service.ScheduleService;
+import com.example.vms.vacation.model.FileDownload;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -67,6 +70,9 @@ public class VacationController {
 	
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private ScheduleService scheduleService;
 	
     @GetMapping("/request")
     public String requestVacation(Model model) {
@@ -215,6 +221,7 @@ public class VacationController {
 	
 	@ResponseBody
 	@GetMapping("/request/getlist")
+
 	public List<VacationEmployee> getRequestList(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state, 
 			@RequestParam(name="curpage", defaultValue = "1") String curpage) {

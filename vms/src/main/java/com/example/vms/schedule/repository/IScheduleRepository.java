@@ -13,7 +13,10 @@ import com.example.vms.schedule.model.ScheduleEmpDeptType;
 @Mapper
 public interface IScheduleRepository {
 	List<Schedule> getSchedulebydeptId(@Param("dept_id") int dept_id);
-	
+
 	int getCountAllSchedule();
 	List<ScheduleEmpDeptType> getAllSchedule();
+
+	void insertSchedule(Schedule schedule);
+	int maxScheduleId();
 }
