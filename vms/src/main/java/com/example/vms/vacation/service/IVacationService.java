@@ -20,4 +20,5 @@ public interface IVacationService {
 	String getVacationTypeName(int typeId);
 	List<UploadFile> getFileList(int regId);
 	UploadFile getFile(int fileId);
+	List<VacationEmployee> getApprDeptRequestList(String empId,String state);
 }

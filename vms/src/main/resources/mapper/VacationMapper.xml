@@ -43,9 +43,31 @@
 					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
 			        ORDER BY regDate DESC
 			    ) r
-			) WHERE num BETWEEN #{startNum} AND #{endNum}
-					
-	</select>
+			) WHERE num BETWEEN #{startNum} AND #{endNum}					
+</select>
+
+<select id="getApprDeptRequestList" resultType="com.example.vms.vacation.model.VacationEmployee">
+			SELECT *
+			    FROM (
+					SELECT V.REG_ID AS regId,
+					       V.STATE AS state,
+					       V.START_DATE AS startDate,
+					       V.END_DATE AS endDate,
+					       V.REG_DATE AS regDate,
+					       E.NAME AS empName,
+					       ROWNUM AS rnum
+					FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+					WHERE V.STATE != '취소'
+					<if test="state != null">
+					AND V.STATE = #{state}
+					</if>
+					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
+			        ORDER BY regDate DESC
+			     ) 					
+</select>
+
+
+
 	
 <select id="selectRequestByRegId" parameterType="int" resultType="com.example.vms.vacation.model.Vacation">
 		<![CDATA[

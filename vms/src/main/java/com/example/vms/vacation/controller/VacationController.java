@@ -38,6 +38,8 @@ import com.example.vms.jwt.JwtTokenProvider;
 
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
+import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.service.ScheduleService;
 import com.example.vms.vacation.model.FileDownload;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
@@ -69,6 +71,9 @@ public class VacationController {
 	
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private ScheduleService scheduleService;
 	
     @GetMapping("/request")
     public String requestVacation(Model model) {
@@ -142,11 +147,11 @@ public class VacationController {
 	//팀원 휴가 신청서 목록 조회(팀장)
 	@GetMapping("/request/list")
 	public String getRequest(@RequestParam(name="curpage", defaultValue = "1") String curpage, Model model) {
-//		//사원 아이디 확인(토큰으로) / 일단 pathvariable로 받아옴
-//		String empId = "I760001";
+		//사원 아이디 확인(토큰으로) / 일단 pathvariable로 받아옴
+		String empId = "M200002";
 //		//role이 팀장인지 확인 필요
 //		
-//		String state = null;
+//		String state = "결재대기";
 //		int rowNum = vacationService.getCountDeptRequestList(empId, state);
 //		int waitingRowNum = vacationService.getCountDeptRequestList(empId, "결재대기");
 //		System.out.println(rowNum);
@@ -175,7 +180,7 @@ public class VacationController {
 	public List<VacationEmployee> getRequest(@RequestParam(name="state", defaultValue = "") String state, @RequestParam(name="curpage", defaultValue = "1") String curpage) {
 		//사원 아이디 확인(토큰으로) / 일단 pathvariable로 받아옴
 		//role이 팀장인지 확인 필요
-		String empId = "I760001";
+		String empId = "M200002";
 		List<VacationEmployee> requestList = null;
 		if(state.equals("")) {
 			state = null;
