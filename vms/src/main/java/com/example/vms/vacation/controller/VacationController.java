@@ -36,13 +36,14 @@ import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
 import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
+
 import com.example.vms.schedule.service.ScheduleService;
 import com.example.vms.vacation.model.FileDownload;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 import com.example.vms.vacation.model.VacationType;
-import com.example.vms.vacation.model.VacationVacationType;
 import com.example.vms.vacation.service.VacationService;
 import com.example.vms.vacation.service.VacationTypeService;
 
@@ -141,39 +142,49 @@ public class VacationController {
             return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
         }
     }
-
-    //개인 휴가 신청서 목록 조회(팀원)
-    @GetMapping("/list")
-    public String getListPage(HttpServletRequest request, 
-			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
-			Model model) {
-    	
-    	// 쿠키 정보
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for(Cookie cookie : cookies) {
-           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-              token = cookie.getValue();
-           }
-        }
-        // 토큰 유효성 검사
-        if (tokenProvider.validateToken(token)) {
-        	return "vacation/requestlist_employee";
-        } else {
-        	return "redirect:/employee/login";
-        }
-    }
     
+  //휴가 신청서 목록 조회
+  	@GetMapping("/request/list")
+  	public String getRequest(HttpServletRequest request, 
+  			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
+  			@RequestParam(name="return", defaultValue = "false") String returnString,
+  			Model model) {
+
+  		// 쿠키 정보
+          Cookie[] cookies = request.getCookies();
+          String token = "";
+          for(Cookie cookie : cookies) {
+             if(cookie.getName().equals("X-AUTH-TOKEN")) {
+                token = cookie.getValue();
+             }
+          }
+          // 토큰 유효성 검사
+          if (tokenProvider.validateToken(token)) {
+          	//팀장인지 확인
+          	Authentication auths = tokenProvider.getAuthentication(token);
+          	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+          	for (GrantedAuthority authority : authorities) {
+          	    //String authorityName = authority.getAuthority();
+          	    if(authority.getAuthority().equals("팀장")) {
+          	    	model.addAttribute("return", returnString);
+          	    	return "vacation/requestlist_supervisor";
+          	    }
+          	}
+          	return "vacation/requestlist_employee";
+          
+          } else {
+          	return "redirect:/employee/login";
+          }
+  	}
+
     @ResponseBody
-	@GetMapping("/list/rownum")
-	public int getListRowNum(HttpServletRequest request, 
+	@GetMapping("/request/getrow")
+	public int getRequestRowNum(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state) {
 		
-		if(state.equals("")) {
-			state = null;
-		}
+    	int rowNum = 0;
+		boolean isLeader = false;
 		
-		//String empId = "I760001";
 		// 쿠키 정보
         Cookie[] cookies = request.getCookies();
         String token = "";
@@ -183,111 +194,42 @@ public class VacationController {
            }
         }
         
+        //팀장인지 확인
+      	Authentication auths = tokenProvider.getAuthentication(token);
+      	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+      	for (GrantedAuthority authority : authorities) {
+      	    //String authorityName = authority.getAuthority();
+      	    if(authority.getAuthority().equals("팀장")) {
+      	    	isLeader = true;
+      	    }
+      	}
+      	
         // 토큰에서 empId 추출
         String empId = tokenProvider.getEmpId(token);
-        System.out.println(empId);
-    	int rowNum = vacationService.getCountRequestList(empId, state);
+        
+		if(state.equals("")) {
+			state = null;
+		}
+		
+		if(isLeader) {
+			rowNum = vacationService.getCountDeptRequestList(empId, state);
+		} else {
+			rowNum = vacationService.getCountRequestList(empId, state);
+		}
+		
     	return rowNum;
  
 	}
 	
-	//팀원 휴가 신청서 목록 조회(비동기)
-	@ResponseBody
-	@GetMapping("/list/getlist")
-	public List<VacationVacationType> getList(HttpServletRequest request, 
-			@RequestParam(name="state", defaultValue = "") String state, 
-			@RequestParam(name="curpage", defaultValue = "1") String curpage) {
-		
-		// 쿠키 정보
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for(Cookie cookie : cookies) {
-           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-              token = cookie.getValue();
-           }
-        }
-        
-        // 토큰에서 empId 추출
-        String empId = tokenProvider.getEmpId(token);
-        System.out.println(empId);
-        
-		if(state.equals("")) {
-			state = null;
-		}
-		
-		List<VacationVacationType> requestList =  vacationService.getRequestList(empId, state, curpage);
-		System.out.println(requestList);
-		return requestList;
-	}
-    
-	//휴가 신청서 목록 조회
-	@GetMapping("/request/list")
-	public String getRequest(HttpServletRequest request, 
-			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
-			Model model) {
-
-		// 쿠키 정보
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for(Cookie cookie : cookies) {
-           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-              token = cookie.getValue();
-           }
-        }
-        // 토큰 유효성 검사
-        if (tokenProvider.validateToken(token)) {
-        	//팀장인지 확인
-        	Authentication auths = tokenProvider.getAuthentication(token);
-        	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-        	for (GrantedAuthority authority : authorities) {
-        	    //String authorityName = authority.getAuthority();
-        	    if(authority.getAuthority().equals("팀장")) {
-        	    	return "vacation/requestlist_supervisor";
-        	    }
-        	}
-        	return "vacation/requestlist_employee";
-        
-        } else {
-        	return "redirect:/employee/login";
-        }
-	}
-	
-	@ResponseBody
-	@GetMapping("/request/rownum")
-	public int getRowNum(HttpServletRequest request, 
-			@RequestParam(name="state", defaultValue = "") String state) {
-		
-		if(state.equals("")) {
-			state = null;
-		}
-		
-		//String empId = "I760001";
-		// 쿠키 정보
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for(Cookie cookie : cookies) {
-           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-              token = cookie.getValue();
-           }
-        }
-        
-        // 토큰에서 empId 추출
-        String empId = tokenProvider.getEmpId(token);
-        System.out.println(empId);
-    	int rowNum = vacationService.getCountDeptRequestList(empId, state);
-    	return rowNum;
- 
-	}
-	
-	//팀원 휴가 신청서 목록 조회(비동기)
 	@ResponseBody
 	@GetMapping("/request/getlist")
 
-	public List<VacationEmployee> getRequest(HttpServletRequest request, 
+	public List<VacationEmployee> getRequestList(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state, 
 			@RequestParam(name="curpage", defaultValue = "1") String curpage) {
 		
-		//role이 팀장인지 확인 필요?
+		List<VacationEmployee> requestList = null;
+		boolean isLeader = false;
 		
 		// 쿠키 정보
         Cookie[] cookies = request.getCookies();
@@ -298,21 +240,36 @@ public class VacationController {
            }
         }
         
+        //팀장인지 확인
+      	Authentication auths = tokenProvider.getAuthentication(token);
+      	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+      	for (GrantedAuthority authority : authorities) {
+      	    //String authorityName = authority.getAuthority();
+      	    if(authority.getAuthority().equals("팀장")) {
+      	    	isLeader = true;
+      	    }
+      	}
+      	
         // 토큰에서 empId 추출
         String empId = tokenProvider.getEmpId(token);
-        System.out.println(empId);
         
 		if(state.equals("")) {
 			state = null;
 		}
 		
-		List<VacationEmployee> requestList =  vacationService.getDeptRequestList(empId, state, curpage);
+		if(isLeader) {
+			requestList =  vacationService.getDeptRequestList(empId, state, curpage);
+		} else {
+			requestList =  vacationService.getRequestList(empId, state, curpage);
+		}
+		
 		System.out.println(requestList);
 		return requestList;
 	}
+    
 	
 	//휴가 신청서 상세 조회(팀장)
-	@GetMapping("/requestd/{regId}")
+	@GetMapping("/request/list/team/{regId}")
 	public String getRequestDetail(@PathVariable String regId, Model model) {
 		//role이 팀장인지 확인 필요
 		int regIdNumber = Integer.parseInt(regId);
@@ -362,8 +319,7 @@ public class VacationController {
 		return result;
 	}
 	
-	//파일 다운로드(비동기)
-	@ResponseBody
+	//파일 다운로드
 	@GetMapping("/file-download/{fileId}") 
 	public ResponseEntity<byte[]> getFile(@PathVariable int fileId) {
 		UploadFile file = vacationService.getFile(fileId);
@@ -379,6 +335,70 @@ public class VacationController {
 			throw new RuntimeException(e);
 		}
 		return new ResponseEntity<byte[]>(file.getFileData(), headers, HttpStatus.OK);
+	}
+	
+	//모든 사원 일정 조회(관리자)
+	@GetMapping("/schedule/list") 
+	public String getSchedule(HttpServletRequest request) {
+		
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+        	//관리자인지 확인
+        	Authentication auths = tokenProvider.getAuthentication(token);
+        	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+        	for (GrantedAuthority authority : authorities) {
+        	    //String authorityName = authority.getAuthority();
+        	    if(authority.getAuthority().equals("팀장")) {
+        	    	return "manager/schedulelist";
+        	    }
+        	}
+        	return "redirect:/employee/login";
+        
+        } else {
+        	return "redirect:/employee/login";
+        }
+	}
+	
+	@ResponseBody
+	@GetMapping("/schedule/getrow")
+	public int getScheduleRowNum() {
+		
+    	int rowNum = 0;
+		
+		// 쿠키 정보
+//        Cookie[] cookies = request.getCookies();
+//        String token = "";
+//        for(Cookie cookie : cookies) {
+//           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+//              token = cookie.getValue();
+//           }
+//        }
+             	
+        // 토큰에서 empId 추출
+        //String empId = tokenProvider.getEmpId(token);
+        
+		rowNum = vacationService.getCountScheduleByOption(1);
+
+    	return rowNum;
+	}
+	
+	@ResponseBody
+	@GetMapping("/schedule/getlist")
+	public List<ScheduleEmpDeptType> getScheduleList() {
+		
+		
+		List<ScheduleEmpDeptType> schedulList =  vacationService.getScheduleListByOption(1);
+		
+		System.out.println("schedule"+schedulList);
+		return schedulList;
 	}
 	
 }

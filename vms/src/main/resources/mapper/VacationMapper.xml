@@ -96,9 +96,9 @@
 
 <insert id="requestVacation" parameterType="com.example.vms.vacation.model.Vacation">
     INSERT INTO VACATION_REG (
-        reg_id, state, start_date, end_date, reg_date, denied_content, content, emp_id, type_id
+        reg_id, start_date, end_date, reg_date, denied_content, content, emp_id, type_id
     ) VALUES (
-        #{regId}, #{state, jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
+        #{regId}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
         #{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
         #{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
     )
@@ -121,7 +121,7 @@
 		</if>
 </select>
 
-<select id="selectRequestListByEmpId" resultType="com.example.vms.vacation.model.VacationVacationType">
+<select id="selectRequestListByEmpId" resultType="com.example.vms.vacation.model.VacationEmployee">
 		SELECT *
 		FROM (
 		    SELECT rownum as num, r.*
@@ -131,7 +131,7 @@
 				       V.START_DATE AS startDate,
 				       V.END_DATE AS endDate,
 				       V.REG_DATE AS regDate,
-				       T.NAME AS typeName,
+				       T.NAME AS empName,
 				       ROWNUM AS rnum
 				FROM VACATION_REG V JOIN VACATION_TYPE T ON V.TYPE_ID = T.TYPE_ID
 				WHERE EMP_ID = #{empId}
