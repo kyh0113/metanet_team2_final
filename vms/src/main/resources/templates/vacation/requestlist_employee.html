@@ -80,6 +80,10 @@
 	/*<![CDATA[*/
 
 	let httpReq=null;
+	let returnParameter = /*[[${return}]]*/;
+	if(returnParameter === 'false') {
+		removeSessionItem();
+	}
 	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
 	let isCancel = getSessionItem('isCancel') || false;
 	
@@ -279,6 +283,11 @@
     	return sessionStorage.getItem(key)
 	}
 	
+	function removeSessionItem() {
+    	sessionStorage.removeItem('currentPage');
+		sessionStorage.removeItem('isCancel');
+	}
+	
 	function movePage() {
 		let pageItems = document.querySelectorAll('.pagination .page-item');
   		pageItems.forEach((item, index) => {
@@ -289,6 +298,7 @@
 			}
 	   	});
 	}
+	
 	
     /*]]>*/
   </script>

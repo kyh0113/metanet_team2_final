@@ -80,6 +80,11 @@
 	/*<![CDATA[*/
 
 	let httpReq=null;
+	let returnParameter = /*[[${return}]]*/;
+	if(returnParameter === 'false') {
+		removeSessionItem();
+	}
+	
 	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
 	let isWaiting = getSessionItem('isWaiting') || false;
 	
@@ -276,6 +281,11 @@
 
 	function getSessionItem(key) {
     	return sessionStorage.getItem(key)
+	}
+	
+	function removeSessionItem() {
+    	sessionStorage.removeItem('currentPage');
+		sessionStorage.removeItem('isWaiting');
 	}
 	
 	function movePage() {

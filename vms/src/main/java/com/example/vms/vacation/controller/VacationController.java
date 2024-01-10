@@ -147,6 +147,7 @@ public class VacationController {
   	@GetMapping("/request/list")
   	public String getRequest(HttpServletRequest request, 
   			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
+  			@RequestParam(name="return", defaultValue = "false") String returnString,
   			Model model) {
 
   		// 쿠키 정보
@@ -165,6 +166,7 @@ public class VacationController {
           	for (GrantedAuthority authority : authorities) {
           	    //String authorityName = authority.getAuthority();
           	    if(authority.getAuthority().equals("팀장")) {
+          	    	model.addAttribute("return", returnString);
           	    	return "vacation/requestlist_supervisor";
           	    }
           	}
