@@ -32,4 +32,6 @@ public interface ICertificateRepository {
 	);
 
 	public String searchDepartNameByDeptId(@Param("deptId") int deptId);
+	
+	public Certificate[] searchCertificates();
 }
