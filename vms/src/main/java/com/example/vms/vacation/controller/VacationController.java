@@ -35,6 +35,9 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
+import com.example.vms.schedule.model.Schedule;
+import com.example.vms.schedule.service.ScheduleService;
+import com.example.vms.vacation.model.FileDownload;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
@@ -66,6 +69,9 @@ public class VacationController {
 	
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private ScheduleService scheduleService;
 	
     @GetMapping("/request")
     public String requestVacation(Model model) {
@@ -276,6 +282,7 @@ public class VacationController {
 	//팀원 휴가 신청서 목록 조회(비동기)
 	@ResponseBody
 	@GetMapping("/request/getlist")
+
 	public List<VacationEmployee> getRequest(HttpServletRequest request, 
 			@RequestParam(name="state", defaultValue = "") String state, 
 			@RequestParam(name="curpage", defaultValue = "1") String curpage) {

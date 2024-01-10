@@ -20,4 +20,16 @@
 		]]>
 	</select>
 	
+	<insert id="insertSchedule" parameterType="com.example.vms.schedule.model.Schedule">
+	    <![CDATA[
+		    INSERT INTO 
+		    SCHEDULE (calender_Id, title, start_date, end_date, emp_id, dept_id, type_id)
+		    VALUES (#{calender_Id}, #{title}, #{start_date}, #{end_date}, #{emp_id}, #{dept_id}, #{type_id})
+		]]>
+	</insert>
+	
+	<select id="maxScheduleId" resultType="int"> 
+		SELECT NVL(MAX(CALENDER_ID),0) FROM SCHEDULE
+	</select>
+	
 </mapper>
