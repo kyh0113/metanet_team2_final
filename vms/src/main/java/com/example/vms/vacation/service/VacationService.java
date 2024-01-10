@@ -15,7 +15,7 @@ import com.example.vms.schedule.service.ScheduleService;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
-
+import com.example.vms.vacation.model.VacationVacationType;
 import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
 
@@ -90,7 +90,7 @@ public class VacationService implements IVacationService {
 		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
 		schedule.setEmp_id(realvacation.getEmpId());
 		schedule.setEnd_date(realvacation.getEndDate());
-		schedule.setStart_date(realvacation.getEndDate());
+		schedule.setStart_date(realvacation.getStartDate());
 		schedule.setTitle("["+getVacationTypeName(realvacation.getTypeId())+"] "
 				+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
 		schedule.setType_id(realvacation.getTypeId());
@@ -146,9 +146,16 @@ public class VacationService implements IVacationService {
 	}
 
 	@Override
-	public List<VacationEmployee> getApprDeptRequestList(String empId, String state) {
+	public int getCountRequestList(String empId, String state) {
+		return vacationDao.selectCountRequestListByEmpId(empId, state);
+	}
 
-		return vacationDao.getApprDeptRequestList(empId, state);
+	@Override
+	public List<VacationVacationType> getRequestList(String empId, String state, String curPage) {
+		int curPageNum = Integer.parseInt(curPage);
+		int startNum = curPageNum*10 - 9;
+		int endNum = curPageNum*10;
+		return vacationDao.selectRequestListByEmpId(empId, state, startNum, endNum);
 	}
 
 }

@@ -2,22 +2,20 @@ package com.example.vms.vacation.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.time.Period;
-
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.Collection;
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.fileupload.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,7 +33,6 @@ import com.example.vms.employee.model.Mail;
 import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
-
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.ManagerService;
 import com.example.vms.schedule.model.Schedule;
@@ -45,6 +42,7 @@ import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 import com.example.vms.vacation.model.VacationType;
+import com.example.vms.vacation.model.VacationVacationType;
 import com.example.vms.vacation.service.VacationService;
 import com.example.vms.vacation.service.VacationTypeService;
 
@@ -144,48 +142,171 @@ public class VacationController {
         }
     }
 
-	//팀원 휴가 신청서 목록 조회(팀장)
+    //개인 휴가 신청서 목록 조회(팀원)
+    @GetMapping("/list")
+    public String getListPage(HttpServletRequest request, 
+			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
+			Model model) {
+    	
+    	// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+        	return "vacation/requestlist_employee";
+        } else {
+        	return "redirect:/employee/login";
+        }
+    }
+    
+    @ResponseBody
+	@GetMapping("/list/rownum")
+	public int getListRowNum(HttpServletRequest request, 
+			@RequestParam(name="state", defaultValue = "") String state) {
+		
+		if(state.equals("")) {
+			state = null;
+		}
+		
+		//String empId = "I760001";
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        
+        // 토큰에서 empId 추출
+        String empId = tokenProvider.getEmpId(token);
+        System.out.println(empId);
+    	int rowNum = vacationService.getCountRequestList(empId, state);
+    	return rowNum;
+ 
+	}
+	
+	//팀원 휴가 신청서 목록 조회(비동기)
+	@ResponseBody
+	@GetMapping("/list/getlist")
+	public List<VacationVacationType> getList(HttpServletRequest request, 
+			@RequestParam(name="state", defaultValue = "") String state, 
+			@RequestParam(name="curpage", defaultValue = "1") String curpage) {
+		
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        
+        // 토큰에서 empId 추출
+        String empId = tokenProvider.getEmpId(token);
+        System.out.println(empId);
+        
+		if(state.equals("")) {
+			state = null;
+		}
+		
+		List<VacationVacationType> requestList =  vacationService.getRequestList(empId, state, curpage);
+		System.out.println(requestList);
+		return requestList;
+	}
+    
+	//휴가 신청서 목록 조회
 	@GetMapping("/request/list")
-	public String getRequest(@RequestParam(name="curpage", defaultValue = "1") String curpage, Model model) {
-		//사원 아이디 확인(토큰으로) / 일단 pathvariable로 받아옴
-		String empId = "M200002";
-//		//role이 팀장인지 확인 필요
-//		
-//		String state = "결재대기";
-//		int rowNum = vacationService.getCountDeptRequestList(empId, state);
-//		int waitingRowNum = vacationService.getCountDeptRequestList(empId, "결재대기");
-//		System.out.println(rowNum);
-//		List<VacationEmployee> requestList =  vacationService.getDeptRequestList(empId, state, curpage);
-//		System.out.println(requestList);
-//		model.addAttribute("requestList", requestList);
-//		model.addAttribute("rowNum", rowNum);
-//		model.addAttribute("waitingRowNum", waitingRowNum);
-		return "vacation/requestlist";
+	public String getRequest(HttpServletRequest request, 
+			@RequestParam(name="curpage", defaultValue = "1") String curpage, 
+			Model model) {
+
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) {
+        	//팀장인지 확인
+        	Authentication auths = tokenProvider.getAuthentication(token);
+        	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+        	for (GrantedAuthority authority : authorities) {
+        	    //String authorityName = authority.getAuthority();
+        	    if(authority.getAuthority().equals("팀장")) {
+        	    	return "vacation/requestlist_supervisor";
+        	    }
+        	}
+        	return "vacation/requestlist_employee";
+        
+        } else {
+        	return "redirect:/employee/login";
+        }
 	}
 	
 	@ResponseBody
 	@GetMapping("/request/rownum")
-	public int getRowNum(@RequestParam(name="state", defaultValue = "") String state) {
-		String empId = "I760001";
+	public int getRowNum(HttpServletRequest request, 
+			@RequestParam(name="state", defaultValue = "") String state) {
+		
 		if(state.equals("")) {
 			state = null;
 		}
-		int rowNum = vacationService.getCountDeptRequestList(empId, state);
-		return rowNum;
+		
+		//String empId = "I760001";
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        
+        // 토큰에서 empId 추출
+        String empId = tokenProvider.getEmpId(token);
+        System.out.println(empId);
+    	int rowNum = vacationService.getCountDeptRequestList(empId, state);
+    	return rowNum;
+ 
 	}
 	
 	//팀원 휴가 신청서 목록 조회(비동기)
 	@ResponseBody
 	@GetMapping("/request/getlist")
-	public List<VacationEmployee> getRequest(@RequestParam(name="state", defaultValue = "") String state, @RequestParam(name="curpage", defaultValue = "1") String curpage) {
-		//사원 아이디 확인(토큰으로) / 일단 pathvariable로 받아옴
-		//role이 팀장인지 확인 필요
-		String empId = "M200002";
-		List<VacationEmployee> requestList = null;
+
+	public List<VacationEmployee> getRequest(HttpServletRequest request, 
+			@RequestParam(name="state", defaultValue = "") String state, 
+			@RequestParam(name="curpage", defaultValue = "1") String curpage) {
+		
+		//role이 팀장인지 확인 필요?
+		
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        
+        // 토큰에서 empId 추출
+        String empId = tokenProvider.getEmpId(token);
+        System.out.println(empId);
+        
 		if(state.equals("")) {
 			state = null;
 		}
-		requestList =  vacationService.getDeptRequestList(empId, state, curpage);
+		
+		List<VacationEmployee> requestList =  vacationService.getDeptRequestList(empId, state, curpage);
 		System.out.println(requestList);
 		return requestList;
 	}
