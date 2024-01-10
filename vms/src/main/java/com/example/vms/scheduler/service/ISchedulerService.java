@@ -1,5 +1,5 @@
 package com.example.vms.scheduler.service;
 
-public class ISchedulerService {
-
+public interface ISchedulerService {
+	void certificateScheduler();
 }

@@ -95,4 +95,14 @@
 	<select id="searchDepartNameByDeptId" resultType="java.lang.String">
 		SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID=#{deptId}
 	</select>
+	
+	<select id="searchCertificates" resultType="com.example.vms.certificate.model.Certificate">
+		SELECT 
+			CERTIFICATE_ID AS certificateId,
+			REG_DATE AS regDate,
+			TYPE AS type,
+			REASON AS reason,
+			EMP_ID AS empId
+		FROM CERTIFICATION
+	</select>
 </mapper>
