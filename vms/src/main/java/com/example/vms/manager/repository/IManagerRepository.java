@@ -26,6 +26,7 @@ public interface IManagerRepository {
     String departmentName(@Param("deptId") int deptId);
 	
     EmployeeResponseDTO[] searchEmployees(@Param("start") int start, @Param("end") int end);
+    EmployeeResponseDTO[] searchEmployeesWithEmpId(@Param("start") int start, @Param("end") int end, @Param("empId") String empId);
     int numberOfEmployees();
 	EmployeeResponseDTO searchEmployeeByEmpId(@Param("empId") String empId);
 	void updateEmployee(EmployeeUpdateRequestDTO employee);

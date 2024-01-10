@@ -15,7 +15,7 @@ public interface IManagerService {
 	String generateEmployeeId(int deptId, LocalDate hireDate);
 	String encodePassword(String password);
 	
-    EmployeeResponseDTO[] searchEmployees(int start, int end);
+    EmployeeResponseDTO[] searchEmployees(int start, int end, String empId);
     int numberOfEmployees();
 	EmployeeResponseDTO searchEmployeeByEmpId(String empId);
 	void updateEmployee(EmployeeUpdateRequestDTO employee);
