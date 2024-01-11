@@ -355,13 +355,13 @@ public class VacationController {
         if (tokenProvider.validateToken(token)) {
         	//관리자인지 확인
         	Authentication auths = tokenProvider.getAuthentication(token);
-        	//Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-        	//for (GrantedAuthority authority : authorities) {
-        	  //  //String authorityName = authority.getAuthority();
-        	    //if(authority.getAuthority().equals("팀장")) {
-        	    	//return "manager/schedulelist";
-        	    //}
-        	//}
+        	Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+        	for (GrantedAuthority authority : authorities) {
+        	    //String authorityName = authority.getAuthority();
+        	    if(authority.getAuthority().equals("팀장")) {
+        	    	return "manager/schedulelist";
+        	    }
+        	}
         	return "manager/schedulelist";
         
         } else {
