@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.vms.employee.service.IEmployeeService;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.IManagerService;
 import com.example.vms.scheduler.model.SchedulerResult;
@@ -29,6 +31,9 @@ public class SchedulerController {
    
    @Autowired
    IManagerService managerService;
+   
+   @Autowired
+   IEmployeeService employeeService;
    
    @GetMapping("/list")
    @ResponseBody
@@ -50,11 +55,27 @@ public class SchedulerController {
       return "/scheduler/list";
    }
    
-   @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
+   	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
 	public void vacationPromoEmail() { // 1개 이상의 연차를 가진 직원에게 연차 촉진 메일을 자동으로 발송
 		log.info("vacationPromoEmail 스케줄러 발동");
-		// SELECT * FROM employees WHERE remains >= 1;
-
+		List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
+		
+		for(Employee employee : employees) {
+			System.out.println(employee.getEmail());
+			sendVacationPromoEmail(employee);
+		}
+   }
+   
+   public void sendVacationPromoEmail(Employee employee) {
+	   // 메일 내용 작성
+	   String mailContent = "남은 연차: "+ employee.getRemains()+"일이 남았습니다.";
+	   String mailSubject = "연차 촉진 알림";
+	   String mailMessage = "연차 촉진 알림";
+	   
+	   String result = employeeService.sendMail(mailContent, employee.getEmail(), mailSubject, mailMessage);
+		
+	   System.out.println("메일 전송 결과: "+result);	
+		
 	}
 
 	@Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행

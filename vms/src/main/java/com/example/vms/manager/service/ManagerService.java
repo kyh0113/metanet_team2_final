@@ -132,4 +132,9 @@ public class ManagerService implements IManagerService {
 		managerDao.updateRemains(empId, remains);
 		
 	}
+
+	@Override
+	public List<Employee> findEmployeesWithAtLeastOneVacation() {
+		return managerDao.findEmployeesWithAtLeastOneVacation();
+	}
 }
