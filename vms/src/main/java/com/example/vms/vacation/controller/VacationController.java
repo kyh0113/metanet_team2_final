@@ -136,7 +136,7 @@ public class VacationController {
             // 쿠키에 토큰을 설정 (클라이언트 사이드에서 사용)
             response.setHeader("Set-Cookie", "X-AUTH-TOKEN=" + token + "; Path=/; HttpOnly");
 
-            return "redirect:/vacation/list";
+            return "redirect:/vacation/request/list";
         } else {
             // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
             return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
