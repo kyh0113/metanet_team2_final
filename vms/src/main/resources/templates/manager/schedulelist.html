@@ -132,11 +132,11 @@
 	    prev.appendChild(prevLink);
 	    pagination.appendChild(prev);
 	        
-	    for (var i = 1; i <= totalPages; i++) {
-	        var li = document.createElement('li');
+	    for (let i = 1; i <= totalPages; i++) {
+	        let li = document.createElement('li');
 	        li.classList.add('page-item');
 	
-	        var a = document.createElement('a');
+	        let a = document.createElement('a');
 	        a.classList.add('page-link');
 	      
 	        // 페이지 번호 텍스트 설정
@@ -146,10 +146,9 @@
 	        if(i == currentPage) {
 				li.classList.add('active');
 			}
-			
 			a.onclick = () => {
-				currentPage = i-1 
-				
+				currentPage = parseInt(i)		
+				console.log(i)
 				searchList(currentPage)
 			}
 	
