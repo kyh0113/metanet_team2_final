@@ -24,7 +24,7 @@ public interface IVacationService {
    UploadFile getFile(int fileId);
    int getCountRequestList(String empId, String state);
    List<VacationEmployee> getRequestList(String empId, String state, String curPage);
-   
+   void deleteVacation(int regId);
    int getCountScheduleByOption(String keyword, int option);
    List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option);
 }
