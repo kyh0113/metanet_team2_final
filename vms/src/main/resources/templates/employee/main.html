@@ -114,6 +114,17 @@
 			position: relative;
 			top: -8px;
 		}
+		
+		#excelContainer button{
+			width: 100px;
+			height: 50px;
+			border-radius: 17.5px;
+			box-sizing: border-box;
+			margin-top: 25px;
+			margin-left: 620px;
+			background-color: lightblue;
+		}
+		
     </style>
 </head>
 <body>
@@ -150,6 +161,12 @@
             </div>
             <p class="infoLabel">나의 휴가 정보</p>
         </div>
+        
+        <div id="excelContainer">
+			<form action="/calendar/download" method="get">
+				<button type="submit">Excel</button>
+			</form>
+		</div>
     </div>
 
     <div id="graphContainer">
