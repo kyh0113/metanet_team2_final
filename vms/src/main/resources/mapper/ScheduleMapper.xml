@@ -20,6 +20,27 @@
 		]]>
 	</select>
 	
+	<select id="getCountAllSchedule" resultType="int">
+		SELECT count(*)
+		FROM SCHEDULE
+	</select>
+	
+	<select id="getAllSchedule" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
+	    <![CDATA[
+		    SELECT 
+			    s.CALENDER_ID as calendarId,
+			    d.NAME as deptName,
+			    e.NAME as empName,
+			    e.POSITION as position,
+			    t.NAME as TypeName,
+			    s.START_DATE as startDate,
+			    s.END_DATE as endDate
+			FROM 
+			    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
+			    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
+			    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID
+		]]>
+	</select>
 	<insert id="insertSchedule" parameterType="com.example.vms.schedule.model.Schedule">
 	    <![CDATA[
 		    INSERT INTO 

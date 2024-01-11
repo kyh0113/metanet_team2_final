@@ -58,7 +58,7 @@
       background-color: rgb(255, 0, 0);
       color: #fff;
     }
-
+    
     .waiting {
       font-size: small;
       font-weight: lighter;
@@ -78,79 +78,122 @@
   
   <script th:inline="javascript">
 	/*<![CDATA[*/
+
+	let httpReq=null;
+	let returnParameter = /*[[${return}]]*/;
+	if(returnParameter === 'false') {
+		removeSessionItem();
+	}
 	
-	let first = true;
-	//let currPage = 1;
-	let currPage = parseInt(pageLoad()) || 1;
-	//pageClear();
+	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
+	let isWaiting = getSessionItem('isWaiting') || false;
 	
-	window.onload = function() {	
+	if(isWaiting === "true") {
+		isWaiting = true;
+	} else {
+		isWaiting = false;
+	}
+	
+	window.onload = function() {
+		let waitingBtn = document.querySelector(".waiting");
+		if(isWaiting) waitingBtn.classList.add('active');
+		else waitingBtn.classList.remove('active');
+			
     	showList();
-    	pagination(false);
+    	pagination(isWaiting);
 	}
 	
 	function pagination(waiting) {
-		//let rowNum = null;
-		//console.log(waiting);
-		
-		let getRowNumUrl = "/vacation/request/rownum";
+
+		let getRowNumUrl = "/vacation/request/getrow";
 		if(waiting) {
-			getRowNumUrl = "/vacation/request/rownum?state=결재대기"
+			getRowNumUrl = "/vacation/request/getrow?state=결재대기"
 		}
-		// 전체 행 수를 Thymeleaf를 통해 가져오기
+
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
-  		.then((data) => {console.log(data); 
-  		//rowNum = data;
-  		let rowNum = data;
-	
-	    // 페이지당 행 수 및 현재 페이지 등의 변수 설정
-	    let rowsPerPage = 10;
-	    let currentPage = 1;
-	
-	    // 전체 페이지 수 계산
-	    let totalPages = Math.ceil(rowNum / rowsPerPage);
-	
-	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
-	    let pagination = document.querySelector('.pagination');
-	    pagination.innerHTML = '';  // 기존 페이지 번호 제거
-	
-	    for (var i = 1; i <= totalPages; i++) {
-	        var li = document.createElement('li');
-	        li.classList.add('page-item');
-	
-	        var a = document.createElement('a');
-	        a.classList.add('page-link');
-	 
-	 		a.addEventListener('click', (event) => showList(event));
-	      
-	        // 페이지 번호 텍스트 설정
-	        a.textContent = i;
-	
-	        // 클릭 이벤트 핸들러 등록
-	        a.addEventListener('click', function() {
-	            currentPage = i;
-	            // 선택된 페이지에 대한 데이터 로딩 등의 동작 수행
-	        });
-	
-	        li.appendChild(a);
-	        pagination.appendChild(li);
-	    }
+  		.then((data) => {
+			
+	  		let rowNum = data;
+		    // 페이지당 행 수 설정
+		    let rowsPerPage = 10;
+		
+		    // 전체 페이지 수 계산
+		    let totalPages = Math.ceil(rowNum / rowsPerPage);
+		
+		    // 페이지 번호를 동적으로 생성하여 HTML에 추가
+		    let pagination = document.querySelector('.pagination');
+		    pagination.innerHTML = '';  // 기존 페이지 번호 제거
+			
+			//이전 페이지 이동 버튼
+			let prev = document.createElement('li');
+		    prev.classList.add('page-item');
+		    
+			let prevLink = document.createElement('a');
+		    prevLink.classList.add('page-link');
+		    prevLink.textContent = '<';
+		    prevLink.addEventListener('click', (event) => {
+				currentPage--;
+				if(currentPage < 1) currentPage = 1;
+				showList();
+				movePage();
+			});
+		    prev.appendChild(prevLink);
+		    pagination.appendChild(prev);
+		    
+		    for (var i = 1; i <= totalPages; i++) {
+		        var li = document.createElement('li');
+		        li.classList.add('page-item');
+		
+		        var a = document.createElement('a');
+		        a.classList.add('page-link');
+		 
+		        // 페이지 번호 텍스트 설정
+		        a.textContent = i;
+		        
+		        // 현재 페이지 active
+		        if(i == currentPage) {
+					li.classList.add('active');
+				}
+		
+		        // 클릭 이벤트 핸들러 등록
+		        a.addEventListener('click', (event) => {
+					showList(event);
+					movePage();
+				});
+		
+		        li.appendChild(a);
+		        pagination.appendChild(li);
+		    }
+		    //다음 페이지 이동 버튼
+			let next = document.createElement('li');
+		    next.classList.add('page-item');
+		    
+			let nextLink = document.createElement('a');
+		    nextLink.classList.add('page-link');
+		    nextLink.textContent = '>';
+		    nextLink.addEventListener('click', (event) => {
+				currentPage++;
+				if(currentPage > totalPages) currentPage--;
+				showList();
+				movePage();
+			});
+		    next.appendChild(nextLink);
+		    pagination.appendChild(next);
   
   		})
 	}
 	
-	let httpReq=null;
-    
     function showDetail(row) {
+      setSessionItem();
       let url = row.getAttribute('url');
       location.href = url;
     }
     
    	function getInstance(){
       if(window.XMLHttpRequest){
-         httpReq = new XMLHttpRequest(); //현재 브라우져 XMLHttpRequest 내장
-      }else if(window.ActiveXObject){ //IE6 이하   //지금 필요없어요
+         httpReq = new XMLHttpRequest(); 
+      }else if(window.ActiveXObject){
          httpReq = new ActiveXObject("Msxml2.XMLHTTP");
       }else{
         throw new Error("AJAX 지원하지 않습니다"); 
@@ -183,15 +226,12 @@
             regDate = row.insertCell(3);
             state = row.insertCell(4);
             
-
             regId.textContent = item.regId;
             empName.textContent = item.empName;
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
-            //state.textContent = item.state;
-            
-           	//row.classList.add('aaa');
-           	row.setAttribute('url', '/vacation/requestd/'+item.regId);
+           
+           	row.setAttribute('url', '/vacation/request/list/team/'+item.regId);
            	row.setAttribute('onclick', "showDetail(this)");
            	
             const statebtn = document.createElement('button')
@@ -202,31 +242,22 @@
     }
 
    function showList(e){
-	   //let pagenum;
-	   //let isShowingPending = true;
+	   
 	   let url = "";
 	   
-	   //페이지 이동 시
+	   //페이지 번호 클릭 이동
 	   if(e != null) {
-		   //console.log(e.target.text);
-		   currPage = e.target.text;
-		   pageSave();
+		   currentPage = e.target.text;
 	   }
 	   
 	  let waitingBtn = document.querySelector(".waiting");
-	  let isShowingPending = waitingBtn.classList.contains("active");
-
 	  
-	  if (isShowingPending) {
-		//pagination(false);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=결재대기";
+	  if (isWaiting) {
+	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=결재대기";
 	  } else {
-		//pagination(true);
-	    url = "/vacation/request/getlist?curpage="+currPage+"&state=";
+	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
 	  }
 	 
-	  //waitingBtn.classList.toggle("active");
-      
       httpReq = getInstance();
       httpReq.onreadystatechange = handlerStateChange;  // x >> ()
       
@@ -235,27 +266,38 @@
    }
    
    function showWaiting() {
-	  currPage = 1;
+	  currentPage = 1;
 	  let waitingBtn = document.querySelector(".waiting");
 	  waitingBtn.classList.toggle("active");
+	  isWaiting = !isWaiting;
 	  showList();
-	  
-	  let isShowingPending = waitingBtn.classList.contains("active");
-	  pagination(isShowingPending);
+	  pagination(isWaiting);
    }
    
-   function pageSave() {
-		sessionStorage.setItem('currentPage', currPage)
+   function setSessionItem() {
+		sessionStorage.setItem('currentPage', currentPage);
+		sessionStorage.setItem('isWaiting', isWaiting);
 	}
 
-	function pageLoad() {
-    	return sessionStorage.getItem('currentPage')
+	function getSessionItem(key) {
+    	return sessionStorage.getItem(key)
 	}
 	
-	function pageClear() {
-    	return sessionStorage.clear();
+	function removeSessionItem() {
+    	sessionStorage.removeItem('currentPage');
+		sessionStorage.removeItem('isWaiting');
 	}
-   
+	
+	function movePage() {
+		let pageItems = document.querySelectorAll('.pagination .page-item');
+  		pageItems.forEach((item, index) => {
+			if(item.firstChild.text == currentPage) {
+				item.classList.add('active');
+			} else {
+				item.classList.remove('active');	
+			}
+	   	});
+	}
 	
     /*]]>*/
   </script>
@@ -276,24 +318,9 @@
       </tr>
     </thead>
     <tbody id = "requestTableBody">
-      <tr th:each="req : ${requestList}" th:attr="url=|/vacation/requestd/${req.regId}|" onclick="showDetail(this)">
-        <td th:text="${req.regId}"/>
-        <td th:text="${req.empName}"/>
-        <td th:text="|${req.startDate} ~ ${req.endDate}|"/>
-        <td th:text="${req.regDate}"/>
-        <td>
-          <button th:class="|status-btn status-${req.state}|" th:text="${req.state}"></button>
-        </td>
-      </tr>
     </tbody>
   </table>
   <ul class="pagination justify-content-center">
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
-   	<div class="page-num page-item">
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
-    </div>
-    <li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
   </ul>
 </div>
 
