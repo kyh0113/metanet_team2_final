@@ -205,6 +205,14 @@
 		NAME AS name
 		FROM DEPARTMENTS
 	</select>
+	
+	
+	<select id="findEmployeesWithAtLeastOneVacation"
+		resultType="com.example.vms.manager.model.Employee">
+		<![CDATA[
+			SELECT * FROM employees WHERE remains >= 1
+				]]>
+	</select>
 
 	<select id="getAllEmployees"
 		resultType="com.example.vms.manager.model.Employee">
