@@ -35,7 +35,7 @@ public class VacationService implements IVacationService {
 
 	@Autowired
 	IUploadFileRepository uploadFileDao;
-	
+
 	@Autowired
 	IScheduleRepository scheduleDao;
 
@@ -91,34 +91,34 @@ public class VacationService implements IVacationService {
 		int result;
 		Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
 		Schedule schedule = new Schedule();
-		schedule.setCalender_Id(scheduleservice.maxScheduleId()+1);
+		schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
 		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
 		schedule.setEmp_id(realvacation.getEmpId());
 		schedule.setEnd_date(realvacation.getEndDate());
 		schedule.setStart_date(realvacation.getStartDate());
-		schedule.setTitle("["+getVacationTypeName(realvacation.getTypeId())+"] "
+		schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
 				+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
 		schedule.setType_id(realvacation.getTypeId());
 
 		result = vacationDao.updateRequest(vacation);
-		
+
 		scheduleservice.insertSchedule(schedule);
-		
+
 		if (result == 1) {
 			// 알림 메일 전송
 			// 사원 이메일 검색
-//			Vacation requestVacation = vacationDao.selectRequestByRegId(vacation.getRegId());
-//			Employee employee = employeeRepository.selectEmployee(requestVacation.getEmpId());
-//			String email = employee.getEmail();
-//			String mailSubject = "결재 알림입니다.";
-//			String mailMessage = "요청하신 휴가 결재 결과입니다.";
-//			StringBuffer content = new StringBuffer();
-//			content.append(vacation.getRegId()).append(" ");
-//			content.append(requestVacation.getTypeId()).append(" ");
-//			content.append(requestVacation.getStartDate()).append("~").append(requestVacation.getEndDate()).append(" ");
-//			content.append(requestVacation.getState());
-//			
-//			employeeService.sendMail(content.toString(), email, mailSubject, mailMessage);
+//         Vacation requestVacation = vacationDao.selectRequestByRegId(vacation.getRegId());
+//         Employee employee = employeeRepository.selectEmployee(requestVacation.getEmpId());
+//         String email = employee.getEmail();
+//         String mailSubject = "결재 알림입니다.";
+//         String mailMessage = "요청하신 휴가 결재 결과입니다.";
+//         StringBuffer content = new StringBuffer();
+//         content.append(vacation.getRegId()).append(" ");
+//         content.append(requestVacation.getTypeId()).append(" ");
+//         content.append(requestVacation.getStartDate()).append("~").append(requestVacation.getEndDate()).append(" ");
+//         content.append(requestVacation.getState());
+//         
+//         employeeService.sendMail(content.toString(), email, mailSubject, mailMessage);
 			return "결재 완료";
 		} else {
 			return "결재 실패";
@@ -158,27 +158,31 @@ public class VacationService implements IVacationService {
 	@Override
 	public List<VacationEmployee> getRequestList(String empId, String state, String curPage) {
 		int curPageNum = Integer.parseInt(curPage);
-		int startNum = curPageNum*10 - 9;
-		int endNum = curPageNum*10;
+		int startNum = curPageNum * 10 - 9;
+		int endNum = curPageNum * 10;
 		return vacationDao.selectRequestListByEmpId(empId, state, startNum, endNum);
 	}
 
 	@Override
 	public List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option) {
 		int curPageNum = Integer.parseInt(curPage);
-		int startNum = curPageNum*10 - 9;
-		int endNum = curPageNum*10;
-		System.out.println("startatart:    "+startNum+"  endeneeendnendend:   "+endNum);
+		int startNum = curPageNum * 10 - 9;
+		int endNum = curPageNum * 10;
+		System.out.println("startatart:    " + startNum + "  endeneeendnendend:   " + endNum);
 		List<ScheduleEmpDeptType> scheduleList;
 		switch (option) {
-		case 1:	//사원명
-			scheduleList = scheduleDao.getScheduleListByEmpName(startNum, endNum, keyword); break;
-		case 2:	//부서
-			scheduleList = scheduleDao.getScheduleListByDeptName(startNum, endNum, keyword); break;
-		case 3: //직위
-			scheduleList = scheduleDao.getScheduleListByPosition(startNum, endNum, keyword); break;
-		default: //전체
-			scheduleList = scheduleDao.getAllScheduleList(startNum, endNum); break;
+		case 1: // 사원명
+			scheduleList = scheduleDao.getScheduleListByEmpName(startNum, endNum, keyword);
+			break;
+		case 2: // 부서
+			scheduleList = scheduleDao.getScheduleListByDeptName(startNum, endNum, keyword);
+			break;
+		case 3: // 직위
+			scheduleList = scheduleDao.getScheduleListByPosition(startNum, endNum, keyword);
+			break;
+		default: // 전체
+			scheduleList = scheduleDao.getAllScheduleList(startNum, endNum);
+			break;
 		}
 		return scheduleList;
 	}
@@ -187,16 +191,25 @@ public class VacationService implements IVacationService {
 	public int getCountScheduleByOption(String keyword, int option) {
 		int rowNum = 0;
 		switch (option) {
-		case 1:	//사원명
-			rowNum = scheduleDao.getCountScheduleByEmpName(keyword); break;
-		case 2:	//부서
-			rowNum = scheduleDao.getCountScheduleByDeptName(keyword); break;
-		case 3: //직위
-			rowNum = scheduleDao.getCountScheduleByPosition(keyword); break;
-		default: //전체
-			rowNum = scheduleDao.getCountAllSchedule(); break;
+		case 1: // 사원명
+			rowNum = scheduleDao.getCountScheduleByEmpName(keyword);
+			break;
+		case 2: // 부서
+			rowNum = scheduleDao.getCountScheduleByDeptName(keyword);
+			break;
+		case 3: // 직위
+			rowNum = scheduleDao.getCountScheduleByPosition(keyword);
+			break;
+		default: // 전체
+			rowNum = scheduleDao.getCountAllSchedule();
+			break;
 		}
 		return rowNum;
+	}
+
+	@Override
+	public void deleteVacation(int regId) {
+		vacationDao.deleteVacation(regId);
 	}
 
 }

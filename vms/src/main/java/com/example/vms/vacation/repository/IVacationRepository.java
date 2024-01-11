@@ -18,10 +18,13 @@ public interface IVacationRepository {
 	int selectCountRequestListByDept(@Param("empId") String empId, @Param("state") String state);
 	List<VacationEmployee> selectRequestListByDept(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
 	Vacation selectRequestByRegId(int regId);
+	void deleteVacation(int regId);
 	int updateRequest(Vacation vacation);
 	String selectTypeName(int typeId);
 	int selectCountRequestListByEmpId(@Param("empId") String empId, @Param("state") String state);
 	List<VacationEmployee> selectRequestListByEmpId(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
+
+
 	//List<String> selectFileListByRegId(int regId);
 	//UploadFile selectFile(int fileId);
 }

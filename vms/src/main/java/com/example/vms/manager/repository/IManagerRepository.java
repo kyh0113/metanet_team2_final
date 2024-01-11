@@ -1,5 +1,7 @@
 package com.example.vms.manager.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,6 +18,7 @@ public interface IManagerRepository {
 	void create(Employee employee);
 	
 	Employee selectEmployee(String empId);
+	List<Employee> getAllEmployees();
 	
 	// 부서 중 가장 큰 ID값의 뒤의 4자리 문자열을 숫자로 바꿔 가져오기
     @Select("SELECT MAX(TO_NUMBER(SUBSTR(EMP_ID, 4))) AS maxId FROM employees WHERE DEPT_ID = #{deptId}")
@@ -30,5 +33,6 @@ public interface IManagerRepository {
     int numberOfEmployees();
 	EmployeeResponseDTO searchEmployeeByEmpId(@Param("empId") String empId);
 	void updateEmployee(EmployeeUpdateRequestDTO employee);
+	void updateRemains(String empId, int remains);
 	Department[] searchDepartments();
 }
