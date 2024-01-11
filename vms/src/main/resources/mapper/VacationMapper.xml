@@ -1,75 +1,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.vms.vacation.repository.IVacationRepository">
+<mapper
+	namespace="com.example.vms.vacation.repository.IVacationRepository">
 
-<!--  <resultMap id="RequestResultMap" type="com.example.vms.vacation.model.VacationEmployee">
-    	<id column="REG_ID" property="regId"/>
-    	<result column="STATE" property="state"/>
-    	<result column="START_DATE" property="startDate"/>
-    	<result column="END_DATE" property="endDate"/>
-    	<result column="REG_DATE" property="regDate"/>
-    	<result column="NAME" property="empName"/>
-  	</resultMap>
--->
+	<!-- <resultMap id="RequestResultMap" type="com.example.vms.vacation.model.VacationEmployee"> 
+		<id column="REG_ID" property="regId"/> <result column="STATE" property="state"/> 
+		<result column="START_DATE" property="startDate"/> <result column="END_DATE" 
+		property="endDate"/> <result column="REG_DATE" property="regDate"/> <result 
+		column="NAME" property="empName"/> </resultMap> -->
 
-<select id="selectCountRequestListByDept" resultType="int">
-			SELECT count(*)
-			FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
-			WHERE V.STATE != '취소'
-			<if test="state != null">
+	<select id="selectCountRequestListByDept" resultType="int">
+		SELECT count(*)
+		FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+		WHERE V.STATE != '취소'
+		<if test="state != null">
 			AND V.STATE = #{state}
-			</if>
-			AND E.DEPT_ID = ( SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})	
+		</if>
+		AND E.DEPT_ID = ( SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID =
+		#{empId})
 	</select>
-	
-<select id="selectRequestListByDept" resultType="com.example.vms.vacation.model.VacationEmployee">
-			SELECT *
-			FROM (
-			    SELECT rownum as num, r.*
-			    FROM (
-					SELECT V.REG_ID AS regId,
-					       V.STATE AS state,
-					       V.START_DATE AS startDate,
-					       V.END_DATE AS endDate,
-					       V.REG_DATE AS regDate,
-					       E.NAME AS empName,
-					       ROWNUM AS rnum
-					FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
-					WHERE V.STATE != '취소'
-					<if test="state != null">
-					AND V.STATE = #{state}
-					</if>
-					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
-			        ORDER BY regDate DESC
-			    ) r
-			) WHERE num BETWEEN #{startNum} AND #{endNum}					
-</select>
 
-<select id="getApprDeptRequestList" resultType="com.example.vms.vacation.model.VacationEmployee">
-			SELECT *
-			    FROM (
-					SELECT V.REG_ID AS regId,
-					       V.STATE AS state,
-					       V.START_DATE AS startDate,
-					       V.END_DATE AS endDate,
-					       V.REG_DATE AS regDate,
-					       E.NAME AS empName,
-					       ROWNUM AS rnum
-					FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
-					WHERE V.STATE != '취소'
-					<if test="state != null">
-					AND V.STATE = #{state}
-					</if>
-					AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID = #{empId})
-			        ORDER BY regDate DESC
-			     ) 					
-</select>
+	<select id="selectRequestListByDept"
+		resultType="com.example.vms.vacation.model.VacationEmployee">
+		SELECT *
+		FROM (
+		SELECT rownum as num, r.*
+		FROM (
+		SELECT V.REG_ID AS regId,
+		V.STATE AS state,
+		V.START_DATE AS startDate,
+		V.END_DATE AS endDate,
+		V.REG_DATE AS regDate,
+		E.NAME AS empName,
+		ROWNUM AS rnum
+		FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+		WHERE V.STATE != '취소'
+		<if test="state != null">
+			AND V.STATE = #{state}
+		</if>
+		AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID =
+		#{empId})
+		ORDER BY regDate DESC
+		) r
+		) WHERE num BETWEEN #{startNum} AND #{endNum}
+	</select>
+
+	<select id="getApprDeptRequestList"
+		resultType="com.example.vms.vacation.model.VacationEmployee">
+		SELECT *
+		FROM (
+		SELECT V.REG_ID AS regId,
+		V.STATE AS state,
+		V.START_DATE AS startDate,
+		V.END_DATE AS endDate,
+		V.REG_DATE AS regDate,
+		E.NAME AS empName,
+		ROWNUM AS rnum
+		FROM VACATION_REG V JOIN EMPLOYEES E ON V.EMP_ID = E.EMP_ID
+		WHERE V.STATE != '취소'
+		<if test="state != null">
+			AND V.STATE = #{state}
+		</if>
+		AND E.DEPT_ID = (SELECT DEPT_ID FROM EMPLOYEES WHERE EMP_ID =
+		#{empId})
+		ORDER BY regDate DESC
+		)
+	</select>
 
 
 
-	
-<select id="selectRequestByRegId" parameterType="int" resultType="com.example.vms.vacation.model.Vacation">
+
+	<select id="selectRequestByRegId" parameterType="int"
+		resultType="com.example.vms.vacation.model.Vacation">
 		<![CDATA[
 			SELECT REG_ID AS regId,
 			       STATE AS state,
@@ -82,66 +85,78 @@
 			       TYPE_ID AS typeId
 			FROM VACATION_REG
 			WHERE REG_ID = #{regId}
-		]]>		
+		]]>
 	</select>
-	
-	<update id="updateRequest" parameterType="com.example.vms.vacation.model.Vacation">
-		UPDATE VACATION_REG 
-		SET STATE = #{state} 
+
+	<delete id="deleteVacation" parameterType="int">
+        <![CDATA[
+            DELETE FROM VACATION_REG
+            WHERE REG_ID = #{regId}
+        ]]>
+	</delete>
+
+	<update id="updateRequest"
+		parameterType="com.example.vms.vacation.model.Vacation">
+		UPDATE VACATION_REG
+		SET STATE = #{state}
 		<if test="deniedContent != null">
-		, DENIED_CONTENT = #{deniedContent} 
+			, DENIED_CONTENT = #{deniedContent}
 		</if>
 		WHERE REG_ID = #{regId}
 	</update>
 
-<insert id="requestVacation" parameterType="com.example.vms.vacation.model.Vacation">
-    INSERT INTO VACATION_REG (
-        reg_id, start_date, end_date, reg_date, denied_content, content, emp_id, type_id
-    ) VALUES (
-        #{regId}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
-        #{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
-        #{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
-    )
-</insert>
+	<insert id="requestVacation"
+		parameterType="com.example.vms.vacation.model.Vacation">
+		INSERT INTO VACATION_REG (
+		reg_id, start_date, end_date, reg_date, denied_content, content, emp_id,
+		type_id
+		) VALUES (
+		#{regId}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
+		#{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
+		#{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
+		)
+	</insert>
 
-<select id ="maxRegId" resultType="int">
-    SELECT NVL(MAX(REG_ID),0) FROM VACATION_REG
-</select>
+	<select id="maxRegId" resultType="int">
+		SELECT NVL(MAX(REG_ID),0) FROM VACATION_REG
+	</select>
 
-<select id ="selectTypeName" resultType="string" parameterType="int">
-    SELECT NAME FROM VACATION_TYPE WHERE TYPE_ID=#{typeId}
-</select>
+	<select id="selectTypeName" resultType="string"
+		parameterType="int">
+		SELECT NAME FROM VACATION_TYPE WHERE TYPE_ID=#{typeId}
+	</select>
 
-<select id="selectCountRequestListByEmpId" resultType="int">
+	<select id="selectCountRequestListByEmpId" resultType="int">
 		SELECT count(*)
 		FROM VACATION_REG
 		WHERE EMP_ID = #{empId}
 		<if test="state != null">
-		AND STATE = #{state}
+			AND STATE = #{state}
 		</if>
-</select>
+	</select>
 
-<select id="selectRequestListByEmpId" resultType="com.example.vms.vacation.model.VacationEmployee">
+	<select id="selectRequestListByEmpId"
+		resultType="com.example.vms.vacation.model.VacationEmployee">
 		SELECT *
 		FROM (
-		    SELECT rownum as num, r.*
-		    FROM (
-				SELECT V.REG_ID AS regId,
-				       V.STATE AS state,
-				       V.START_DATE AS startDate,
-				       V.END_DATE AS endDate,
-				       V.REG_DATE AS regDate,
-				       T.NAME AS empName,
-				       ROWNUM AS rnum
-				FROM VACATION_REG V JOIN VACATION_TYPE T ON V.TYPE_ID = T.TYPE_ID
-				WHERE EMP_ID = #{empId}
-				<if test="state != null">
-				AND STATE = #{state}
-				</if>
-		        ORDER BY regDate DESC
-		    ) r
+		SELECT rownum as num, r.*
+		FROM (
+		SELECT V.REG_ID AS regId,
+		V.STATE AS state,
+		V.START_DATE AS startDate,
+		V.END_DATE AS endDate,
+		V.REG_DATE AS regDate,
+		T.NAME AS empName,
+		ROWNUM AS rnum
+		FROM VACATION_REG V JOIN VACATION_TYPE T ON V.TYPE_ID = T.TYPE_ID
+		WHERE EMP_ID = #{empId}
+		<if test="state != null">
+			AND STATE = #{state}
+		</if>
+		ORDER BY regDate DESC
+		) r
 		) WHERE num BETWEEN #{startNum} AND #{endNum}
-	
-</select>
-	
+
+	</select>
+
 </mapper>

@@ -173,4 +173,9 @@ public class VacationService implements IVacationService {
 		return scheduleDao.getCountAllSchedule();
 	}
 
+	@Override
+	public void deleteVacation(int regId) {
+		vacationDao.deleteVacation(regId);
+	}
+
 }
