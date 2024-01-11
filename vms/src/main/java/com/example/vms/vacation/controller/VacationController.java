@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.ibatis.javassist.compiler.ast.Keyword;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -138,7 +139,7 @@ public class VacationController {
             // 쿠키에 토큰을 설정 (클라이언트 사이드에서 사용)
             response.setHeader("Set-Cookie", "X-AUTH-TOKEN=" + token + "; Path=/; HttpOnly");
 
-            return "redirect:/vacation/list";
+            return "redirect:/vacation/request/list";
         } else {
             // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
             return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
@@ -178,6 +179,47 @@ public class VacationController {
           	return "redirect:/employee/login";
           }
   	}
+  	
+  	
+  	
+  	@GetMapping("/request/detail/{regId}")
+  	public String getRequestDetailEmployee(@PathVariable String regId, Model model) {
+		int regIdNumber = Integer.parseInt(regId);
+		Vacation vacation = vacationService.getRequestDetail(regIdNumber);
+		//사원 정보 검색
+		Employee employee = managerService.selectEmployee(vacation.getEmpId());
+		//부서 이름 검색
+		String deptName = vacationService.getDeptNameByEmpId(vacation.getEmpId());
+		//휴가 유형 검색
+		String typeName = vacationService.getVacationTypeName(vacation.getTypeId());
+		//휴가일수 계산
+		Period period = Period.between(vacation.getStartDate(), vacation.getEndDate());
+		//파일 리스트 가져오기
+		List<UploadFile> files = vacationService.getFileList(regIdNumber);
+		System.out.println(files);
+		System.out.println(vacation);
+		model.addAttribute("vacation", vacation);
+		model.addAttribute("employee", employee);
+		model.addAttribute("deptName", deptName);
+		model.addAttribute("typeName", typeName);
+		model.addAttribute("vacationPeriod", period.getDays()+1);
+		model.addAttribute("files", files);
+		return "vacation/requestdetail_employee";
+	}
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
 
     @ResponseBody
 	@GetMapping("/request/getrow")
@@ -309,6 +351,37 @@ public class VacationController {
 		result.setResultMessage(resultMsg);
 		return result;
 	}
+	
+	@PostMapping("/delete/{regId}")
+	@ResponseBody
+	public ResponseEntity<String> deleteRequest(@PathVariable int regId) {
+	    try {
+	        System.out.println("랄랄: " + regId);
+	        vacationService.deleteVacation(regId);
+	        return ResponseEntity.ok().body("{\"resultMessage\": \"삭제가 성공적으로 이루어졌습니다.\"}");
+	    } catch (DataAccessException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body("{\"resultMessage\": \"데이터베이스 오류가 발생했습니다.\"}");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body("{\"resultMessage\": \"삭제 중 오류가 발생했습니다.\"}");
+	    }
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//메일 전송
 	@ResponseBody

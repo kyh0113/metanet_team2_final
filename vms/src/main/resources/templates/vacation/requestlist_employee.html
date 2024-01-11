@@ -229,9 +229,8 @@
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
             
-           	//row.classList.add('aaa');
-           	//row.setAttribute('url', '/vacation/requestd/'+item.regId);   //상세페이지 경로
-           	//row.setAttribute('onclick', "showDetail(this)");
+           	row.setAttribute('url', '/vacation/request/detail/'+item.regId);   //상세페이지 경로
+           	row.setAttribute('onclick', "showDetail(this)");
            	
             const statebtn = document.createElement('button')
             statebtn.classList.add('status-btn', 'status-'+item.state);

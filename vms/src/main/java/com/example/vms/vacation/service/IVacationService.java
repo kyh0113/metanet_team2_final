@@ -11,20 +11,20 @@ import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 
 public interface IVacationService {
-	void requestVacation(Vacation vacation, MultipartFile[] files);
-	public int maxRegId();
+   void requestVacation(Vacation vacation, MultipartFile[] files);
+   public int maxRegId();
 
-	int getCountDeptRequestList(String empId, String state);
-	List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage);
-	Vacation getRequestDetail(int regId);
-	String approvalRequest(Vacation vacation);
-	String getDeptNameByEmpId(String empId);
-	String getVacationTypeName(int typeId);
-	List<UploadFile> getFileList(int regId);
-	UploadFile getFile(int fileId);
-	int getCountRequestList(String empId, String state);
-	List<VacationEmployee> getRequestList(String empId, String state, String curPage);
-	
-	int getCountScheduleByOption(String keyword, int option);
-	List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option);
+   int getCountDeptRequestList(String empId, String state);
+   List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage);
+   Vacation getRequestDetail(int regId);
+   String approvalRequest(Vacation vacation);
+   String getDeptNameByEmpId(String empId);
+   String getVacationTypeName(int typeId);
+   List<UploadFile> getFileList(int regId);
+   UploadFile getFile(int fileId);
+   int getCountRequestList(String empId, String state);
+   List<VacationEmployee> getRequestList(String empId, String state, String curPage);
+   
+   int getCountScheduleByOption(String keyword, int option);
+   List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option);
 }
