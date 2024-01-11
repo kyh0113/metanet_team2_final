@@ -102,6 +102,7 @@
                     <td>경력사항</td>
                     <td>
 						<p th:if="${employee.hireDate != null}" th:text="${#temporals.format(employee.hireDate, 'yyyy년 MM월 dd일')} + ' 부터 ' + ${deptName} + ' 부서 근무'"></p>
+                        <p th:if="${employee.retireDate == null}" th:text="' ~ ' + ${#dates.format(today, 'yyyy년 MM월 dd일')} + ' 재직중'"></p>
                         <p th:if="${employee.retireDate != null}" th:text="${#temporals.format(employee.retireDate, 'yyyy년 MM월 dd일')} + ' 사직'"></p>
                     </td>
                 </tr>

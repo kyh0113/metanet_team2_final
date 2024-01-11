@@ -102,6 +102,7 @@
                     <td>경력사항</td>
                     <td>
 						<p th:if="${certificate.hireDate != null}" th:text="${#dates.format(certificate.hireDate, 'yyyy년 MM월 dd일')} + ' 부터 ' + ${certificate.deptName} + ' 부서 근무'"></p>
+                        <p th:if="${certificate.retireDate == null}" th:text="' ~ ' + ${#dates.format(certificate.regDate, 'yyyy년 MM월 dd일')} + ' 재직중'"></p>
                         <p th:if="${certificate.retireDate != null}" th:text="${#dates.format(certificate.hireDate, 'yyyy년 MM월 dd일')} + ' 사직'"></p>
                     </td>
                 </tr>
