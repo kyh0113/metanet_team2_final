@@ -100,7 +100,7 @@
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
 					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND empName = #{empName}
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND empName like '%' || #{empName} || '%'
 	</select>
 	
 	<select id="getScheduleListByDeptName" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
@@ -121,7 +121,7 @@
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
 					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND deptName = #{deptName}
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND deptName like '%' || #{deptName} || '%'
 	</select>
 	
 	<select id="getScheduleListByPosition" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
@@ -142,7 +142,7 @@
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
 					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND position = #{position}
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND position like '%' || #{position} || '%'
 	</select>
 	
 </mapper>

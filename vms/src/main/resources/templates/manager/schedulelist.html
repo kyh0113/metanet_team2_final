@@ -83,8 +83,14 @@
 	let currentPage = 1;
 	
 	window.onload = function() {	
+		viewDidLoad()
     	showList();
     	pagination();
+	}
+	
+	function viewDidLoad() {
+		document.getElementById('searchTypeSelect').value = 0 
+		document.getElementById('searchInput').disabled = true
 	}
 	
 	function pagination() {
@@ -187,6 +193,7 @@
           if(httpReq.status >= 200 && httpReq.status < 300){
     
              data = JSON.parse(httpReq.responseText)
+             console.log(data)
              reloadTable(data);
 
           }else{
@@ -257,13 +264,34 @@
 	
 	function searchList() {
 	    let searchKeyword = document.getElementById('searchInput').value;
-	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword;
-	    
+	    let selectOptionValue = document.getElementById('searchTypeSelect').value;
+	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword + "&option=" + selectOptionValue;
+	    console.log(url)
 	    httpReq = getInstance();
 	    httpReq.onreadystatechange = handlerStateChange;
 	    
 	    httpReq.open("GET", url);
 	    httpReq.send();
+	}
+	
+	function selectOptionChange() {
+	    let selectOptionValue = parseInt(document.getElementById('searchTypeSelect').value);
+	    let searchInput = document.getElementById('searchInput');
+	    searchInput.disabled = (selectOptionValue === 0);
+	    switch (selectOptionValue) {
+	        case 1:
+	            searchInput.placeholder = '사원명 입력';
+	            break;
+	        case 2:
+	            searchInput.placeholder = '부서 입력';
+	            break;
+	        case 3:
+	            searchInput.placeholder = '직위 입력';
+	            break;
+	        default:
+          		searchInput.placeholder = '';
+	            break;
+	    }
 	}
     
     /*]]>*/
@@ -290,7 +318,13 @@
     </tbody>
   </table>
   <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="사원명 검색" id="searchInput">
+	<select id="searchTypeSelect" onchange="selectOptionChange()">
+		<option value="0">전체</option>
+		<option value="1">사원명</option>
+		<option value="2">부서</option>
+		<option value="3">직위</option>
+	</select>
+    <input type="text" class="form-control" id="searchInput">
     <div class="input-group-append">
       <button class="btn btn-outline-secondary" type="button" onclick="searchList()">검색</button>
     </div>
