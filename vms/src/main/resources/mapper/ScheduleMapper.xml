@@ -52,5 +52,5 @@
 	<select id="maxScheduleId" resultType="int"> 
 		SELECT NVL(MAX(CALENDER_ID),0) FROM SCHEDULE
 	</select>
-	
+
 </mapper>

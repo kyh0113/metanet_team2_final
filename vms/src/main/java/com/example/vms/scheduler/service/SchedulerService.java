@@ -1,16 +1,14 @@
 package com.example.vms.scheduler.service;
 
-
 import java.sql.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.repository.ICertificateRepository;
+import com.example.vms.schedule.repository.IScheduleRepository;
+import com.example.vms.scheduler.model.SchedulerResult;
 import com.example.vms.scheduler.repository.ISchedulerRepository;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,6 +20,9 @@ public class SchedulerService implements ISchedulerService{
 
     @Autowired
     private ICertificateRepository certificateRepository;
+    
+    @Autowired
+    private ISchedulerRepository schedulerRepository;
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void certificateScheduler() {
@@ -46,5 +47,10 @@ public class SchedulerService implements ISchedulerService{
     	// SELECT * FROM employees WHERE remains >= 1;
     	
     }  
-    
+
+	@Override
+	public SchedulerResult[] searchSchedulers(int start, int end, String content, int success) {
+		return schedulerRepository.searchSchedulers(start, end, content, success);
+	}
+
 }
