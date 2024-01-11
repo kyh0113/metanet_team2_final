@@ -309,12 +309,12 @@
     </tbody>
   </table>
   <div class="input-group mb-3">
-	<select id="searchTypeSelect" onchange="selectOptionChange()">
-		<option value="0">전체</option>
-		<option value="1">사원명</option>
-		<option value="2">부서</option>
-		<option value="3">직위</option>
-	</select>
+   <select class="col-1 custom-select" id="searchTypeSelect" onchange="selectOptionChange()" style="margin-right: 10px;">
+        <option value="0">전체</option>
+        <option value="1">사원명</option>
+        <option value="2">부서</option>
+    	<option value="3">직위</option>
+    </select>
     <input type="text" class="form-control" id="searchInput">
     <div class="input-group-append">
       <button class="btn btn-outline-secondary" type="button" onclick="searchList()">검색</button>
