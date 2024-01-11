@@ -9,17 +9,21 @@ import org.springframework.stereotype.Service;
 
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.repository.ICertificateRepository;
+import com.example.vms.scheduler.repository.ISchedulerRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class SchedulerService {
+public class SchedulerService implements ISchedulerService{
+	
+	@Autowired
+	private ISchedulerRepository schedulerDao;
 
     @Autowired
     private ICertificateRepository certificateRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void certificateScheduler() {
         log.info("certificate 스케줄러 발동");
 
@@ -35,4 +39,12 @@ public class SchedulerService {
             
         }
     }
+    
+    @Scheduled(cron="0 0 0 1 12 ?") // 매년 12월 1일 자정
+    public void vacationPromoEmail() { // 1개 이상의 연차를 가진 직원에게 연차 촉진 메일을 자동으로 발송
+    	log.info("vacationPromoEmail 스케줄러 발동");
+    	// SELECT * FROM employees WHERE remains >= 1;
+    	
+    }  
+    
 }
