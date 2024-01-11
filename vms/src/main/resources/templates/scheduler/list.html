@@ -47,7 +47,10 @@
 		        <tbody id="resultTableBody"></tbody>
 		    </table>
 		  	<nav aria-label="Page navigation" class="d-flex justify-content-center">
-			    <ul class="pagination" id="pagination"></ul>
+			    <ul class="pagination" id="pagination">
+					<li class="page-item" onclick="fetchDatas(1)"><a class="page-link" href="#"><</a></li>
+					<li class="page-item" onclick="fetchDatas(1)"><a class="page-link" href="#">></a></li>
+				</ul>
 			</nav>
 		</div>
 		
@@ -65,6 +68,7 @@
 	let content = ""
 	let success = 3
 	let totalPages = 1
+	let hasPrevButton = 0 
 	dataLoad()
 	fetchDatas(currentPage)
 	
@@ -73,7 +77,6 @@
 		start = (currentPage-1) * step
 		end = currentPage * step 
 		let url = "/scheduler/list?start=" + start + "&end=" + end + "&success=" + success + "&content=" + content
-		console.log(url)
 		var xhr = new XMLHttpRequest()
         xhr.open('GET', url, true)
 
@@ -129,7 +132,6 @@
 			pageButtonActive()
 			return
 		}
-		console.log(items[0].totalRows)
 		for (let i=0; i<items.length; i++) {
 			let item = items[i]
 			numberOfItems = item.totalRows
@@ -166,7 +168,27 @@
         paginationContainer.innerHTML = ''; // 페이지네이션 초기화
 
         totalPages = Math.ceil(numberOfItems / step);
+        
+        // 이전 버튼 
+        if (currentPage>1 && currentPage<=totalPages) {
+			let previousButton = document.createElement('li')
+	        previousButton.classList.add('page-item')
+	            
+	        let previousButtonA = document.createElement('a')
+	        previousButtonA.classList.add('page-link')
+	        previousButtonA.href = '#'
+	        previousButtonA.textContent = '<'
+	        previousButtonA.onclick = () => {
+				pageArrowButtonTapped(-1)
+			}
+	        previousButton.appendChild(previousButtonA)
+	        paginationContainer.appendChild(previousButton)
+	        hasPrevButton = 1 
+		} else {
+			hasPrevButton = 0 
+		}
 
+		// 내부 페이지 버튼 
         for (let i = 1; i <= totalPages; i++) {
             let li = document.createElement('li');
             li.classList.add('page-item');
@@ -177,13 +199,29 @@
             a.textContent = i;
 
             a.onclick = function() {
-				console.log(i)
                 fetchDatas(i);
             };
 
             li.appendChild(a);
             paginationContainer.appendChild(li);
         }
+        
+        // 이후 버튼
+        if (currentPage<totalPages) {
+			let nextButton = document.createElement('li')
+	        nextButton.classList.add('page-item')
+	            
+	        let nextButtonA = document.createElement('a')
+	        nextButtonA.classList.add('page-link')
+	        nextButtonA.href = '#'
+	        nextButtonA.textContent = '>'
+	        nextButtonA.onclick = () => {
+				pageArrowButtonTapped(1)
+			}
+	        nextButton.appendChild(nextButtonA)
+	        paginationContainer.appendChild(nextButton) 
+		}
+
 	}
 	
 	function pageButtonActive() {
@@ -191,7 +229,16 @@
          pageItems.forEach(function(item) {
          	item.classList.remove('active')
          });
-		 pageItems[currentPage-1].classList.add('active')
+		 pageItems[currentPage+hasPrevButton-1].classList.add('active')
+	}
+	
+	function pageArrowButtonTapped(number) {
+		let willChangePage = currentPage + number 
+		if (willChangePage <= 0 || willChangePage > totalPages) {
+			return 
+		}
+		currentPage = willChangePage
+		fetchDatas(currentPage)
 	}
 
 </script>
