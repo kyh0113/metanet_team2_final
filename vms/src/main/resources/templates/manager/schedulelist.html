@@ -109,7 +109,6 @@
 	
 	    // 전체 페이지 수 계산
 	    totalPages = Math.ceil(rowNum / rowsPerPage);
-	
 	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
 	    let pagination = document.querySelector('.pagination');
 	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
@@ -148,7 +147,6 @@
 			}
 			a.onclick = () => {
 				currentPage = parseInt(i)		
-				console.log(i)
 				searchList(currentPage)
 			}
 	
@@ -176,8 +174,6 @@
   
   		})
 	}
-	
-	
     
     function showDetail(row) {
       let url = row.getAttribute('url');
@@ -200,6 +196,7 @@
           if(httpReq.status >= 200 && httpReq.status < 300){
     
              data = JSON.parse(httpReq.responseText)
+             console.log(data)
              reloadTable(data);
 
           }else{
@@ -238,17 +235,6 @@
         });
         pagination()
     }
-   
-   function movePage() {
-		let pageItems = document.querySelectorAll('.pagination .page-item');
-  		pageItems.forEach((item, index) => {
-			if(parseInt(item.firstChild.text) === currentPage) {
-				item.classList.add('active');
-			} else {
-				item.classList.remove('active');	
-			}
-	   	});
-	}
 	
 	function searchList(searchPage) {
 		currentPage = searchPage || 1 
@@ -280,6 +266,7 @@
 	            break;
 	        default:
           		searchInput.placeholder = '';
+          		searchInput.value = '';
 	            break;
 	    }
 	}
@@ -308,7 +295,7 @@
     </tbody>
   </table>
   <div class="input-group mb-3">
-   <select class="col-1 custom-select" id="searchTypeSelect" onchange="selectOptionChange()" style="margin-right: 10px;">
+   <select class="col-2 custom-select" id="searchTypeSelect" onchange="selectOptionChange()" style="margin-right: 10px;">
         <option value="0">전체</option>
         <option value="1">사원명</option>
         <option value="2">부서</option>
