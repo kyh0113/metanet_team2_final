@@ -1,6 +1,7 @@
 package com.example.vms.vacation.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.StackWalker.Option;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.Period;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.javassist.compiler.ast.Keyword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -433,7 +435,7 @@ public class VacationController {
         	    	return "manager/schedulelist";
         	    }
         	}
-        	return "redirect:/employee/login";
+        	return "manager/schedulelist";
         
         } else {
         	return "redirect:/employee/login";
@@ -442,7 +444,10 @@ public class VacationController {
 	
 	@ResponseBody
 	@GetMapping("/schedule/getrow")
-	public int getScheduleRowNum() {
+	public int getScheduleRowNum(
+			@RequestParam(name = "keyword", required=false, defaultValue = "") String keyword,
+			@RequestParam(name = "option", required = false, defaultValue ="0") String option
+			) {
 		
     	int rowNum = 0;
 		
@@ -458,17 +463,20 @@ public class VacationController {
         // 토큰에서 empId 추출
         //String empId = tokenProvider.getEmpId(token);
         
-		rowNum = vacationService.getCountScheduleByOption(1);
+		rowNum = vacationService.getCountScheduleByOption(keyword, Integer.parseInt(option));
 
     	return rowNum;
 	}
 	
 	@ResponseBody
 	@GetMapping("/schedule/getlist")
-	public List<ScheduleEmpDeptType> getScheduleList() {
+	public List<ScheduleEmpDeptType> getScheduleList(
+			@RequestParam(name = "keyword", required=false, defaultValue = "") String keyword,
+			@RequestParam(name = "option", required = false, defaultValue = "0") String option,
+			@RequestParam(name="curPage", required = false, defaultValue = "1") String curPage
+			) {
 		
-		
-		List<ScheduleEmpDeptType> schedulList =  vacationService.getScheduleListByOption(1);
+		List<ScheduleEmpDeptType> schedulList =  vacationService.getScheduleListByOption(curPage, keyword, Integer.parseInt(option));
 		
 		System.out.println("schedule"+schedulList);
 		return schedulList;
