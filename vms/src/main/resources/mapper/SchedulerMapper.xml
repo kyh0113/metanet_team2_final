@@ -2,24 +2,35 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.vms.scheduler.repository.ISchedulerRepository">
-	<select id="searchSchedulers" resultType="com.example.vms.scheduler.model.SchedulerResult">
-		SELECT 
-		    COUNT(*) OVER () AS totalRows,
-		    ROWNUM,
-		    SCHEDULE_ID AS scheduleId,
-		    WORK_DATE AS workDate,
-		    CONTENT,
-		    SUCCESS
-		FROM 
-		    SCHEDULER
-		WHERE  
-			(ROWNUM BETWEEN #{start} AND #{end})
-			<if test="success!=3">
-				AND SUCCESS = #{success}	
-			</if>
-			<if test="content != null">
-				AND CONTENT LIKE '#{content}%'
-			</if>
-	</select>
-	
+    <select id="searchSchedulers" resultType="com.example.vms.scheduler.model.SchedulerResult">
+        SELECT 
+            (
+                SELECT 
+                    COUNT(*) 
+                FROM 
+                    SCHEDULER 
+                WHERE 
+                    <if test="success != 3">
+                        SUCCESS = #{success} AND
+                    </if>
+                    <if test="content != null">
+                        CONTENT LIKE '%' || #{content} || '%'
+                    </if>
+            ) AS totalRows,
+            ROWNUM,
+            SCHEDULE_ID AS scheduleId, 
+            WORK_DATE AS workDate,
+            CONTENT,
+            SUCCESS
+        FROM 
+            SCHEDULER
+        WHERE  
+            ROWNUM BETWEEN #{start} AND #{end}
+            <if test="success != 3">
+                AND SUCCESS = #{success}	
+            </if>
+            <if test="content != null">
+                AND CONTENT LIKE '%' || #{content} || '%'
+            </if>
+    </select>
 </mapper>

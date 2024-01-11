@@ -23,10 +23,11 @@ public class SchedulerController {
 		@RequestParam(name = "start", defaultValue = "0") int start,
 		@RequestParam(name = "end", defaultValue = "10") int end, 
 		@RequestParam(name = "success", defaultValue = "3", required = false) int success,
-		@RequestParam(name = "conetent", required = false) String content 
+		@RequestParam(name = "content", defaultValue = "", required = false) String content 
 	) {
 		SchedulerResult[] schedulers = null;
-		schedulers = schedulerService.searchSchedulers(start, end, content, 1);
+		System.out.println(start + " 시작 " + end + " 끝 ");
+		schedulers = schedulerService.searchSchedulers(start, end, content, success);
 		return schedulers;
 	}
 	

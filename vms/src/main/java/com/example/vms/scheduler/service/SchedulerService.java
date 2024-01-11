@@ -9,15 +9,21 @@ import org.springframework.stereotype.Service;
 
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.repository.ICertificateRepository;
+import com.example.vms.schedule.repository.IScheduleRepository;
+import com.example.vms.scheduler.model.SchedulerResult;
+import com.example.vms.scheduler.repository.ISchedulerRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class SchedulerService {
+public class SchedulerService implements ISchedulerService {
 
     @Autowired
     private ICertificateRepository certificateRepository;
+    
+    @Autowired
+    private ISchedulerRepository schedulerRepository;
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void certificateScheduler() {
@@ -35,4 +41,9 @@ public class SchedulerService {
             
         }
     }
+
+	@Override
+	public SchedulerResult[] searchSchedulers(int start, int end, String content, int success) {
+		return schedulerRepository.searchSchedulers(start, end, content, success);
+	}
 }

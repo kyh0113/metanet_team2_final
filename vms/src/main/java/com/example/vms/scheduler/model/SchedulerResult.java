@@ -9,9 +9,19 @@ import lombok.ToString;
 @ToString
 public class SchedulerResult {
     private int totalRows;
-    private int rowNum;
+    private int num;
     private int scheduleId;
     private Date workDate;
     private String content;
     private int success;
+    
+    private String successText() {
+    	if (success==0) {
+    		return "실패";
+    	} else if (success==1) {
+    		return "성공";
+    	} else {
+    		return "알 수 없는 결과";
+    	}
+    }
 }
