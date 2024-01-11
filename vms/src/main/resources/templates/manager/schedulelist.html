@@ -80,16 +80,24 @@
 	/*<![CDATA[*/
 	
 	let httpReq=null;
-	let currentPage = 1;
-	
+	let currentPage = parseInt(1)
+	let keyword = ''
+	let option = 0
+	let totalPages = 1
+		
 	window.onload = function() {	
-    	showList();
-    	pagination();
+		viewDidLoad()
+    	searchList()
+	}
+	
+	function viewDidLoad() {
+		document.getElementById('searchTypeSelect').value = 0 
+		document.getElementById('searchInput').disabled = true
 	}
 	
 	function pagination() {
-		
-		let getRowNumUrl = "/vacation/schedule/getrow";
+		 
+		let getRowNumUrl = '/vacation/schedule/getrow?keyword='+keyword+'&option='+option
 		
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
@@ -100,11 +108,10 @@
 	    let rowsPerPage = 10;
 	
 	    // 전체 페이지 수 계산
-	    let totalPages = Math.ceil(rowNum / rowsPerPage);
-	
+	    totalPages = Math.ceil(rowNum / rowsPerPage);
 	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
 	    let pagination = document.querySelector('.pagination');
-	    pagination.innerHTML = '';  // 기존 페이지 번호 제거
+	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
 	
 		//이전 페이지 이동 버튼
 		let prev = document.createElement('li');
@@ -114,19 +121,21 @@
 	    prevLink.classList.add('page-link');
 	    prevLink.textContent = '<';
 	    prevLink.addEventListener('click', (event) => {
-			currentPage--;
-			if(currentPage < 1) currentPage = 1;
-			showList();
-			movePage();
+			if(currentPage <= 1) { 
+				currentPage = 1
+			} else {
+				currentPage -= 1 
+				searchList(currentPage)
+			}
 		});
 	    prev.appendChild(prevLink);
 	    pagination.appendChild(prev);
 	        
-	    for (var i = 1; i <= totalPages; i++) {
-	        var li = document.createElement('li');
+	    for (let i = 1; i <= totalPages; i++) {
+	        let li = document.createElement('li');
 	        li.classList.add('page-item');
 	
-	        var a = document.createElement('a');
+	        let a = document.createElement('a');
 	        a.classList.add('page-link');
 	      
 	        // 페이지 번호 텍스트 설정
@@ -136,11 +145,10 @@
 	        if(i == currentPage) {
 				li.classList.add('active');
 			}
-			
-			a.addEventListener('click', (event) => {
-				showList(event);
-				movePage();
-			});
+			a.onclick = () => {
+				currentPage = parseInt(i)		
+				searchList(currentPage)
+			}
 	
 	        li.appendChild(a);
 	        pagination.appendChild(li);
@@ -152,19 +160,20 @@
 		let nextLink = document.createElement('a');
 	    nextLink.classList.add('page-link');
 	    nextLink.textContent = '>';
-	    nextLink.addEventListener('click', (event) => {
-			currentPage++;
-			if(currentPage > totalPages) currentPage--;
-			showList();
-			movePage();
-		});
+	    nextLink.onclick = () => {
+			if(currentPage >= totalPages) { 
+				currentPage = totalPages 
+			} else {
+				currentPage += 1 
+			}
+			searchList(currentPage);				
+
+		}
 	    next.appendChild(nextLink);
 	    pagination.appendChild(next);
   
   		})
 	}
-	
-	
     
     function showDetail(row) {
       let url = row.getAttribute('url');
@@ -187,6 +196,7 @@
           if(httpReq.status >= 200 && httpReq.status < 300){
     
              data = JSON.parse(httpReq.responseText)
+             console.log(data)
              reloadTable(data);
 
           }else{
@@ -223,47 +233,42 @@
            	//row.setAttribute('onclick', "showDetail(this)");
            	
         });
+        pagination()
     }
-
-   function showList(e){
-	  
-	   let url = "";
-	   
-	   //페이지 번호 클릭 이동
-	   if(e != null) {
-		   //console.log(e.target.text);
-		   currentPage = e.target.text;
-	   }
-
-	    url = "/vacation/schedule/getlist?curpage="+currentPage;
-	    
-      httpReq = getInstance();
-      httpReq.onreadystatechange = handlerStateChange;  // x >> ()
-      
-      httpReq.open("GET",url); //form 태그 구성
-      httpReq.send(); // form submit 버튼 클릭
-   }
-   
-   function movePage() {
-		let pageItems = document.querySelectorAll('.pagination .page-item');
-  		pageItems.forEach((item, index) => {
-			if(item.firstChild.text == currentPage) {
-				item.classList.add('active');
-			} else {
-				item.classList.remove('active');	
-			}
-	   	});
-	}
 	
-	function searchList() {
+	function searchList(searchPage) {
+		currentPage = searchPage || 1 
 	    let searchKeyword = document.getElementById('searchInput').value;
-	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword;
-	    
+	    keyword = searchKeyword
+	    let selectOptionValue = document.getElementById('searchTypeSelect').value;
+	    option = selectOptionValue
+	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword + "&option=" + selectOptionValue + "&curPage=" + currentPage;
 	    httpReq = getInstance();
 	    httpReq.onreadystatechange = handlerStateChange;
 	    
 	    httpReq.open("GET", url);
 	    httpReq.send();
+	}
+	
+	function selectOptionChange() {
+	    let selectOptionValue = parseInt(document.getElementById('searchTypeSelect').value);
+	    let searchInput = document.getElementById('searchInput');
+	    searchInput.disabled = (selectOptionValue === 0);
+	    switch (selectOptionValue) {
+	        case 1:
+	            searchInput.placeholder = '사원명 입력';
+	            break;
+	        case 2:
+	            searchInput.placeholder = '부서 입력';
+	            break;
+	        case 3:
+	            searchInput.placeholder = '직위 입력';
+	            break;
+	        default:
+          		searchInput.placeholder = '';
+          		searchInput.value = '';
+	            break;
+	    }
 	}
     
     /*]]>*/
@@ -290,7 +295,13 @@
     </tbody>
   </table>
   <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="사원명 검색" id="searchInput">
+   <select class="col-2 custom-select" id="searchTypeSelect" onchange="selectOptionChange()" style="margin-right: 10px;">
+        <option value="0">전체</option>
+        <option value="1">사원명</option>
+        <option value="2">부서</option>
+    	<option value="3">직위</option>
+    </select>
+    <input type="text" class="form-control" id="searchInput">
     <div class="input-group-append">
       <button class="btn btn-outline-secondary" type="button" onclick="searchList()">검색</button>
     </div>

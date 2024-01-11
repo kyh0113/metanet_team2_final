@@ -168,7 +168,7 @@ public class VacationService implements IVacationService {
 		int curPageNum = Integer.parseInt(curPage);
 		int startNum = curPageNum*10 - 9;
 		int endNum = curPageNum*10;
-		
+		System.out.println("startatart:    "+startNum+"  endeneeendnendend:   "+endNum);
 		List<ScheduleEmpDeptType> scheduleList;
 		switch (option) {
 		case 1:	//사원명

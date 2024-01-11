@@ -29,21 +29,21 @@
 		SELECT count(*)
 		FROM SCHEDULE s JOIN EMPLOYEES e
 		ON s.EMP_ID = e.EMP_ID
-		WHERE e.NAME like '%#{empName}%'
+		WHERE e.NAME like '%' || #{empName} || '%'
 	</select>
 	
 	<select id="getCountScheduleByDeptName" resultType="int" parameterType="string">
 		SELECT count(*)
 		FROM SCHEDULE s JOIN DEPARTMENTS d
 		ON s.DEPT_ID = d.DEPT_ID
-		WHERE d.NAME like '%#{deptName}%'
+		WHERE d.NAME like '%' || #{deptName} || '%'
 	</select>
 	
 	<select id="getCountScheduleByPosition" resultType="int" parameterType="string">
 		SELECT count(*)
 		FROM SCHEDULE s JOIN EMPLOYEES e
 		ON s.EMP_ID = e.EMP_ID
-		WHERE e.POSITION like '%#{position}%'
+		WHERE e.POSITION like '%' || #{position} || '%'
 	</select>
 	
 	<select id="getAllScheduleList" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
@@ -80,6 +80,69 @@
 	
 	<select id="maxScheduleId" resultType="int"> 
 		SELECT NVL(MAX(CALENDER_ID),0) FROM SCHEDULE
+	</select>
+	
+	<select id="getScheduleListByEmpName" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
+		SELECT *
+			FROM (
+			    SELECT rownum as num, r.*
+			    FROM (
+					SELECT 
+					    s.CALENDER_ID as calendarId,
+					    d.NAME as deptName,
+					    e.NAME as empName,
+					    e.POSITION as position,
+					    t.NAME as TypeName,
+					    s.START_DATE as startDate,
+					    s.END_DATE as endDate
+					FROM 
+					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
+					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+			    ) r
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND empName like '%' || #{empName} || '%'
+	</select>
+	
+	<select id="getScheduleListByDeptName" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
+		SELECT *
+			FROM (
+			    SELECT rownum as num, r.*
+			    FROM (
+					SELECT 
+					    s.CALENDER_ID as calendarId,
+					    d.NAME as deptName,
+					    e.NAME as empName,
+					    e.POSITION as position,
+					    t.NAME as TypeName,
+					    s.START_DATE as startDate,
+					    s.END_DATE as endDate
+					FROM 
+					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
+					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+			    ) r
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND deptName like '%' || #{deptName} || '%'
+	</select>
+	
+	<select id="getScheduleListByPosition" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
+		SELECT *
+			FROM (
+			    SELECT rownum as num, r.*
+			    FROM (
+					SELECT 
+					    s.CALENDER_ID as calendarId,
+					    d.NAME as deptName,
+					    e.NAME as empName,
+					    e.POSITION as position,
+					    t.NAME as TypeName,
+					    s.START_DATE as startDate,
+					    s.END_DATE as endDate
+					FROM 
+					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
+					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+			    ) r
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND position like '%' || #{position} || '%'
 	</select>
 	
 </mapper>

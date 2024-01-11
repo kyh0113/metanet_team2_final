@@ -362,7 +362,7 @@ public class VacationController {
         	    	return "manager/schedulelist";
         	    }
         	}
-        	return "redirect:/employee/login";
+        	return "manager/schedulelist";
         
         } else {
         	return "redirect:/employee/login";
@@ -400,7 +400,7 @@ public class VacationController {
 	public List<ScheduleEmpDeptType> getScheduleList(
 			@RequestParam(name = "keyword", required=false, defaultValue = "") String keyword,
 			@RequestParam(name = "option", required = false, defaultValue = "0") String option,
-			@RequestParam(name="curpage", required = false, defaultValue = "1") String curPage
+			@RequestParam(name="curPage", required = false, defaultValue = "1") String curPage
 			) {
 		
 		List<ScheduleEmpDeptType> schedulList =  vacationService.getScheduleListByOption(curPage, keyword, Integer.parseInt(option));

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>스케줄러 목록 페이지</title>
+</head>
+<body>
+	
+	<div class="container mt-5">
+	    <div class="row">
+	        <div class="col-md-3">
+	            <div class="form-group">
+	                <label for="successSelect">상태</label>
+	                <select id="successSelect" class="form-control">
+	                    <option value="3">전체</option>
+	                    <option value="1">성공</option>
+	                    <option value="0">실패</option>
+	                </select>
+	            </div>
+	        </div>
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label for="contentInput">내용 검색</label>
+	                <input type="text" id="contentInput" class="form-control">
+	            </div>
+	        </div>
+	        <div class="col-md-3">
+	            <div class="form-group">
+					<label for="successSelect"><P></P></label>
+	                <button onclick="searchSchedulers()" class="btn btn-primary btn-block">검색</button>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <div id="resultTable" class="mt-3" style="text-align: center;">
+			<table class="table mt-3">
+		        <thead>
+		            <tr>
+		                <th>스케줄러 ID</th>
+		                <th>작동 시간</th>
+		                <th>내용</th>
+		                <th>작동 상태</th>
+		            </tr>
+		        </thead>
+		        <tbody id="resultTableBody"></tbody>
+		    </table>
+		  	<nav aria-label="Page navigation" class="d-flex justify-content-center">
+			    <ul class="pagination" id="pagination">
+					<li class="page-item" onclick="fetchDatas(1)"><a class="page-link" href="#"><</a></li>
+					<li class="page-item" onclick="fetchDatas(1)"><a class="page-link" href="#">></a></li>
+				</ul>
+			</nav>
+		</div>
+		
+		
+	</div>
+		
+    
+<script>
+
+	let numberOfItems = 0
+	let step = 10 
+	let start = 0
+	let end = 10 
+	let currentPage = 1 
+	let content = ""
+	let success = 3
+	let totalPages = 1
+	let hasPrevButton = 0 
+	dataLoad()
+	fetchDatas(currentPage)
+	
+	function fetchDatas(selectedPage) {
+		currentPage = selectedPage
+		start = (currentPage-1) * step
+		end = currentPage * step 
+		let url = "/scheduler/list?start=" + start + "&end=" + end + "&success=" + success + "&content=" + content
+		var xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                 var data = JSON.parse(xhr.responseText)
+                 reloadTable(data)
+            }
+        }
+        xhr.send()
+	}
+	
+	function saveData() {
+		sessionStorage.setItem('schedulerCurrentPage', currentPage)
+		sessionStorage.setItem('schedulerSearchText', content)
+		sessionStorage.setItem('schedulerSuccessOption', success)
+	}
+	
+	function dataLoad() {
+		currentPage = sessionStorage.getItem('schedulerCurrentPage') || 1 
+		content = sessionStorage.getItem('schedulerSearchText') || ''
+		success = sessionStorage.getItem('schedulerSuccessOption') || 3
+		document.getElementById('contentInput').value = content
+		let dropdown = document.getElementById("successSelect");
+		for (var i = 0; i < dropdown.options.length; i++) {
+		    if (parseInt(dropdown.options[i].value) === success) {
+		        dropdown.options[i].selected = true;
+		        break;
+		    }
+		}
+
+		resetData()
+	}
+	
+	function resetData() {
+		sessionStorage.removeItem('schedulerCurrentPage')
+		sessionStorage.removeItem('schedulerSearchText')
+		sessionStorage.removeItem('schedulerSuccessOption')
+	}
+	
+	function searchSchedulers() {
+		content = document.getElementById('contentInput').value
+		success = document.getElementById("successSelect").value
+		fetchDatas(1)
+	}
+	
+	function reloadTable(items) {
+		
+		document.getElementById('resultTableBody').innerHTML = ''
+		if (items.length==0) {
+			numberOfItems = 0 
+			pageButtonReload() 
+			pageButtonActive()
+			return
+		}
+		for (let i=0; i<items.length; i++) {
+			let item = items[i]
+			numberOfItems = item.totalRows
+
+            let newRow = resultTableBody.insertRow(resultTableBody.rows.length);
+
+            let cellSchedulerId = newRow.insertCell(0);
+            cellSchedulerId.innerHTML = item.scheduleId;
+
+            let cellWorkDate = newRow.insertCell(1);
+            cellWorkDate.innerHTML = item.workDate;
+
+            let cellContent = newRow.insertCell(2);
+            cellContent.innerHTML = item.content;
+
+            let cellSuccess = newRow.insertCell(3);
+            let successText;
+            if (item.success==0) {
+				successText = "실패"
+			} else if (item.success==1) {
+				successText = "성공"
+			} else {
+				successText = "알 수 없는 결과"
+			}
+            cellSuccess.innerHTML = successText
+		}
+		
+		pageButtonReload() 
+		pageButtonActive()
+	}
+	
+	function pageButtonReload() {
+		let paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = ''; // 페이지네이션 초기화
+
+        totalPages = Math.ceil(numberOfItems / step);
+        
+        // 이전 버튼 
+        if (currentPage>1 && currentPage<=totalPages) {
+			let previousButton = document.createElement('li')
+	        previousButton.classList.add('page-item')
+	            
+	        let previousButtonA = document.createElement('a')
+	        previousButtonA.classList.add('page-link')
+	        previousButtonA.href = '#'
+	        previousButtonA.textContent = '<'
+	        previousButtonA.onclick = () => {
+				pageArrowButtonTapped(-1)
+			}
+	        previousButton.appendChild(previousButtonA)
+	        paginationContainer.appendChild(previousButton)
+	        hasPrevButton = 1 
+		} else {
+			hasPrevButton = 0 
+		}
+
+		// 내부 페이지 버튼 
+        for (let i = 1; i <= totalPages; i++) {
+            let li = document.createElement('li');
+            li.classList.add('page-item');
+            
+            let a = document.createElement('a');
+            a.classList.add('page-link');
+            a.href = '#';
+            a.textContent = i;
+
+            a.onclick = function() {
+                fetchDatas(i);
+            };
+
+            li.appendChild(a);
+            paginationContainer.appendChild(li);
+        }
+        
+        // 이후 버튼
+        if (currentPage<totalPages) {
+			let nextButton = document.createElement('li')
+	        nextButton.classList.add('page-item')
+	            
+	        let nextButtonA = document.createElement('a')
+	        nextButtonA.classList.add('page-link')
+	        nextButtonA.href = '#'
+	        nextButtonA.textContent = '>'
+	        nextButtonA.onclick = () => {
+				pageArrowButtonTapped(1)
+			}
+	        nextButton.appendChild(nextButtonA)
+	        paginationContainer.appendChild(nextButton) 
+		}
+
+	}
+	
+	function pageButtonActive() {
+		 var pageItems = document.querySelectorAll('.pagination .page-item')
+         pageItems.forEach(function(item) {
+         	item.classList.remove('active')
+         });
+		 pageItems[currentPage+hasPrevButton-1].classList.add('active')
+	}
+	
+	function pageArrowButtonTapped(number) {
+		let willChangePage = currentPage + number 
+		if (willChangePage <= 0 || willChangePage > totalPages) {
+			return 
+		}
+		currentPage = willChangePage
+		fetchDatas(currentPage)
+	}
+
+</script>
+
+</body>
+</html>
