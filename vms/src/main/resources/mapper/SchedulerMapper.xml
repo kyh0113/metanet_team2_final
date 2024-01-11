@@ -3,6 +3,15 @@
 
 <mapper namespace="com.example.vms.scheduler.repository.ISchedulerRepository">
     <select id="searchSchedulers" resultType="com.example.vms.scheduler.model.SchedulerResult">
+		SELECT 
+			S.totalRows,
+			S.num,
+			S.scheduleId,
+			S.workDate,
+			S.content,
+			s.success
+		FROM (
+		
         SELECT 
             (
                 SELECT 
@@ -16,21 +25,24 @@
                     <if test="content != null">
                         CONTENT LIKE '%' || #{content} || '%'
                     </if>
-            ) AS totalRows,
-            ROWNUM,
-            SCHEDULE_ID AS scheduleId, 
-            WORK_DATE AS workDate,
-            CONTENT,
-            SUCCESS
-        FROM 
-            SCHEDULER
-        WHERE  
-            ROWNUM BETWEEN #{start} AND #{end}
-            <if test="success != 3">
-                AND SUCCESS = #{success}	
-            </if>
-            <if test="content != null">
-                AND CONTENT LIKE '%' || #{content} || '%'
-            </if>
+	        ) AS totalRows,
+	            ROWNUM as NUM,
+	            SCHEDULE_ID AS scheduleId, 
+	            WORK_DATE AS workDate,
+	            CONTENT,
+	            SUCCESS
+	        FROM 
+	            SCHEDULER
+	        WHERE  
+	 
+	            <if test="success != 3">
+	                SUCCESS = #{success} AND 
+	            </if>
+	            <if test="content != null">
+	                CONTENT LIKE '%' || #{content} || '%'
+	            </if>
+            ) s 
+         WHERE 
+         	NUM BETWEEN #{start} AND #{end}
     </select>
 </mapper>
