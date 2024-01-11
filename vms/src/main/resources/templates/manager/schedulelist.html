@@ -80,12 +80,14 @@
 	/*<![CDATA[*/
 	
 	let httpReq=null;
-	let currentPage = 1;
-	
+	let currentPage = parseInt(1)
+	let keyword = ''
+	let option = 0
+	let totalPages = 1
+		
 	window.onload = function() {	
 		viewDidLoad()
-    	showList();
-    	pagination();
+    	searchList()
 	}
 	
 	function viewDidLoad() {
@@ -94,8 +96,8 @@
 	}
 	
 	function pagination() {
-		
-		let getRowNumUrl = "/vacation/schedule/getrow";
+		 
+		let getRowNumUrl = '/vacation/schedule/getrow?keyword='+keyword+'&option='+option
 		
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
@@ -106,11 +108,11 @@
 	    let rowsPerPage = 10;
 	
 	    // 전체 페이지 수 계산
-	    let totalPages = Math.ceil(rowNum / rowsPerPage);
+	    totalPages = Math.ceil(rowNum / rowsPerPage);
 	
 	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
 	    let pagination = document.querySelector('.pagination');
-	    pagination.innerHTML = '';  // 기존 페이지 번호 제거
+	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
 	
 		//이전 페이지 이동 버튼
 		let prev = document.createElement('li');
@@ -120,10 +122,12 @@
 	    prevLink.classList.add('page-link');
 	    prevLink.textContent = '<';
 	    prevLink.addEventListener('click', (event) => {
-			currentPage--;
-			if(currentPage < 1) currentPage = 1;
-			showList();
-			movePage();
+			if(currentPage <= 1) { 
+				currentPage = 1
+			} else {
+				currentPage -= 1 
+				searchList(currentPage)
+			}
 		});
 	    prev.appendChild(prevLink);
 	    pagination.appendChild(prev);
@@ -143,10 +147,11 @@
 				li.classList.add('active');
 			}
 			
-			a.addEventListener('click', (event) => {
-				showList(event);
-				movePage();
-			});
+			a.onclick = () => {
+				currentPage = i-1 
+				
+				searchList(currentPage)
+			}
 	
 	        li.appendChild(a);
 	        pagination.appendChild(li);
@@ -158,12 +163,15 @@
 		let nextLink = document.createElement('a');
 	    nextLink.classList.add('page-link');
 	    nextLink.textContent = '>';
-	    nextLink.addEventListener('click', (event) => {
-			currentPage++;
-			if(currentPage > totalPages) currentPage--;
-			showList();
-			movePage();
-		});
+	    nextLink.onclick = () => {
+			if(currentPage >= totalPages) { 
+				currentPage = totalPages 
+			} else {
+				currentPage += 1 
+			}
+			searchList(currentPage);				
+
+		}
 	    next.appendChild(nextLink);
 	    pagination.appendChild(next);
   
@@ -193,7 +201,6 @@
           if(httpReq.status >= 200 && httpReq.status < 300){
     
              data = JSON.parse(httpReq.responseText)
-             console.log(data)
              reloadTable(data);
 
           }else{
@@ -230,31 +237,13 @@
            	//row.setAttribute('onclick', "showDetail(this)");
            	
         });
+        pagination()
     }
-
-   function showList(e){
-	  
-	   let url = "";
-	   
-	   //페이지 번호 클릭 이동
-	   if(e != null) {
-		   //console.log(e.target.text);
-		   currentPage = e.target.text;
-	   }
-
-	    url = "/vacation/schedule/getlist?curpage="+currentPage;
-	    
-      httpReq = getInstance();
-      httpReq.onreadystatechange = handlerStateChange;  // x >> ()
-      
-      httpReq.open("GET",url); //form 태그 구성
-      httpReq.send(); // form submit 버튼 클릭
-   }
    
    function movePage() {
 		let pageItems = document.querySelectorAll('.pagination .page-item');
   		pageItems.forEach((item, index) => {
-			if(item.firstChild.text == currentPage) {
+			if(parseInt(item.firstChild.text) === currentPage) {
 				item.classList.add('active');
 			} else {
 				item.classList.remove('active');	
@@ -262,11 +251,13 @@
 	   	});
 	}
 	
-	function searchList() {
+	function searchList(searchPage) {
+		currentPage = searchPage || 1 
 	    let searchKeyword = document.getElementById('searchInput').value;
+	    keyword = searchKeyword
 	    let selectOptionValue = document.getElementById('searchTypeSelect').value;
-	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword + "&option=" + selectOptionValue;
-	    console.log(url)
+	    option = selectOptionValue
+	    let url = "/vacation/schedule/getlist?keyword=" + searchKeyword + "&option=" + selectOptionValue + "&curPage=" + currentPage;
 	    httpReq = getInstance();
 	    httpReq.onreadystatechange = handlerStateChange;
 	    
