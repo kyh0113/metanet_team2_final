@@ -25,6 +25,6 @@ public interface IVacationService {
 	int getCountRequestList(String empId, String state);
 	List<VacationEmployee> getRequestList(String empId, String state, String curPage);
 	
-	int getCountScheduleByOption(int option);
-	List<ScheduleEmpDeptType> getScheduleListByOption(int option);
+	int getCountScheduleByOption(String keyword, int option);
+	List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option);
 }

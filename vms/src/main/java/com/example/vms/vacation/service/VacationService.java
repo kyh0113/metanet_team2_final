@@ -164,13 +164,39 @@ public class VacationService implements IVacationService {
 	}
 
 	@Override
-	public List<ScheduleEmpDeptType> getScheduleListByOption(int option) {
-		return scheduleDao.getAllSchedule();
+	public List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option) {
+		int curPageNum = Integer.parseInt(curPage);
+		int startNum = curPageNum*10 - 9;
+		int endNum = curPageNum*10;
+		
+		List<ScheduleEmpDeptType> scheduleList;
+		switch (option) {
+		case 1:	//사원명
+			scheduleList = scheduleDao.getScheduleListByEmpName(startNum, endNum, keyword); break;
+		case 2:	//부서
+			scheduleList = scheduleDao.getScheduleListByDeptName(startNum, endNum, keyword); break;
+		case 3: //직위
+			scheduleList = scheduleDao.getScheduleListByPosition(startNum, endNum, keyword); break;
+		default: //전체
+			scheduleList = scheduleDao.getAllScheduleList(startNum, endNum); break;
+		}
+		return scheduleList;
 	}
 
 	@Override
-	public int getCountScheduleByOption(int option) {
-		return scheduleDao.getCountAllSchedule();
+	public int getCountScheduleByOption(String keyword, int option) {
+		int rowNum = 0;
+		switch (option) {
+		case 1:	//사원명
+			rowNum = scheduleDao.getCountScheduleByEmpName(keyword); break;
+		case 2:	//부서
+			rowNum = scheduleDao.getCountScheduleByDeptName(keyword); break;
+		case 3: //직위
+			rowNum = scheduleDao.getCountScheduleByPosition(keyword); break;
+		default: //전체
+			rowNum = scheduleDao.getCountAllSchedule(); break;
+		}
+		return rowNum;
 	}
 
 }
