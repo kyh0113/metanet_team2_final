@@ -109,11 +109,11 @@
 		parameterType="com.example.vms.vacation.model.Vacation">
 		INSERT INTO VACATION_REG (
 		reg_id, start_date, end_date, reg_date, denied_content, content, emp_id,
-		type_id
+		type_id,vacation_days
 		) VALUES (
 		#{regId}, #{startDate,jdbcType=DATE}, #{endDate, jdbcType=DATE},
 		#{regDate, jdbcType=DATE}, #{deniedContent, jdbcType=VARCHAR},
-		#{content}, #{empId}, #{typeId, jdbcType=NUMERIC}
+		#{content}, #{empId}, #{typeId, jdbcType=NUMERIC}, #{vacationDays}
 		)
 	</insert>
 

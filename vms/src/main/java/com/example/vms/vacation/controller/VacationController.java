@@ -153,6 +153,8 @@ public class VacationController {
 			
 			// 휴가 정보 설정
 			vacation.setEmpId(empId);
+			
+			vacation.setVacationDays(calculateWorkingDaysBetween(vacation.getStartDate(), vacation.getEndDate()));
 
 			// 휴가 등록
 			vacationService.requestVacation(vacation, files);
