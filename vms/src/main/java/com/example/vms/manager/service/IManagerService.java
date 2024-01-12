@@ -16,6 +16,7 @@ public interface IManagerService {
 	List<Employee> getAllEmployees();
 	String generateEmployeeId(int deptId, LocalDate hireDate);
 	String encodePassword(String password);
+	List<Employee> findEmployeesWithAtLeastOneVacation();
 	
     EmployeeResponseDTO[] searchEmployees(int start, int end, String empId);
     int numberOfEmployees();
