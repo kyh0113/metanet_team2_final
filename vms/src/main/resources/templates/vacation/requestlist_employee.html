@@ -85,29 +85,15 @@
 		removeSessionItem();
 	}
 	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
-	let isCancel = getSessionItem('isCancel') || false;
 	
-	if(isCancel === "true") {
-		isCancel = true;
-	} else {
-		isCancel = false;
-	}
-	
-	window.onload = function() {	
-    	let cancelBtn = document.querySelector(".cancel");
-		if(isCancel) cancelBtn.classList.add('active');
-		else cancelBtn.classList.remove('active');
-		
+	window.onload = function() {			
     	showList();
-    	pagination(isCancel);
+    	pagination();
 	}
 	
-	function pagination(cancel) {
+	function pagination() {
 	
 		let getRowNumUrl = "/vacation/request/getrow";
-		if(cancel) {
-			getRowNumUrl = "/vacation/request/getrow?state=취소"
-		}
 		
 	    fetch(getRowNumUrl)
   		.then((response) => response.json())
@@ -241,20 +227,13 @@
 
    function showList(e){
 	   
-	   let url = "";
-	   
 	   //페이지 번호 클릭 이동
 	   if(e != null) {
 		   currentPage = e.target.text;
 	   }
 	   
-	  let cancelBtn = document.querySelector(".waiting");
+	  let url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
 	  
-	  if (isCancel) {
-	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=취소";
-	  } else {
-	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
-	  }
 	  
       httpReq = getInstance();
       httpReq.onreadystatechange = handlerStateChange;  // x >> ()
@@ -263,19 +242,8 @@
       httpReq.send(); // form submit 버튼 클릭
    }
    
-   function showWaiting() {
-	  currentPage = 1;
-	  let cancelBtn = document.querySelector(".cancel");
-	  cancelBtn.classList.toggle("active");
-	  isCancel = !isCancel;
-	  showList();
-	  
-	  pagination(isCancel);
-   }
-   
    function setSessionItem() {
 		sessionStorage.setItem('currentPage', currentPage);
-		sessionStorage.setItem('isCancel', getInstance);
 	}
 
 	function getSessionItem(key) {
@@ -284,7 +252,6 @@
 	
 	function removeSessionItem() {
     	sessionStorage.removeItem('currentPage');
-		sessionStorage.removeItem('isCancel');
 	}
 	
 	function movePage() {
@@ -305,7 +272,7 @@
 <body>
 
 <div class="container">
-  <h4>휴가 신청 내역 <span class="cancel" onclick="showWaiting()">취소 내역</span></h4>
+  <h4>휴가 신청 내역</h4>
 
   <table class="table">
     <thead>
