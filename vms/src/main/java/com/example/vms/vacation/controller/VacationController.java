@@ -2,6 +2,7 @@ package com.example.vms.vacation.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Collection;
@@ -184,19 +185,41 @@ public class VacationController {
 		// 휴가 유형 검색
 		String typeName = vacationService.getVacationTypeName(vacation.getTypeId());
 		// 휴가일수 계산
-		Period period = Period.between(vacation.getStartDate(), vacation.getEndDate());
+		int workingDays = calculateWorkingDaysBetween(vacation.getStartDate(), vacation.getEndDate());
+		
 		// 파일 리스트 가져오기
 		List<UploadFile> files = vacationService.getFileList(regIdNumber);
 		System.out.println(files);
+		
 		System.out.println(vacation);
 		model.addAttribute("vacation", vacation);
 		model.addAttribute("employee", employee);
 		model.addAttribute("deptName", deptName);
 		model.addAttribute("typeName", typeName);
-		model.addAttribute("vacationPeriod", period.getDays() + 1);
+		model.addAttribute("vacationPeriod", workingDays);
 		model.addAttribute("files", files);
 		return "vacation/requestdetail_employee";
 	}
+	
+	
+	public static int calculateWorkingDaysBetween(LocalDate startDate, LocalDate endDate) {
+        int workingDays = 0;
+        LocalDate currentDate = startDate;
+
+        while (!currentDate.isAfter(endDate)) {
+            if (currentDate.getDayOfWeek() != DayOfWeek.SATURDAY && currentDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                workingDays++;
+            }
+            currentDate = currentDate.plusDays(1);
+        }
+
+        return workingDays;
+    }
+	
+	
+	
+	
+	
 
 	@ResponseBody
 	@GetMapping("/request/getrow")

@@ -29,7 +29,7 @@
 		</if>
 		) AS totalRows,
 		ROWNUM as NUM,
-		SCHEDULE_ID AS scheduleId,
+		SCHEDULER_ID AS scheduleId,
 		WORK_DATE AS workDate,
 		CONTENT,
 		SUCCESS
