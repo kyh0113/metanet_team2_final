@@ -161,7 +161,7 @@ public class VacationController {
 			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
 			for (GrantedAuthority authority : authorities) {
 				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("팀장")) {
+				if (authority.getAuthority().equals("ROLE_LEADER")) {
 					model.addAttribute("return", returnString);
 					return "vacation/requestlist_supervisor";
 				}
@@ -220,7 +220,7 @@ public class VacationController {
 		Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
 		for (GrantedAuthority authority : authorities) {
 			// String authorityName = authority.getAuthority();
-			if (authority.getAuthority().equals("팀장")) {
+			if (authority.getAuthority().equals("ROLE_LEADER")) {
 				isLeader = true;
 			}
 		}
@@ -266,7 +266,7 @@ public class VacationController {
 		Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
 		for (GrantedAuthority authority : authorities) {
 			// String authorityName = authority.getAuthority();
-			if (authority.getAuthority().equals("팀장")) {
+			if (authority.getAuthority().equals("ROLE_LEADER")) {
 				isLeader = true;
 			}
 		}
@@ -395,7 +395,7 @@ public class VacationController {
 			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
 			for (GrantedAuthority authority : authorities) {
 				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("팀장")) {
+				if (authority.getAuthority().equals("ROLE_LEADER")) {
 					return "manager/schedulelist";
 				}
 			}
