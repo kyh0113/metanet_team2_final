@@ -236,33 +236,7 @@ public class CertificateController {
     	}
 		return null;
     }
-    
-    // 증명서 진위 확인 화면 
-    @GetMapping("/verificate")
-    public String verificatePage(
-    	HttpServletRequest request,
-        Model model
-    ) {
-		// 쿠키 정보
-        Cookie[] cookies = request.getCookies();
-        String token = "";
-        for(Cookie cookie : cookies) {
-           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-              token = cookie.getValue();
-           }
-        }
-        // 토큰 유효성 검사
-        if (tokenProvider.validateToken(token)) { 
-            // 토큰에서 empId 추출
-            String empId = tokenProvider.getEmpId(token);
-    		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
-    		model.addAttribute("employee", employee);
-            return "certificate/certificateverificationpage";      	
-        }
-        
-        return "redirect:/employee/login";
-
-    }
+   
     
     // 증명서 검색 화면 
     @GetMapping("/verificate/view") 
