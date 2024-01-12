@@ -166,6 +166,8 @@ public class CertificateController {
             // 토큰에서 empId 추출
             String empId = tokenProvider.getEmpId(token);
         	model.addAttribute("empId", empId);
+            Employee employee = employeeService.selectEmployee(empId);
+            model.addAttribute("employee", employee);
         	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(empId));
         	return "certificate/view";
         } else {

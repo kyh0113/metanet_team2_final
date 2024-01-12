@@ -11,40 +11,6 @@
 	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
   	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
 </head>
-<style>
-	#certificateRequestBody {
-		padding: 20px;
-	}
-	table {
-	  border: 1px #a39485 solid;
-	  font-size: .9em;
-	  box-shadow: 0 2px 5px rgba(0,0,0,.25);
-	  width: 100%;
-	  border-collapse: collapse;
-	  border-radius: 5px;
-	  overflow: hidden;
-	}
-	
-	th {
-	  text-align: left;
-	}
-	  
-	thead {
-	  font-weight: bold;
-	  color: #fff;
-	  background: #73685d;
-	}
-	  
-	 td, th {
-	  padding: 1em .5em;
-	  vertical-align: middle;
-	}
-	  
-	 td {
-	  border-bottom: 1px solid rgba(0,0,0,.1);
-	  background: #fff;
-	}
-</style>
 <body>
 	
 		
@@ -116,6 +82,18 @@
             </li>
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">AUTH</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/employee/logout" aria-expanded="false">
+                <span>
+				<i class="ti ti-logout"></i>
+                </span>
+                <span class="hide-menu">Logout</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Admin</span>
             </li>
             <li class="sidebar-item">
@@ -140,6 +118,14 @@
 					<i class="ti ti-clock-2"></i>
                 </span>
                 <span class="hide-menu">스케줄러 관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/certificate/verificate" aria-expanded="false">
+                <span>
+					<i class="ti ti-id-badge"></i>
+                </span>
+                <span class="hide-menu">인증서 검증</span>
               </a>
             </li>
           </ul>
@@ -178,42 +164,44 @@
       </header>
       <!--  Header End -->
       <div class="container-fluid">
-	<div id="certificateRequestBody">
-		<h2>증명서 발급</h2>
-	    <table>
-	        <thead>
-	            <th>양식명</th>
-	            <th>양식설명</th>
-	            <th colspan="1"></th>
-	            <th colspan="1"></th>
-	        </thead>
-	        <tbody>
-		        <tr>
-		            <td>경력증명서</td>
-		            <td>경력을 증명는 문서입니다.</td>
-		            <td><button onclick="certificatePreViewOpen('경력증명서')" class="btn btn-primary">미리보기</button></td>
-		            <td><button onclick="requestCertificate('경력증명서')" class="btn btn-success">신청</button></td>
-		        </tr>
-		        <tr>
-		            <td>재직증명서</td>
-		            <td>재직을 증명하는 문서입니다.</td>
-		            <td><button th:if="${employee.retireDate == null}" onclick="certificatePreViewOpen('재직증명서')" 
-		            		class="btn btn-primary">미리보기</button></td>
-		            <td><button th:if="${employee.retireDate == null}" onclick="requestCertificate('재직증명서')" 
-		            		class="btn btn-success">신청</button></td>
-		        </tr>
-		        <tr>
-		            <td>퇴직증명서</td>
-		            <td>퇴사를 증명하는 문서입니다.</td>
-		            <td><button th:if="${employee.retireDate != null}" onclick="certificatePreViewOpen('퇴직증명서')"
-		                    class="btn btn-primary">미리보기</button></td>
-		            <td><button th:if="${employee.retireDate != null}" onclick="requestCertificate('퇴직증명서')"
-		                    class="btn btn-success">신청</button></td>
-		        </tr>
-			</tbody>
-	
-	    </table>	
-	</div>
+		  
+    <div class="container mt-5">
+        <h4 style="margin-bottom: 20px; font-weight: bold;">증명서 발급</h4>
+        <table class="table" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th>양식명</th>
+                    <th>양식설명</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>경력증명서</td>
+                    <td>경력을 증명하는 문서입니다.</td>
+                    <td><button onclick="certificatePreViewOpen('경력증명서')" class="btn btn-primary">미리보기</button></td>
+                    <td><button onclick="requestCertificate('경력증명서')" class="btn btn-success">신청</button></td>
+                </tr>
+                <tr>
+                    <td>재직증명서</td>
+                    <td>재직을 증명하는 문서입니다.</td>
+                    <td><button th:if="${employee.retireDate == null}" onclick="certificatePreViewOpen('재직증명서')"
+                            class="btn btn-primary">미리보기</button></td>
+                    <td><button th:if="${employee.retireDate == null}" onclick="requestCertificate('재직증명서')"
+                            class="btn btn-success">신청</button></td>
+                </tr>
+                <tr>
+                    <td>퇴직증명서</td>
+                    <td>퇴사를 증명하는 문서입니다.</td>
+                    <td><button th:if="${employee.retireDate != null}" onclick="certificatePreViewOpen('퇴직증명서')"
+                            class="btn btn-primary">미리보기</button></td>
+                    <td><button th:if="${employee.retireDate != null}" onclick="requestCertificate('퇴직증명서')"
+                            class="btn btn-success">신청</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
       </div>
     </div>
   </div>
