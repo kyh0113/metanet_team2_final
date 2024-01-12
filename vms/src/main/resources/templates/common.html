@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.js"></script>
+	<script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://unpkg.com/tippy.js@6.3.1/dist/tippy-bundle.umd.min.js"></script>
+	<title>사이드바 예시</title>
+
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.wrapper {
+			display: flex;
+			height: 100%;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.sidebar {
+			width: 250px;
+			background-color: #111;
+			padding: 20px;
+			color: white;
+			height: 100vh;
+			/* 사이드바 세로 길이를 화면 세로 길이와 같게 설정 */
+			overflow-y: auto;
+			/* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
+		}
+
+		.sidebar a {
+			display: block;
+			color: white;
+			text-decoration: none;
+			padding: 10px 0;
+		}
+
+		.sidebar a:hover {
+			background-color: #555;
+		}
+
+		.clipBoard {
+			border: 1px solid #000000;
+			border-radius: 15px;
+			display: inline-block;
+			padding-right: 20px;
+			padding-left: 20px;
+			color: #252C58;
+			box-sizing: border-box;
+			margin: 20px;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.todayTime {
+			font-size: 24px;
+			font-weight: 300px;
+			line-height: 30px;
+			opacity: 0.5;
+		}
+
+		.todayDateBody,
+		.todayDateTitle {
+			font-size: 18px;
+			font-weight: 300px;
+		}
+
+		.infoCountLabel {
+			font-size: 38px;
+			font-weight: 600px;
+			margin: 15px;
+			/* 마진을 0으로 설정 */
+			align-items: center;
+		}
+
+		#myCertificateInfo,
+		#approvalVacationRequestInfo,
+		#myVacationInfo {
+			padding-top: 20px;
+		}
+
+		#myCertificateInfo img {
+			position: relative;
+			left: 36%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+			box-sizing: content-box;
+			/* 변경된 부분 */
+		}
+
+		#approvalVacationRequestInfo img {
+			position: relative;
+			left: 60%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+
+		#myVacationInfo img {
+			position: relative;
+			left: 24%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+
+		.infoLabel {
+			font-size: 16px;
+			font-weight: 300px;
+		}
+
+		.infoButton {
+			margin-left: 15px;
+		}
+
+		#graphContainer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 10px;
+		}
+
+		.infoBox {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		#calendar {
+			flex: 1;
+			/* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+			max-width: 43%;
+			/* 최대 너비 설정 */
+			max-height: 53%;
+		}
+
+		#myChart {
+			flex: 1;
+			/* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+			max-width: 45%;
+			/* 최대 너비 설정 */
+			max-height: 95%;
+		}
+
+		span {
+			position: relative;
+			top: -8px;
+		}
+
+		#excelContainer button {
+			width: 100px;
+			height: 50px;
+			border-radius: 17.5px;
+			box-sizing: border-box;
+			margin-top: 25px;
+			margin-left: 620px;
+			background-color: lightblue;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="wrapper">
+		<div class="sidebar" id="sidebar">
+			<h2>Sidebar</h2>
+			<ul>
+				<li><a href="#" onclick="showContent('mainpage')">메인페이지</a></li>
+				<li><a href="#" onclick="showContent('vacation')">휴가 신청</a></li>
+				<li><a href="#" onclick="showContent('list')">신청 목록</a></li>
+				<li><a href="#" onclick="showContent('certification')">증명서 발급</a></li>
+				<li><a href="#" onclick="showContent('manage')">조직 관리</a></li>
+			</ul>
+		</div>
+		
+		<div id="content">
+			
+		</div>
+
+		<div id="mainpage" style="display: block;">
+			<div class="infoBox">
+				<div id="todoayInfo" class="clipBoard">
+					<p class="todayDateTitle">오늘의 날짜</p>
+					<p class="todayDateBody"></p>
+					<p class="todayTime"></p>
+				</div>
+				<div id="myCertificateInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfMyCertificates}"></label></span>
+							<img src="/images/calendar-time.svg" onclick="moveView('certificate')">
+						</p>
+					</div>
+					<p class="infoLabel">나의 증명서</p>
+				</div>
+				<div id="approvalVacationRequestInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfVacationApproval}"></label></span>
+							<img src="/images/category.svg" onclick="moveView('vacationApprove')">
+						</p>
+					</div>
+					<p class="infoLabel">내가 결재해야할 문서</p>
+				</div>
+				<div id="myVacationInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfYearUsage}"></label></span>
+							<img src="/images/person.svg" onclick="moveView('vacation')">
+						</p>
+					</div>
+					<p class="infoLabel">나의 휴가 정보</p>
+				</div>
+
+				<div id="excelContainer">
+					<form action="/calendar/download" method="get">
+						<button type="submit">Excel</button>
+					</form>
+				</div>
+			</div>
+
+			<div id="graphContainer">
+				<div id='calendar'></div>
+				<canvas id="myChart"></canvas>
+			</div>
+		</div>
+		<div id="vacation" style="display: none;">
+			<h1>휴가 신청</h1>
+		</div>
+		<div id="list" style="display: none;">
+			<h1>신청 목록</h1>
+		</div>
+		<div id="certification" style="display: none;">
+			<h1>증명서 발급</h1>
+		</div>
+		<div id="manage" style="display: none;">
+			<h1>조직 관리</h1>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		function showContent(id) {
+			// 모든 div 숨기기
+			var divsToHide = document.querySelectorAll('#mainpage, #vacation, #list, #certification, #manage');
+            for (var i = 0; i < divsToHide.length; i++) {
+                divsToHide[i].style.display = 'none';
+            }
+
+            // 해당하는 div만 보이도록 설정
+            var selectedDiv = document.getElementById(id);
+            selectedDiv.style.display = 'block';
+
+            // content 영역에 해당 내용을 복사해서 삽입
+            var content = document.getElementById('content');
+            content.innerHTML = selectedDiv.innerHTML;
+		}
+
+		// 데이터 정의
+		let employeeVacationInfos = /*[[${employeeVacationInfos}]]*/;
+		let empId = /*[[${employee.empId}]]*/;
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridMonth'
+		});
+		calendar.render();
+
+		var data = {
+			labels: [
+				employeeVacationInfos[0].month,
+				employeeVacationInfos[1].month,
+				employeeVacationInfos[2].month,
+				employeeVacationInfos[3].month,
+				employeeVacationInfos[4].month,
+				employeeVacationInfos[5].month],
+			datasets: [{
+				label: '월별 사용 휴가 일수',
+				data: [
+					employeeVacationInfos[0].monthPerCount,
+					employeeVacationInfos[1].monthPerCount,
+					employeeVacationInfos[2].monthPerCount,
+					employeeVacationInfos[3].monthPerCount,
+					employeeVacationInfos[4].monthPerCount,
+					employeeVacationInfos[5].monthPerCount
+				], // 각 막대의 높이
+				backgroundColor: 'rgba(75, 192, 192, 0.2)', // 막대 색상
+				borderColor: 'rgba(75, 192, 192, 1)', // 막대 테두리 색상
+				borderWidth: 1 // 막대 테두리 너비
+			}]
+		};
+
+		// 차트 옵션 정의
+		var options = {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		};
+
+		// 막대 그래프 생성
+		var ctx = document.getElementById('myChart').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: data,
+			options: options
+		});
+
+
+
+		function updateDateTime() {
+			var todayDateBodyTag = document.querySelector('.todayDateBody');
+			var now = new Date();
+
+			var year = now.getFullYear();
+			var month = ('0' + (now.getMonth() + 1)).slice(-2);
+			var day = ('0' + now.getDate()).slice(-2);
+			var dayOfWeek = getDayOfWeek(now.getDay());
+
+			todayDateBodyTag.innerHTML = year + '년 ' + month + '월 ' + day + '일 (' + dayOfWeek + ')';
+		}
+
+		function getDayOfWeek(dayIndex) {
+			var daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+			return daysOfWeek[dayIndex];
+		}
+
+		function updateClock() {
+			var todayTimeTag = document.querySelector('.todayTime');
+			var now = new Date();
+			var hours = ('0' + now.getHours()).slice(-2);
+			var minutes = ('0' + now.getMinutes()).slice(-2);
+			var seconds = ('0' + now.getSeconds()).slice(-2);
+
+			todayTimeTag.innerHTML = hours + ':' + minutes + ':' + seconds;
+
+			updateDateTime(); // 시간이 업데이트될 때마다 날짜와 요일도 함께 업데이트
+		}
+
+		function viewDidLoad() {
+			updateClock(); // 페이지 로드시 한번 호출
+			setInterval(updateClock, 1000); // 1초마다 업데이트
+		}
+
+		function moveView(viewName) {
+			switch (viewName) {
+				case 'certificate':
+					window.location.href = "/certificate/view"
+					break
+				case 'vacationApprove':
+					window.location.href = "/vacation/request/" + empId
+					break
+				default:
+					console.log(viewName)
+			}
+		}
+
+		viewDidLoad()
+
+		document.addEventListener('DOMContentLoaded', function () {
+			$(function () {
+				var request = $.ajax({
+					url: "/calendar/calendar-admin", // 변경하기
+					method: "GET",
+					dataType: "json"
+				});
+
+				request.done(function (data) {
+					console.log(data); // log 로 데이터 찍어주기.
+
+					var calendarEl = document.getElementById('calendar');
+
+					var calendar = new FullCalendar.Calendar(calendarEl, {
+						//initialDate: '2022-02-07',
+						initialView: 'dayGridMonth',
+						headerToolbar: {
+							left: 'prev,next today',
+							center: 'title',
+							right: 'dayGridMonth'
+						},
+						editable: true,
+						droppable: true, // this allows things to be dropped onto the calendar
+						drop: function (arg) {
+							// is the "remove after drop" checkbox checked?
+							if (document.getElementById('drop-remove').checked) {
+								// if so, remove the element from the "Draggable Events" list
+								arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+							}
+						},
+
+						eventDidMount: function (info) {
+							tippy(info.el, {
+								content: "<strong>제목:</strong>" + info.event.title + "<hr>" +
+									"시작날짜: " + info.event.start + "<br>"
+									+ "종료날짜: " + info.event.end,
+								placement: 'bottom',
+								trigger: 'mouseenter',
+								allowHTML: true,
+							});
+						},
+						events: data
+					});
+
+					calendar.render();
+				});
+
+
+				request.fail(function (jqXHR, textStatus) {
+					alert("Request failed: " + textStatus);
+				});
+			});
+
+		});
+
+
+
+	</script>
+
+</body>
+
+</html>
