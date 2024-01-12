@@ -64,7 +64,7 @@ public class EmployeeController {
 
 	@GetMapping("/home")
 	public String home() {
-		return "employee/home";
+		return "/employee/home";
 	}
 	
 	@GetMapping("/common")
@@ -101,7 +101,7 @@ public class EmployeeController {
 	        cookie.setPath("/");
 	        response.addCookie(cookie);
 	        				
-	        return "employee/home";
+	        return "redirect:/employee/main";
 	    }
 	}
 
