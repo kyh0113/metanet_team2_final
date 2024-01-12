@@ -6,7 +6,7 @@ function loadSidebar() {
 	console.log('Document ready state:', document.readyState);
 
 	// mainContent 엘리먼트 확인
-	let mainContent = document.getElementById('mainContent');
+	const mainContent = document.getElementById('mainContent');
 	console.log('#mainContent:', mainContent); // null이 출력됨
 
 	// DOMContentLoaded 이벤트가 발생할 때까지 대기

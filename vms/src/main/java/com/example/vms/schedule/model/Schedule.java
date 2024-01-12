@@ -12,6 +12,7 @@ import lombok.ToString;
 @ToString
 public class Schedule {
 	private int calender_Id;
+	private int reg_id;
 	private String title;
 	private LocalDate start_date;
 	private LocalDate end_date;

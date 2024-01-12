@@ -90,6 +90,7 @@ public class EmployeeService implements IEmployeeService{
         	return "메일 전송 실패";
         }
     }
+		
 	
 	@Override
 	public Map<String, String> findPassword(Employee employee) {
@@ -273,6 +274,4 @@ public class EmployeeService implements IEmployeeService{
 	public int numberOfVacationUsagesSearchByYear(String year) {
 		return employeeDao.numberOfVacationUsagesSearchByYear(year);
 	}
-	
-
 }

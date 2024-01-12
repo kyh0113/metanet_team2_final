@@ -45,12 +45,12 @@ public class SecurityConfig {
 
         
         http.authorizeRequests()
-        .requestMatchers("/**", "/css/**", "/js/**", "/image/**").permitAll()
+        .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
         .requestMatchers("/manager/**").permitAll()
         .requestMatchers("/employee/**").permitAll()
         .requestMatchers("/scheduler/**").permitAll()
         .requestMatchers("/certificate/**").permitAll()
-        .requestMatchers("/vacation/**").permitAll()
+        .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE")
         .anyRequest().authenticated();
         
         http.sessionManagement((session)->session.sessionCreationPolicy(

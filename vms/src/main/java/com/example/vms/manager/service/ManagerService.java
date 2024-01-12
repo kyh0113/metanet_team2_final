@@ -2,6 +2,7 @@ package com.example.vms.manager.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,5 +120,21 @@ public class ManagerService implements IManagerService {
 	@Override
 	public int searchEmployeeRemains() {
 		return 0;
+	}
+
+	@Override
+	public List<Employee> getAllEmployees() {
+		return managerDao.getAllEmployees();
+	}
+
+	@Override
+	public void updateRemains(String empId, int remains) {
+		managerDao.updateRemains(empId, remains);
+		
+	}
+
+	@Override
+	public List<Employee> findEmployeesWithAtLeastOneVacation() {
+		return managerDao.findEmployeesWithAtLeastOneVacation();
 	}
 }
