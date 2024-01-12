@@ -7,12 +7,14 @@ import com.example.vms.scheduler.model.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.vms.employee.service.IEmployeeService;
+import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.IManagerService;
 import com.example.vms.scheduler.model.SchedulerResult;
@@ -20,6 +22,8 @@ import com.example.vms.scheduler.repository.ISchedulerRepository;
 import com.example.vms.scheduler.service.ISchedulerService;
 import com.example.vms.scheduler.service.SchedulerService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,6 +42,9 @@ public class SchedulerController {
 
 	@Autowired
 	IEmployeeService employeeService;
+	
+	@Autowired
+	JwtTokenProvider tokenProvider;
 
 	@GetMapping("/list")
 	@ResponseBody
@@ -53,8 +60,30 @@ public class SchedulerController {
 
 	// 스케줄러 목록 페이지
 	@GetMapping("/list/view")
-	public String searchSchedulerPage() {
-		return "/scheduler/list";
+	public String searchSchedulerPage(
+		HttpServletRequest request,
+		Model model 
+	) {
+		
+		// 쿠키 정보
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = managerService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			return "/scheduler/list";		
+		} else {
+			return "redirect:/employee/login";
+		}
+		
 	}
 
 	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
