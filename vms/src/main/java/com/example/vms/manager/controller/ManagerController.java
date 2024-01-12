@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.model.EmployeeResponseDTO;
 import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
@@ -23,12 +24,17 @@ import com.example.vms.manager.repository.IManagerRepository;
 import com.example.vms.manager.service.IManagerService;
 import com.example.vms.manager.service.ManagerService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
 	
 	@Autowired
 	IManagerService managerService;
+	@Autowired
+	JwtTokenProvider tokenProvider;
 	
 	@PostMapping("/create")
 	@ResponseBody
@@ -80,10 +86,31 @@ public class ManagerController {
 	// 직원 조회 페이지 
 	@GetMapping("/employee/list")
 	public String employeeListPage(
+		HttpServletRequest request,
 		Model model 
 	) {
-		model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
-		return "/manager/list";
+		
+		// 쿠키 정보
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = managerService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
+			return "/manager/list";
+	        
+		} else {
+			return "redirect:/employee/login";
+		}
+
 	}
 	
 	// 직원 수정 페이지 
