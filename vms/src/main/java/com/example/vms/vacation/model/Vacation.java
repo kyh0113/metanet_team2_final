@@ -25,6 +25,7 @@ public class Vacation {
     private String content;
     private String empId;
     private Integer typeId; // 휴가 유형
+    private int vacationDays;
     
     public void setTypeId(Integer typeId) {
         this.typeId = typeId;
