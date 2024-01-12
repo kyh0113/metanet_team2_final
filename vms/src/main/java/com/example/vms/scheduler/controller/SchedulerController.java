@@ -58,33 +58,6 @@ public class SchedulerController {
 		return schedulers;
 	}
 
-	// 스케줄러 목록 페이지
-	@GetMapping("/list/view")
-	public String searchSchedulerPage(
-		HttpServletRequest request,
-		Model model 
-	) {
-		
-		// 쿠키 정보
-		Cookie[] cookies = request.getCookies();
-		String token = "";
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("X-AUTH-TOKEN")) {
-				token = cookie.getValue();
-			}
-		}
-		// 토큰 유효성 검사
-		if (tokenProvider.validateToken(token)) {
-			
-			String empId = tokenProvider.getEmpId(token);
-	        Employee employee = managerService.selectEmployee(empId);
-	        model.addAttribute("employee", employee);
-			return "/scheduler/list";		
-		} else {
-			return "redirect:/employee/login";
-		}
-		
-	}
 
 	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
 	// @Scheduled(cron = "0/20 * * * * ?")
