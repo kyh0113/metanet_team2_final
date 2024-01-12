@@ -46,12 +46,15 @@ public class SecurityConfig {
         
         http.authorizeRequests()
         .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
-        .requestMatchers("/manager/**").permitAll()
+        .requestMatchers("/manager/**").hasAnyRole("LEADER")
         .requestMatchers("/employee/**").permitAll()
         .requestMatchers("/scheduler/**").permitAll()
         .requestMatchers("/certificate/**").permitAll()
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE")
         .anyRequest().authenticated();
+        
+        http
+        .exceptionHandling().accessDeniedPage("/error/access-denied");
         
         http.sessionManagement((session)->session.sessionCreationPolicy(
 				SessionCreationPolicy.STATELESS)); // 세션방식의 인증을 사용하지 않겠다는 뜻
