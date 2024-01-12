@@ -42,7 +42,7 @@
 		</if>
 		<if test="content != null">
 			CONTENT LIKE '%' || #{content} || '%'
-		</if>
+		 </if>
 		) s
 		WHERE
 		NUM BETWEEN #{start} AND #{end}
