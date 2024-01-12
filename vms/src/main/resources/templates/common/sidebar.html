@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>사이드바 예시</title>
+	<link rel="stylesheet" type="text/css" href="/style.css">
+	<script src="/js/common.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.wrapper {
+			display: flex;
+			height: 100%;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.sidebar {
+			width: 250px;
+			background-color: #111;
+			padding: 20px;
+			color: white;
+			height: 100vh;
+			/* 사이드바 세로 길이를 화면 세로 길이와 같게 설정 */
+			overflow-y: auto;
+			/* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
+		}
+
+		.sidebar a {
+			display: block;
+			color: white;
+			text-decoration: none;
+			padding: 10px 0;
+		}
+
+		.sidebar a:hover {
+			background-color: #555;
+		}
+	</style>
+</head>
+
+
+<body>
+	<div class="wrapper">
+		<div class="sidebar" id="sidebar">
+			<h2>Sidebar</h2>
+			<ul>
+				<li><a href="#mainpage" onclick="showContent('mainpage')">메인페이지</a></li>
+				<li><a href="#vacation" onclick="showContent('vacation')">휴가 신청</a></li>
+				<li><a href="#list" onclick="showContent('list')">신청 목록</a></li>
+				<li><a href="#certification" onclick="showContent('certification')">증명서 발급</a></li>
+				<li><a href="#manage" onclick="showContent('manage')">조직 관리</a></li>
+			</ul>
+		</div>
+
+		<div id="mainpage" style="display: none;">
+			<h1>메인페이지</h1>
+		</div>
+		<div id="vacation" style="display: none;">
+			<h1>휴가 신청</h1>
+		</div>
+		<div id="list" style="display: none;">
+			<h1>신청 목록</h1>
+		</div>
+		<div id="certification" style="display: none;">
+			<h1>증명서 발급</h1>
+		</div>
+		<div id="manage" style="display: none;">
+			<h1>조직 관리</h1>
+		</div>
+	</div>
+
+	
+
+	<div id="content">
+
+	</div>
+
+	<script>
+		function showContent(id) {
+			// 모든 div 숨기기
+			var divsToHide = document.querySelectorAll('#mainpage, #vacation, #list, #certification, #manage');
+			for (var i = 0; i < divsToHide.length; i++) {
+				divsToHide[i].style.display = 'none';
+			}
+
+			// 해당하는 div만 보이도록 설정
+			var selectedDiv = document.getElementById(id);
+			selectedDiv.style.display = 'block';
+
+			// content 영역에 해당 내용을 복사해서 삽입
+			
+		}
+	</script>
+</body>
+
+</html>

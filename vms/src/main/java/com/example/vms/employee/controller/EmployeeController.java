@@ -67,6 +67,11 @@ public class EmployeeController {
 	public String home() {
 		return "/employee/home";
 	}
+	
+	@GetMapping("/common")
+	public String common() {
+		return "common/header";
+	}
 
 	// 로그아웃 기능 ( 보완 필요 ) 
 	@GetMapping("/logout")

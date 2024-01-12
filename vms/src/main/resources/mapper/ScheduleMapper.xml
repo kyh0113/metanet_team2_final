@@ -74,8 +74,8 @@
 	<insert id="insertSchedule" parameterType="com.example.vms.schedule.model.Schedule">
 	    <![CDATA[
 		    INSERT INTO 
-		    SCHEDULE (calender_Id, title, start_date, end_date, emp_id, dept_id, type_id)
-		    VALUES (#{calender_Id}, #{title}, #{start_date}, #{end_date}, #{emp_id}, #{dept_id}, #{type_id})
+		    SCHEDULE (calender_Id, reg_id, title, start_date, end_date, emp_id, dept_id, type_id)
+		    VALUES (#{calender_Id}, #{reg_id}, #{title}, #{start_date}, #{end_date}, #{emp_id}, #{dept_id}, #{type_id})
 		]]>
 	</insert>
 	
