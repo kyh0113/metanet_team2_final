@@ -26,12 +26,12 @@ public class LogAspect {
 		try {
 			result = joinPoint.proceed();
 		} catch (Throwable e) {
-			log.info("[[AOP-around Log-exception]]]");
+			log.info("[[AOP-around 에러발생]]]");
 		}
 		
 		Long end = System.currentTimeMillis();
 		
-		log.info("[[[AOP-around execution time-{},methodName-{}]]",(end-start), methodName);
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
 		return result;
 	}	
 	
@@ -39,7 +39,7 @@ public class LogAspect {
 	public void EmployeeTHrowingLog(JoinPoint joinPoint, Exception exception) {
 		Signature signature = joinPoint.getSignature();
 		String methodName = signature.getName();
-		log.info("[[[AOP-after Log]]]-{}, ex: {}",methodName,exception.getMessage());
+		log.info("[[[AOP-Throwing Log]]]-{}, ex: {}",methodName,exception.getMessage());
 	}
 	
 	@Around("execution(* com.example.vms..VacationService.*(..))")
@@ -51,12 +51,12 @@ public class LogAspect {
 		try {
 			result = joinPoint.proceed();
 		} catch (Throwable e) {
-			log.info("[[AOP-around Log-exception]]]");
+			log.info("[[AOP-around Log-에러발생]]]");
 		}
 		
 		Long end = System.currentTimeMillis();
 		
-		log.info("[[[AOP-around execution time-{},methodName-{}]]",(end-start), methodName);
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
 		return result;
 	}	
 	
@@ -64,7 +64,31 @@ public class LogAspect {
 	public void VacationTHrowingLog(JoinPoint joinPoint, Exception exception) {
 		Signature signature = joinPoint.getSignature();
 		String methodName = signature.getName();
-		log.info("[[[AOP-after Log]]]-{}, ex: {}",methodName,exception.getMessage());
+		log.info("[[[AOP-Throwing Log]]]-{}, 예외: {}",methodName,exception.getMessage());
+	}	
+	@Around("execution(* com.example.vms..CertificateService.*(..))")
+	public Object CertificateVacationLog(ProceedingJoinPoint joinPoint) {
+		Signature signature = joinPoint.getSignature();
+		String methodName = signature.getName();
+		Long start = System.currentTimeMillis();
+		Object result = null;
+		try {
+			result = joinPoint.proceed();
+		} catch (Throwable e) {
+			log.info("[[AOP-around Log-에럽라생]]]");
+		}
+		
+		Long end = System.currentTimeMillis();
+		
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
+		return result;
+	}	
+	
+	@AfterThrowing(pointcut="execution(* com.example.myapp..CertificateController.*(..))", throwing="exception")
+	public void CertificateTHrowingLog(JoinPoint joinPoint, Exception exception) {
+		Signature signature = joinPoint.getSignature();
+		String methodName = signature.getName();
+		log.info("[[[AOP-Throwing Log]]]-{}, 예외: {}",methodName,exception.getMessage());
 	}	
 		
 	
