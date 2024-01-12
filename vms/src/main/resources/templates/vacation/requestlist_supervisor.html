@@ -10,16 +10,10 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../../assets/css/styles.min.css" />
+  
   <style>
-    body {
-      background-color: #f8f9fa;
-    }
-
-    .container {
-      background-color: #fff;
-      padding: 20px;
-      margin-top: 30px;
-    }
 
 	table tr td {
       cursor: pointer;
@@ -305,7 +299,8 @@
   </script>
 </head>
 <body>
-<!--  Body Wrapper -->
+			
+  <!--  Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     <!-- Sidebar Start -->
@@ -313,7 +308,7 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="./index.html" class="text-nowrap logo-img">
+          <a href="/employee/main" class="text-nowrap logo-img">
             <img src="../../assets/images/logos/dark-logo.svg" width="180" alt="" />
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -328,7 +323,7 @@
               <span class="hide-menu">Home</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./index.html" aria-expanded="false">
+              <a class="sidebar-link" href="/employee/main" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -340,27 +335,35 @@
               <span class="hide-menu">Service</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-buttons.html" aria-expanded="false">
+              <a class="sidebar-link" href="/vacation/request" aria-expanded="false">
                 <span>
-                  <i class="ti ti-article"></i>
+					<i class="ti ti-writing"></i>
                 </span>
                 <span class="hide-menu">휴가신청</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
+              <a class="sidebar-link" href="/vacation/request/list" aria-expanded="false">
                 <span>
-                  <i class="ti ti-alert-circle"></i>
+					<i class="ti ti-calendar-event"></i>
                 </span>
-                <span class="hide-menu">신청목록</span>
+                <span class="hide-menu">휴가 신청 목록</span>
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
+              <a class="sidebar-link" href="/certificate/request" aria-expanded="false">
                 <span>
-                  <i class="ti ti-alert-circle"></i>
+					<i class="ti ti-certificate"></i>
                 </span>
                 <span class="hide-menu">증명서 발급</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/certificate/view" aria-expanded="false">
+                <span>
+					<i class="ti ti-list"></i>
+                </span>
+                <span class="hide-menu">증명서 신청 목록</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -368,19 +371,11 @@
               <span class="hide-menu">AUTH</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
+              <a class="sidebar-link" href="/employee/login" aria-expanded="false">
                 <span>
                   <i class="ti ti-login"></i>
                 </span>
                 <span class="hide-menu">Login</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user-plus"></i>
-                </span>
-                <span class="hide-menu">Register</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -388,11 +383,27 @@
               <span class="hide-menu">Admin</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./icon-tabler.html" aria-expanded="false">
+              <a class="sidebar-link" href="/manager/employee/list" aria-expanded="false">
                 <span>
-                  <i class="ti ti-mood-happy"></i>
+					<i class="ti ti-users"></i>
                 </span>
                 <span class="hide-menu">조직관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/vacation/schedule/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-luggage"></i>
+                </span>
+                <span class="hide-menu">휴가관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/scheduler/list/view" aria-expanded="false">
+                <span>
+					<i class="ti ti-clock-2"></i>
+                </span>
+                <span class="hide-menu">스케줄러 관리</span>
               </a>
             </li>
           </ul>
@@ -413,28 +424,25 @@
                 <i class="ti ti-menu-2"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li>
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-              <li class="nav-item">
-                <a class="nav-link" href="javascript:void(0)" id="drop2" aria-expanded="false">
-                  <div>이름</div>
-                  <div>이메일</div>
-                  <img src="../../assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
-                </a>
-              </li>
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>사원 아이디</p>
+				</li>
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>이름</p>
+				</li>
+				<li class="nav-item">
+					<p>이메일</p>
+				</li>
             </ul>
           </div>
         </nav>
       </header>
       <!--  Header End -->
       <div class="container-fluid">
+		  
         <!--  Row 1 -->
         <div class="container">
 		  <h4>팀원 휴가 신청 내역 <span class="waiting" onclick="showWaiting()">결재 대기 중인 것만 보기</span></h4>
