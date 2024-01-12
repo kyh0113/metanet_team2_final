@@ -64,7 +64,7 @@ public class EmployeeController {
 
 	@GetMapping("/home")
 	public String home() {
-		return "employee/home";
+		return "/employee/home";
 	}
 
 	// 로그아웃 기능
@@ -96,7 +96,7 @@ public class EmployeeController {
 	        cookie.setPath("/");
 	        response.addCookie(cookie);
 	        				
-	        return "employee/home";
+	        return "redirect:/employee/main";
 	    }
 	}
 
