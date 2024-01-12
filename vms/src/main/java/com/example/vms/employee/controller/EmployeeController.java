@@ -1,5 +1,6 @@
 package com.example.vms.employee.controller;
 
+import java.lang.ProcessHandle.Info;
 import java.util.List;
 import java.util.Map;
 
@@ -66,13 +67,28 @@ public class EmployeeController {
 	public String home() {
 		return "/employee/home";
 	}
-
-	// 로그아웃 기능
 	
+	@GetMapping("/common")
+	public String common() {
+		return "common/header";
+	}
+
+	// 로그아웃 기능 ( 보완 필요 ) 
+	@GetMapping("/logout")
+	public String logout(
+		HttpServletResponse response
+	) {
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+        cookie.setMaxAge(0); 
+        cookie.setPath("/"); 
+	    response.addCookie(cookie);
+		return "redirect:/employee/login";
+	}
 
 	@PostMapping("/login")
 	public String login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
 	    log.info("EMP_ID: {}", empId);
+	    System.out.println("로그인로그이");
 
 	    Employee employee = employeeService.selectEmployee(empId);
 	    if (employee == null) {

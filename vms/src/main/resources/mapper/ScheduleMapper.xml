@@ -63,7 +63,8 @@
 					FROM 
 					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
-					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID  
+					ORDER BY START_DATE  
 			    ) r
 			) WHERE num BETWEEN #{startNum} AND #{endNum}	
 		]]>
@@ -73,8 +74,8 @@
 	<insert id="insertSchedule" parameterType="com.example.vms.schedule.model.Schedule">
 	    <![CDATA[
 		    INSERT INTO 
-		    SCHEDULE (calender_Id, title, start_date, end_date, emp_id, dept_id, type_id)
-		    VALUES (#{calender_Id}, #{title}, #{start_date}, #{end_date}, #{emp_id}, #{dept_id}, #{type_id})
+		    SCHEDULE (calender_Id, reg_id, title, start_date, end_date, emp_id, dept_id, type_id)
+		    VALUES (#{calender_Id}, #{reg_id}, #{title}, #{start_date}, #{end_date}, #{emp_id}, #{dept_id}, #{type_id})
 		]]>
 	</insert>
 	
@@ -98,9 +99,11 @@
 					FROM 
 					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
-					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID   
+					WHERE e.NAME like '%' || #{empName} || '%'
+					ORDER BY START_DATE
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND empName like '%' || #{empName} || '%'
+			) WHERE (num BETWEEN #{startNum} AND #{endNum})
 	</select>
 	
 	<select id="getScheduleListByDeptName" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
@@ -119,9 +122,11 @@
 					FROM 
 					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
-					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID   
+					WHERE d.NAME like '%' || #{deptName} || '%'
+					ORDER BY START_DATE   
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND deptName like '%' || #{deptName} || '%'
+			) WHERE (num BETWEEN #{startNum} AND #{endNum})
 	</select>
 	
 	<select id="getScheduleListByPosition" resultType="com.example.vms.schedule.model.ScheduleEmpDeptType">
@@ -141,8 +146,10 @@
 					    SCHEDULE s JOIN EMPLOYEES e ON s.EMP_ID = e.EMP_ID
 					    JOIN DEPARTMENTS d ON s.DEPT_ID = d.DEPT_ID
 					    JOIN VACATION_TYPE t ON s.TYPE_ID = t.TYPE_ID    
+					WHERE e.POSITION like '%' || #{position} || '%'
+					ORDER BY START_DATE  
 			    ) r
-			) WHERE (num BETWEEN #{startNum} AND #{endNum}) AND position like '%' || #{position} || '%'
+			) WHERE (num BETWEEN #{startNum} AND #{endNum}) 
 	</select>
 	
 </mapper>

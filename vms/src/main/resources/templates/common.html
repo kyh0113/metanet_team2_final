@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 
 <head>
 	<meta charset="UTF-8">
@@ -11,10 +11,45 @@
 	<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.js"></script>
 	<script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://unpkg.com/tippy.js@6.3.1/dist/tippy-bundle.umd.min.js"></script>
-	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
-	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
-	<title>메인 페이지</title>
+	<title>사이드바 예시</title>
+
 	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.wrapper {
+			display: flex;
+			height: 100%;
+			/* 화면 세로 길이를 100%로 설정 */
+		}
+
+		.sidebar {
+			width: 250px;
+			background-color: #111;
+			padding: 20px;
+			color: white;
+			height: 100vh;
+			/* 사이드바 세로 길이를 화면 세로 길이와 같게 설정 */
+			overflow-y: auto;
+			/* 내용이 넘칠 경우 스크롤 가능하도록 설정 */
+		}
+
+		.sidebar a {
+			display: block;
+			color: white;
+			text-decoration: none;
+			padding: 10px 0;
+		}
+
+		.sidebar a:hover {
+			background-color: #555;
+		}
+
 		.clipBoard {
 			border: 1px solid #000000;
 			border-radius: 15px;
@@ -100,7 +135,6 @@
 			justify-content: space-between;
 			align-items: center;
 			padding: 10px;
-			align-items: flex-start;
 		}
 
 		.infoBox {
@@ -129,90 +163,114 @@
 			top: -8px;
 		}
 
-		#excelContainer img {
-			width: 40px;
-			height: 40px;
-		}
-
-		.container {
-			position: relative;
-			top: 100px;
-			width: 100%;
-			height: 110%;
+		#excelContainer button {
+			width: 100px;
+			height: 50px;
+			border-radius: 17.5px;
+			box-sizing: border-box;
+			margin-top: 25px;
+			margin-left: 620px;
+			background-color: lightblue;
 		}
 	</style>
 </head>
 
 <body>
 
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar" th:include="include/sidebar :: aside">
-	</aside>
-	<!--  Sidebar End -->
-    <!--  Main wrapper -->
-    <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header" th:include="include/header :: header">
-      </header>
-      <!--  Header End -->
-      <div class="container-fluid">
-    <div class="infoBox">
-        <div id="todoayInfo" class="clipBoard">
-            <p class="todayDateTitle">오늘의 날짜</p>
-            <p class="todayDateBody"></p>
-            <p class="todayTime"></p>
-        </div>
-        <div id="myCertificateInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfMyCertificates}"></label></span>
-                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 증명서</p>
-        </div>
-        <div id="approvalVacationRequestInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfVacationApproval}"></label></span>
-                    <img src="/images/category.svg" onclick="moveView('vacationApprove')">
-                </p>
-            </div>
-            <p class="infoLabel">내가 결재해야할 문서</p>
-        </div>
-        <div id="myVacationInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfYearUsage}"></label></span>
-                    <img src="/images/person.svg" onclick="moveView('vacation')"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 휴가 정보</p>
-        </div>
-				</div>
+	<div class="wrapper">
+		<div class="sidebar" id="sidebar">
+			<h2>Sidebar</h2>
+			<ul>
+				<li><a href="#" onclick="showContent('mainpage')">메인페이지</a></li>
+				<li><a href="#" onclick="showContent('vacation')">휴가 신청</a></li>
+				<li><a href="#" onclick="showContent('list')">신청 목록</a></li>
+				<li><a href="#" onclick="showContent('certification')">증명서 발급</a></li>
+				<li><a href="#" onclick="showContent('manage')">조직 관리</a></li>
+			</ul>
+		</div>
+		
+		<div id="content">
+			
+		</div>
 
-				<div id="graphContainer">
-					<div id='calendar'></div>
-					<div id="excelContainer">
-						<form id="downloadForm" action="/calendar/download" method="get">
-							<button type="submit" style="background: none; border: none; padding: 0; margin: 0;">
-								<img src="/images/excelDownload.png" alt="excelDownloadButton">
-							</button>
-						</form>
+		<div id="mainpage" style="display: block;">
+			<div class="infoBox">
+				<div id="todoayInfo" class="clipBoard">
+					<p class="todayDateTitle">오늘의 날짜</p>
+					<p class="todayDateBody"></p>
+					<p class="todayTime"></p>
+				</div>
+				<div id="myCertificateInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfMyCertificates}"></label></span>
+							<img src="/images/calendar-time.svg" onclick="moveView('certificate')">
+						</p>
 					</div>
-					<canvas id="myChart"></canvas>
+					<p class="infoLabel">나의 증명서</p>
+				</div>
+				<div id="approvalVacationRequestInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfVacationApproval}"></label></span>
+							<img src="/images/category.svg" onclick="moveView('vacationApprove')">
+						</p>
+					</div>
+					<p class="infoLabel">내가 결재해야할 문서</p>
+				</div>
+				<div id="myVacationInfo" class="clipBoard">
+					<div class="infoTop">
+						<p class="infoCountLabel">
+							<span><label th:text="${numberOfYearUsage}"></label></span>
+							<img src="/images/person.svg" onclick="moveView('vacation')">
+						</p>
+					</div>
+					<p class="infoLabel">나의 휴가 정보</p>
 				</div>
 
+				<div id="excelContainer">
+					<form action="/calendar/download" method="get">
+						<button type="submit">Excel</button>
+					</form>
+				</div>
 			</div>
+
+			<div id="graphContainer">
+				<div id='calendar'></div>
+				<canvas id="myChart"></canvas>
+			</div>
+		</div>
+		<div id="vacation" style="display: none;">
+			<h1>휴가 신청</h1>
+		</div>
+		<div id="list" style="display: none;">
+			<h1>신청 목록</h1>
+		</div>
+		<div id="certification" style="display: none;">
+			<h1>증명서 발급</h1>
+		</div>
+		<div id="manage" style="display: none;">
+			<h1>조직 관리</h1>
 		</div>
 	</div>
 
 	<script th:inline="javascript">
+		function showContent(id) {
+			// 모든 div 숨기기
+			var divsToHide = document.querySelectorAll('#mainpage, #vacation, #list, #certification, #manage');
+            for (var i = 0; i < divsToHide.length; i++) {
+                divsToHide[i].style.display = 'none';
+            }
 
-		/*<![CDATA[*/
+            // 해당하는 div만 보이도록 설정
+            var selectedDiv = document.getElementById(id);
+            selectedDiv.style.display = 'block';
+
+            // content 영역에 해당 내용을 복사해서 삽입
+            var content = document.getElementById('content');
+            content.innerHTML = selectedDiv.innerHTML;
+		}
+
 		// 데이터 정의
 		let employeeVacationInfos = /*[[${employeeVacationInfos}]]*/;
 		let empId = /*[[${employee.empId}]]*/;
@@ -305,17 +363,14 @@
 					window.location.href = "/certificate/view"
 					break
 				case 'vacationApprove':
-					window.location.href = "/vacation/request/list"
+					window.location.href = "/vacation/request/" + empId
 					break
-				case 'vacation':
-					window.location.href = "/vacation/request/list"
 				default:
 					console.log(viewName)
 			}
 		}
 
 		viewDidLoad()
-		/*]]>*/
 
 		document.addEventListener('DOMContentLoaded', function () {
 			$(function () {
@@ -347,9 +402,6 @@
 								arg.draggedEl.parentNode.removeChild(arg.draggedEl);
 							}
 						},
-						//eventMouseEnter: function (arg) {
-						//	insertModalOpen("눌렀어?");
-						//},
 
 						eventDidMount: function (info) {
 							tippy(info.el, {
@@ -375,13 +427,10 @@
 
 		});
 
+
+
 	</script>
+
 </body>
-<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
-<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../assets/js/sidebarmenu.js"></script>
-<script src="../../assets/js/app.min.js"></script>
-<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
-<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
-<script src="../../assets/js/dashboard.js"></script>
+
 </html>

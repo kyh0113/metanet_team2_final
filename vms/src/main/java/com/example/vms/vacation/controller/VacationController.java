@@ -77,10 +77,34 @@ public class VacationController {
 	private ScheduleService scheduleService;
 
 	@GetMapping("/request")
-	public String requestVacation(Model model) {
-		List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
-		model.addAttribute("vacationTypes", vacationTypes);
-		return "vacation/request";
+	public String requestVacation(
+		HttpServletRequest request,
+		Model model
+	) {
+		
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = employeeService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			// 토큰에서 empId 추출
+			List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
+			model.addAttribute("vacationTypes", vacationTypes);
+			return "vacation/request";
+
+		} else {
+			return "redirect:/employee/login";
+		}
+	
 	}
 
 	@GetMapping("/getDaysForVacationType")
@@ -97,7 +121,7 @@ public class VacationController {
 
 	@PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
 	public String requestVacation(HttpServletRequest request, HttpServletResponse response,
-			@ModelAttribute Vacation vacation, @RequestParam(value = "files", required = false) MultipartFile[] files) {
+			@ModelAttribute Vacation vacation, @RequestParam(value = "files", required = false) MultipartFile[] files, Model model) {
 
 		// 종료 날짜 설정
 		LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
@@ -108,7 +132,7 @@ public class VacationController {
 
 		// 쿠키 정보
 		Cookie[] cookies = request.getCookies();
-		// System.out.println(cookies.toString());
+
 		String token = "";
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("X-AUTH-TOKEN")) {
@@ -121,10 +145,12 @@ public class VacationController {
 
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
-			System.out.println("유효성 검사 들어옴");
 			// 토큰에서 empId 추출
 			String empId = tokenProvider.getEmpId(token);
 
+	        Employee employee = employeeService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			
 			// 휴가 정보 설정
 			vacation.setEmpId(empId);
 
@@ -157,6 +183,11 @@ public class VacationController {
 		}
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = employeeService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			
 			// 팀장인지 확인
 			Authentication auths = tokenProvider.getAuthentication(token);
 			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
@@ -397,74 +428,6 @@ public class VacationController {
 			throw new RuntimeException(e);
 		}
 		return new ResponseEntity<byte[]>(file.getFileData(), headers, HttpStatus.OK);
-	}
-
-	// 모든 사원 일정 조회(관리자)
-	@GetMapping("/schedule/list")
-	public String getSchedule(HttpServletRequest request) {
-
-		// 쿠키 정보
-		Cookie[] cookies = request.getCookies();
-		String token = "";
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("X-AUTH-TOKEN")) {
-				token = cookie.getValue();
-			}
-		}
-		// 토큰 유효성 검사
-		if (tokenProvider.validateToken(token)) {
-			// 관리자인지 확인
-			Authentication auths = tokenProvider.getAuthentication(token);
-			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-			for (GrantedAuthority authority : authorities) {
-				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("ROLE_LEADER")) {
-					return "manager/schedulelist";
-				}
-			}
-			return "redirect:/employee/login";
-
-		} else {
-			return "redirect:/employee/login";
-		}
-	}
-
-	@ResponseBody
-	@GetMapping("/schedule/getrow")
-	public int getScheduleRowNum(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
-			@RequestParam(name = "option", required = false, defaultValue = "0") String option) {
-
-		int rowNum = 0;
-
-		// 쿠키 정보
-//	        Cookie[] cookies = request.getCookies();
-//	        String token = "";
-//	        for(Cookie cookie : cookies) {
-//	           if(cookie.getName().equals("X-AUTH-TOKEN")) {
-//	              token = cookie.getValue();
-//	           }
-//	        }
-
-		// 토큰에서 empId 추출
-		// String empId = tokenProvider.getEmpId(token);
-
-		rowNum = vacationService.getCountScheduleByOption(keyword, Integer.parseInt(option));
-
-		return rowNum;
-	}
-
-	@ResponseBody
-	@GetMapping("/schedule/getlist")
-	public List<ScheduleEmpDeptType> getScheduleList(
-			@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
-			@RequestParam(name = "option", required = false, defaultValue = "0") String option,
-			@RequestParam(name = "curPage", required = false, defaultValue = "1") String curPage) {
-
-		List<ScheduleEmpDeptType> schedulList = vacationService.getScheduleListByOption(curPage, keyword,
-				Integer.parseInt(option));
-
-		System.out.println("schedule" + schedulList);
-		return schedulList;
 	}
 
 }

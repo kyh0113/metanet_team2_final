@@ -1,8 +1,11 @@
 package com.example.vms.manager.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -16,12 +19,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vms.employee.service.EmployeeService;
+import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.model.EmployeeResponseDTO;
 import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
 import com.example.vms.manager.repository.IManagerRepository;
 import com.example.vms.manager.service.IManagerService;
 import com.example.vms.manager.service.ManagerService;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
+import com.example.vms.vacation.service.VacationService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/manager")
@@ -29,6 +39,12 @@ public class ManagerController {
 	
 	@Autowired
 	IManagerService managerService;
+	@Autowired
+	JwtTokenProvider tokenProvider;
+	@Autowired
+	private EmployeeService employeeService;
+	@Autowired
+	private VacationService vacationService;
 	
 	@PostMapping("/create")
 	@ResponseBody
@@ -80,10 +96,31 @@ public class ManagerController {
 	// 직원 조회 페이지 
 	@GetMapping("/employee/list")
 	public String employeeListPage(
+		HttpServletRequest request,
 		Model model 
 	) {
-		model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
-		return "/manager/list";
+		
+		// 쿠키 정보
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = managerService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
+			return "/manager/list";
+	        
+		} else {
+			return "redirect:/employee/login";
+		}
+
 	}
 	
 	// 직원 수정 페이지 
@@ -100,4 +137,133 @@ public class ManagerController {
 		return "/manager/employeeupdate";
 	}
 	
+	// 모든 사원 일정 조회(관리자)
+	@GetMapping("/schedule/list")
+	public String getSchedule(HttpServletRequest request, Model model) {
+
+		// 쿠키 정보
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = employeeService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			
+			// 관리자인지 확인
+			Authentication auths = tokenProvider.getAuthentication(token);
+			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
+			for (GrantedAuthority authority : authorities) {
+				//System.out.println(authority.getAuthority());
+				// String authorityName = authority.getAuthority();
+				if (authority.getAuthority().equals("ROLE_LEADER")) {
+					return "manager/schedulelist";
+				}
+			}
+			return "redirect:/employee/login";
+
+		} else {
+			return "redirect:/employee/login";
+		}
+	}
+
+	@ResponseBody
+	@GetMapping("/schedule/getrow")
+	public int getScheduleRowNum(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+			@RequestParam(name = "option", required = false, defaultValue = "0") String option) {
+
+		int rowNum = 0;
+
+		// 쿠키 정보
+//		        Cookie[] cookies = request.getCookies();
+//		        String token = "";
+//		        for(Cookie cookie : cookies) {
+//		           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+//		              token = cookie.getValue();
+//		           }
+//		        }
+
+		// 토큰에서 empId 추출
+		// String empId = tokenProvider.getEmpId(token);
+
+		rowNum = vacationService.getCountScheduleByOption(keyword, Integer.parseInt(option));
+
+		return rowNum;
+	}
+
+	@ResponseBody
+	@GetMapping("/schedule/getlist")
+	public List<ScheduleEmpDeptType> getScheduleList(
+			@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+			@RequestParam(name = "option", required = false, defaultValue = "0") String option,
+			@RequestParam(name = "curPage", required = false, defaultValue = "1") String curPage) {
+
+		List<ScheduleEmpDeptType> schedulList = vacationService.getScheduleListByOption(curPage, keyword,
+				Integer.parseInt(option));
+
+		System.out.println("schedule" + schedulList);
+		return schedulList;
+	}
+	
+	// 스케줄러 목록 페이지
+	@GetMapping("/scheduler/list")
+	public String searchSchedulerPage(
+		HttpServletRequest request,
+		Model model 
+	) {
+		
+		// 쿠키 정보
+		Cookie[] cookies = request.getCookies();
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		// 토큰 유효성 검사
+		if (tokenProvider.validateToken(token)) {
+			
+			String empId = tokenProvider.getEmpId(token);
+	        Employee employee = managerService.selectEmployee(empId);
+	        model.addAttribute("employee", employee);
+			return "/scheduler/list";		
+		} else {
+			return "redirect:/employee/login";
+		}
+		
+	}
+	
+    // 증명서 진위 확인 화면 
+    @GetMapping("/certificate/verificate")
+    public String verificatePage(
+    	HttpServletRequest request,
+        Model model
+    ) {
+		// 쿠키 정보
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        for(Cookie cookie : cookies) {
+           if(cookie.getName().equals("X-AUTH-TOKEN")) {
+              token = cookie.getValue();
+           }
+        }
+        // 토큰 유효성 검사
+        if (tokenProvider.validateToken(token)) { 
+            // 토큰에서 empId 추출
+            String empId = tokenProvider.getEmpId(token);
+    		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
+    		model.addAttribute("employee", employee);
+            return "certificate/certificateverificationpage";      	
+        }
+        
+        return "redirect:/employee/login";
+
+    }
+
 }

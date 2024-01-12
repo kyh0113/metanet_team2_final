@@ -92,6 +92,7 @@ public class VacationService implements IVacationService {
 		Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
 		Schedule schedule = new Schedule();
 		schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
+		schedule.setReg_id(realvacation.getRegId());
 		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
 		schedule.setEmp_id(realvacation.getEmpId());
 		schedule.setEnd_date(realvacation.getEndDate());

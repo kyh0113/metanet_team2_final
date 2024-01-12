@@ -37,6 +37,8 @@ import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.employee.service.IEmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.manager.model.EmployeeResponseDTO;
+import com.example.vms.manager.service.IManagerService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +56,8 @@ public class CertificateController {
 	ICertificateService certificateService;
 	@Autowired
 	IEmployeeService employeeService;
+	@Autowired
+	IManagerService managerService;
 	
 	@Autowired
 	private SpringTemplateEngine springTemplateEngine;	
@@ -162,6 +166,8 @@ public class CertificateController {
             // 토큰에서 empId 추출
             String empId = tokenProvider.getEmpId(token);
         	model.addAttribute("empId", empId);
+            Employee employee = employeeService.selectEmployee(empId);
+            model.addAttribute("employee", employee);
         	model.addAttribute("certificates", certificateService.searchCertificatesByEmpId(empId));
         	return "certificate/view";
         } else {
@@ -230,12 +236,7 @@ public class CertificateController {
     	}
 		return null;
     }
-    
-    // 증명서 진위 확인 화면 
-    @GetMapping("/verificate")
-    public String verificatePage() {
-        return "certificate/certificateverificationpage";
-    }
+   
     
     // 증명서 검색 화면 
     @GetMapping("/verificate/view") 
