@@ -430,6 +430,7 @@ public class VacationController {
 			Authentication auths = tokenProvider.getAuthentication(token);
 			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
 			for (GrantedAuthority authority : authorities) {
+				//System.out.println(authority.getAuthority());
 				// String authorityName = authority.getAuthority();
 				if (authority.getAuthority().equals("ROLE_LEADER")) {
 					return "manager/schedulelist";
