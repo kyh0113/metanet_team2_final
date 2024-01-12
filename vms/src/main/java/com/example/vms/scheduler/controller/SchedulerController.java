@@ -3,7 +3,7 @@ package com.example.vms.scheduler.controller;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
+import com.example.vms.scheduler.model.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import com.example.vms.employee.service.IEmployeeService;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.service.IManagerService;
 import com.example.vms.scheduler.model.SchedulerResult;
+import com.example.vms.scheduler.repository.ISchedulerRepository;
 import com.example.vms.scheduler.service.ISchedulerService;
 import com.example.vms.scheduler.service.SchedulerService;
 
@@ -28,6 +29,9 @@ public class SchedulerController {
 
    @Autowired
    ISchedulerService schedulerService;
+   
+   @Autowired
+   ISchedulerRepository schedulerDao;
    
    @Autowired
    IManagerService managerService;
@@ -55,16 +59,40 @@ public class SchedulerController {
       return "/scheduler/list";
    }
    
-   	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
-	public void vacationPromoEmail() { // 1개 이상의 연차를 가진 직원에게 연차 촉진 메일을 자동으로 발송
-		log.info("vacationPromoEmail 스케줄러 발동");
-		List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
-		
-		for(Employee employee : employees) {
-			System.out.println(employee.getEmail());
-			sendVacationPromoEmail(employee);
-		}
-   }
+   	// @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
+   	@Scheduled(cron = "0/20 * * * * ?")
+    public void vacationPromoEmail() {
+        try {
+            log.info("vacationPromoEmail 스케줄러 발동");
+            
+            List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
+            
+            for (Employee employee : employees) {
+                log.info("Sending vacation promo email to: {}", employee.getEmail());
+                sendVacationPromoEmail(employee);
+            }
+            
+            Scheduler scheduler = new Scheduler();
+            scheduler.setSchedulerId(schedulerDao.maxSchedulerId()+1);
+            scheduler.setWorkDate(LocalDate.now());
+            scheduler.setContent("연차 촉진 메일");
+            scheduler.setSuccess(1); // 성공
+            schedulerService.saveScheduler(scheduler);
+            
+            log.info("vacationPromoEmail 스케줄러 완료");
+        } catch (Exception e) {
+            log.error("vacationPromoEmail 스케줄러 에러", e);
+            
+            Scheduler scheduler = new Scheduler();
+            scheduler.setSchedulerId(schedulerService.maxSchedulerId());
+            scheduler.setWorkDate(LocalDate.now());
+            scheduler.setContent("연차 촉진 메일");
+            scheduler.setSuccess(0); // 실패
+            schedulerService.saveScheduler(scheduler);
+            
+            // 예외 처리 또는 필요한 조치를 수행
+        }
+    }
    
    public void sendVacationPromoEmail(Employee employee) {
 	   // 메일 내용 작성
