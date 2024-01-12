@@ -42,7 +42,7 @@ public class SchedulerController {
 
 	@Autowired
 	IEmployeeService employeeService;
-	
+
 	@Autowired
 	JwtTokenProvider tokenProvider;
 
@@ -58,6 +58,11 @@ public class SchedulerController {
 		return schedulers;
 	}
 
+	// 스케줄러 목록 페이지
+	@GetMapping("/list/view")
+	public String searchSchedulerPage() {
+		return "/scheduler/list";
+	}
 
 	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
 	// @Scheduled(cron = "0/20 * * * * ?")
