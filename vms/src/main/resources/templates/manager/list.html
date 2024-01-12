@@ -151,22 +151,18 @@
                 <i class="ti ti-menu-2"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                <i class="ti ti-bell-ringing"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-            </li>
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-              <li class="nav-item">
-                <a class="nav-link" href="javascript:void(0)" id="drop2" aria-expanded="false">
-                  <div>이름</div>
-                  <div>이메일</div>
-                  <img src="../../assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
-                </a>
-              </li>
+               <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>사원 아이디</p>
+				</li>
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>이름</p>
+				</li>
+				<li class="nav-item">
+					<p>이메일</p>
+				</li>
             </ul>
           </div>
         </nav>
@@ -204,7 +200,7 @@
 		    <nav id="paginationNavigation" aria-label="Page navigation example">
 		        <ul class="pagination">
 		            <li class="page-item" id="preButton">
-		                <a class="page-link" href="#" onclick="previousButtonTapped()">이전</a>
+		                <a class="page-link" href="#" onclick="previousButtonTapped()"><</a>
 		            </li>
 		            <th:block th:each="pageNum : ${#numbers.sequence(1, (numberOfEmployees/10)+1)}">
 		                <li class="page-item" th:classappend="${pageNum == currentPage} ? 'active' : ''">
@@ -212,7 +208,7 @@
 		                </li>
 		            </th:block>
 		            <li class="page-item" id="nextButton">
-		                <a class="page-link" href="#" onclick="nextButtonTapped()">다음</a>
+		                <a class="page-link" href="#" onclick="nextButtonTapped()">></a>
 		            </li>
 		        </ul>
 		    </nav>
