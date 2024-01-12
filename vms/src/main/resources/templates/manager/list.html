@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+  	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
     <title>직원 조회</title>
     <style>
 		 #searchForm {
@@ -24,6 +26,149 @@
     </style>
 </head>
 <body>
+	
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="/employee/main" class="text-nowrap logo-img">
+            <img src="../../assets/images/logos/dark-logo.svg" width="180" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Home</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/employee/main" aria-expanded="false">
+                <span>
+                  <i class="ti ti-layout-dashboard"></i>
+                </span>
+                <span class="hide-menu">메인페이지</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Service</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/vacation/request" aria-expanded="false">
+                <span>
+					<i class="ti ti-writing"></i>
+                </span>
+                <span class="hide-menu">휴가신청</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/vacation/request/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-calendar-event"></i>
+                </span>
+                <span class="hide-menu">휴가 신청 목록</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/certificate/request" aria-expanded="false">
+                <span>
+					<i class="ti ti-certificate"></i>
+                </span>
+                <span class="hide-menu">증명서 발급</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/certificate/view" aria-expanded="false">
+                <span>
+					<i class="ti ti-list"></i>
+                </span>
+                <span class="hide-menu">증명서 신청 목록</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">AUTH</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/employee/login" aria-expanded="false">
+                <span>
+                  <i class="ti ti-login"></i>
+                </span>
+                <span class="hide-menu">Login</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Admin</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/manager/employee/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">조직관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/vacation/schedule/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-luggage"></i>
+                </span>
+                <span class="hide-menu">휴가관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/scheduler/list/view" aria-expanded="false">
+                <span>
+					<i class="ti ti-clock-2"></i>
+                </span>
+                <span class="hide-menu">스케줄러 관리</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+               <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>사원 아이디</p>
+				</li>
+				<li class="nav-item" style="margin-right: 15px;">
+					<p>이름</p>
+				</li>
+				<li class="nav-item">
+					<p>이메일</p>
+				</li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->
+      <div class="container-fluid">
 	<div id="searchForm">
             <div class="input-group">
                 <input type="text" id="emp_id_form" class="form-control" placeholder="사원ID 입력" name="keyword">
@@ -55,7 +200,7 @@
 		    <nav id="paginationNavigation" aria-label="Page navigation example">
 		        <ul class="pagination">
 		            <li class="page-item" id="preButton">
-		                <a class="page-link" href="#" onclick="previousButtonTapped()">이전</a>
+		                <a class="page-link" href="#" onclick="previousButtonTapped()"><</a>
 		            </li>
 		            <th:block th:each="pageNum : ${#numbers.sequence(1, (numberOfEmployees/10)+1)}">
 		                <li class="page-item" th:classappend="${pageNum == currentPage} ? 'active' : ''">
@@ -63,13 +208,17 @@
 		                </li>
 		            </th:block>
 		            <li class="page-item" id="nextButton">
-		                <a class="page-link" href="#" onclick="nextButtonTapped()">다음</a>
+		                <a class="page-link" href="#" onclick="nextButtonTapped()">></a>
 		            </li>
 		        </ul>
 		    </nav>
 		</div>
     </div>
 
+
+      </div>
+    </div>
+  </div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
