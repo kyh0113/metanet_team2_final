@@ -144,7 +144,6 @@
 </head>
 
 <body>
-
   <!--  Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
@@ -353,15 +352,19 @@
 						//},
 
 						eventDidMount: function (info) {
+							var end_date = new Date(info.event.end);
+							end_date.setDate(end_date.getDate() - 1); // 종료날짜에서 1일을 뺌
+
 							tippy(info.el, {
 								content: "<strong>제목:</strong>" + info.event.title + "<hr>" +
 									"시작날짜: " + info.event.start + "<br>"
-									+ "종료날짜: " + info.event.end,
+									+ "종료날짜: " + end_date,
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,
 							});
 						},
+
 						events: data
 					});
 
@@ -385,4 +388,5 @@
 <script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 <script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
 <script src="../../assets/js/dashboard.js"></script>
+
 </html>
