@@ -95,7 +95,7 @@ public class VacationService implements IVacationService {
 		schedule.setReg_id(realvacation.getRegId());
 		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
 		schedule.setEmp_id(realvacation.getEmpId());
-		schedule.setEnd_date(realvacation.getEndDate());
+		schedule.setEnd_date(realvacation.getEndDate().plusDays(1));  // 달력 막대에 종료 날짜는 포함이 안되서 임의로 +1
 		schedule.setStart_date(realvacation.getStartDate());
 		schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
 				+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
