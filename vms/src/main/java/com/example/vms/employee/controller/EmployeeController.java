@@ -221,7 +221,7 @@ public class EmployeeController {
             String empId = tokenProvider.getEmpId(token);
     		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
     		model.addAttribute("employee", employee);
-    		int vacationUsageThisYear = employeeService.numberOfVacationUsagesSearchByYear("2024");
+    		int vacationUsageThisYear = employeeService.numberOfVacationUsagesSearchByYear(empId, "2024");
     		model.addAttribute("numberOfYearUsage", vacationUsageThisYear+"/"+(vacationUsageThisYear+employee.getRemains()));
     		int numberOfVacationApproval = employeeService.searchVacationApprovalWaiting(empId).length;
     		model.addAttribute("numberOfVacationApproval", numberOfVacationApproval);

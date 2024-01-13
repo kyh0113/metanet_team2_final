@@ -25,5 +25,5 @@ public interface IEmployeeService {
 	
 	List<EmployeeVacationCountPerMonth> vacationCountPerMonth(String empId);
 	
-	int numberOfVacationUsagesSearchByYear(String year);
+	int numberOfVacationUsagesSearchByYear(String empId, String year);
 }

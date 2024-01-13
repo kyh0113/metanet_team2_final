@@ -162,7 +162,7 @@ public class ManagerController {
 			for (GrantedAuthority authority : authorities) {
 				//System.out.println(authority.getAuthority());
 				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("ROLE_LEADER")) {
+				if (authority.getAuthority().equals("ROLE_MANAGER")) {
 					return "manager/schedulelist";
 				}
 			}

@@ -33,6 +33,7 @@ public interface IEmployeeRepository {
 	);
 	
 	int numberOfVacationUsagesSearchByYear(
+		@Param("empId") String empId,
 		@Param("year") String year
 	);
 }
