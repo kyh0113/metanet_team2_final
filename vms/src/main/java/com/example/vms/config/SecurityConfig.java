@@ -48,11 +48,10 @@ public class SecurityConfig {
         
         http.authorizeRequests()
         .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
-
         .requestMatchers("/manager/create").permitAll()
-        .requestMatchers("/manager/**").hasAnyRole("LEADER")
-        .requestMatchers("/employee/**").permitAll()
-        //.requestMatchers("/scheduler/**").permitAll()
+        .requestMatchers("/manager/**").hasAnyRole("MANAGER")
+        .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
+        .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
         .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/leader/**").hasAnyRole("LEADER")

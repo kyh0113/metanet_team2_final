@@ -271,7 +271,7 @@ public class EmployeeService implements IEmployeeService{
 	}
 
 	@Override
-	public int numberOfVacationUsagesSearchByYear(String year) {
-		return employeeDao.numberOfVacationUsagesSearchByYear(year);
+	public int numberOfVacationUsagesSearchByYear(String empId,String year) {
+		return employeeDao.numberOfVacationUsagesSearchByYear(empId, year);
 	}
 }
