@@ -49,7 +49,7 @@ public class SecurityConfig {
         .requestMatchers("/manager/**").hasAnyRole("MANAGER")
         .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
         .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
-        .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
+        .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
         .anyRequest().authenticated();
         
