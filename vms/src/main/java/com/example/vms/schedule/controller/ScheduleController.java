@@ -188,7 +188,7 @@ public class ScheduleController {
 	            } else if (i == 2) {
 	                setDateCellStyle(cell, schedule.getStart_date());
 	            } else if (i == 3) {
-	                setDateCellStyle(cell, schedule.getEnd_date().plusDays(1)); // 달력막대에 종료 날짜는 포함이 안되서 임의로 +1
+	                setDateCellStyle(cell, schedule.getEnd_date().minusDays(1)); 
 	            }
 	        }
 	    }
