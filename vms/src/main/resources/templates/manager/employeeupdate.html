@@ -39,7 +39,7 @@
 	            <div class="form-group">
 	                <label for="position">직책</label>
 	                <select id="position" name="position" class="form-control" required>
-	                    <option th:each="position : ${positions}" th:value="${position}" th:text="${position}"></option>
+	                    <option th:each="position : ${positions}" th:value="${position}" th:text="${position}" th:selected="${position == employee.position}"></option>
 	                </select>            
 	            </div>
 	        
@@ -61,7 +61,7 @@
 	            <div class="form-group">
 	                <label for="deptId">부서</label>
 	                <select id="deptId" name="deptId" class="form-control" required>
-	                    <option th:each="department : ${departments}" th:value="${department.deptId}" th:text="${department.name}"></option>
+	                    <option th:each="department : ${departments}" th:value="${department.deptId}" th:text="${department.name}" th:selected="${department.deptId == employee.deptId}"></option>
 	                </select>
 	            </div>
 	
@@ -99,6 +99,7 @@
                 "status": $("#status").val(),
                 "remains": $("#remains").val(),
                 "deptId": $("#deptId").val(),
+                "retireDate": $('#retireDate').val()
             }
             $.ajax({
                 url:"/manager/employee/update",
