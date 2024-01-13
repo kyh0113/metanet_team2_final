@@ -46,11 +46,11 @@ public class SecurityConfig {
         
         http.authorizeRequests()
         .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
-        .requestMatchers("/manager/**").hasAnyRole("LEADER")
-        .requestMatchers("/employee/**").permitAll()
-        .requestMatchers("/scheduler/**").permitAll()
-        .requestMatchers("/certificate/**").permitAll()
-        .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE")
+        .requestMatchers("/manager/**").hasAnyRole("MANAGER")
+        .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
+        .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
+        .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
+        .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
         .anyRequest().authenticated();
         
         http
