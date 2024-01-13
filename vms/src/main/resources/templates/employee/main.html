@@ -145,53 +145,53 @@
 
 <body>
 
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar" th:include="include/sidebar :: aside">
-	</aside>
-	<!--  Sidebar End -->
-    <!--  Main wrapper -->
-    <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header" th:include="include/header :: header">
-      </header>
-      <!--  Header End -->
-      <div class="container-fluid">
-    <div class="infoBox">
-        <div id="todoayInfo" class="clipBoard">
-            <p class="todayDateTitle">오늘의 날짜</p>
-            <p class="todayDateBody"></p>
-            <p class="todayTime"></p>
-        </div>
-        <div id="myCertificateInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfMyCertificates}"></label></span>
-                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 증명서</p>
-        </div>
-        <div id="approvalVacationRequestInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfVacationApproval}"></label></span>
-                    <img src="/images/category.svg" onclick="moveView('vacationApprove')">
-                </p>
-            </div>
-            <p class="infoLabel">내가 결재해야할 문서</p>
-        </div>
-        <div id="myVacationInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfYearUsage}"></label></span>
-                    <img src="/images/person.svg" onclick="moveView('vacation')"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 휴가 정보</p>
-        </div>
+	<!--  Body Wrapper -->
+	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+		data-sidebar-position="fixed" data-header-position="fixed">
+		<!-- Sidebar Start -->
+		<aside class="left-sidebar" th:include="include/sidebar :: aside">
+		</aside>
+		<!--  Sidebar End -->
+		<!--  Main wrapper -->
+		<div class="body-wrapper">
+			<!--  Header Start -->
+			<header class="app-header" th:include="include/header :: header">
+			</header>
+			<!--  Header End -->
+			<div class="container-fluid">
+				<div class="infoBox">
+					<div id="todoayInfo" class="clipBoard">
+						<p class="todayDateTitle">오늘의 날짜</p>
+						<p class="todayDateBody"></p>
+						<p class="todayTime"></p>
+					</div>
+					<div id="myCertificateInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${numberOfMyCertificates}"></label></span>
+								<img src="/images/calendar-time.svg" onclick="moveView('certificate')">
+							</p>
+						</div>
+						<p class="infoLabel">나의 증명서</p>
+					</div>
+					<div id="approvalVacationRequestInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${numberOfVacationApproval}"></label></span>
+								<img src="/images/category.svg" onclick="moveView('vacationApprove')">
+							</p>
+						</div>
+						<p class="infoLabel">내가 결재해야할 문서</p>
+					</div>
+					<div id="myVacationInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${numberOfYearUsage}"></label></span>
+								<img src="/images/person.svg" onclick="moveView('vacation')">
+							</p>
+						</div>
+						<p class="infoLabel">나의 휴가 정보</p>
+					</div>
 				</div>
 
 				<div id="graphContainer">
@@ -352,15 +352,19 @@
 						//},
 
 						eventDidMount: function (info) {
+							var end_date = new Date(info.event.end);
+							end_date.setDate(end_date.getDate() - 1); // 종료날짜에서 1일을 뺌
+
 							tippy(info.el, {
 								content: "<strong>제목:</strong>" + info.event.title + "<hr>" +
 									"시작날짜: " + info.event.start + "<br>"
-									+ "종료날짜: " + info.event.end,
+									+ "종료날짜: " + end_date,
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,
 							});
 						},
+
 						events: data
 					});
 
@@ -384,4 +388,5 @@
 <script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 <script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
 <script src="../../assets/js/dashboard.js"></script>
+
 </html>

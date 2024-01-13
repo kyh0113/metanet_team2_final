@@ -56,14 +56,16 @@
 							tippy(info.el, {
 								content: "<strong>제목:</strong>"+info.event.title+"<hr>"+
 								"시작날짜: "+info.event.start+"<br>"
-								+"종료날짜: "+info.event.end,
+								+"종료날짜ss: "+1,
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,
 							});
+							console.log(typeof(info.event.end));
 						},
 						events: data
 					});
+					
 
 					calendar.render();
 				});
