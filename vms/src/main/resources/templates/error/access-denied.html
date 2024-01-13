@@ -24,12 +24,8 @@
                 <a href="./index.html" class="text-nowrap logo-img text-center d-block py-3 w-100">
                   <h3>권한이 없는 페이지입니다.</h3>
                 </a>
-                <p class="text-center">관리자만 접근 가능합니다.</p>
-               
-                 
+                <p class="text-center" th:text='|"${errorMessage}" 권한을 가진 사용자만 접근 가능합니다|'></p>
                   <a href="/employee/main" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">메인으로 돌아가기</a>
-                  
-            
               </div>
             </div>
           </div>

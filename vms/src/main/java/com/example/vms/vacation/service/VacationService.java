@@ -12,6 +12,7 @@ import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
+import com.example.vms.schedule.model.ScheduleExcel;
 import com.example.vms.schedule.repository.IScheduleRepository;
 
 import com.example.vms.schedule.service.ScheduleService;
@@ -212,5 +213,12 @@ public class VacationService implements IVacationService {
 	public void deleteVacation(int regId) {
 		vacationDao.deleteVacation(regId);
 	}
+
+	@Override
+	public List<ScheduleExcel> selectAllVacationByDept(int deptId) {
+		
+		return vacationDao.selectAllVacationByDept(deptId);
+	}
+	
 
 }

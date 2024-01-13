@@ -160,10 +160,15 @@
 	</select>
 	
 	<select id="selectAllVacationByDept"
-		parameterType="com.example.vms.vacation.model.Vacation">
-		
+		resultType="com.example.vms.schedule.model.ScheduleExcel">
+		SELECT s.START_DATE AS startDate,
+			       s.END_DATE AS endDate,
+			       vr.CONTENT AS content,
+			       s.EMP_ID AS empId,
+			       s.TITLE as title 
+			       from vacation_reg vr 
+                   join employees e on vr.emp_id=e.emp_id join schedule s on vr.reg_id= s.reg_id
+				   where vr.state ='승인' and e.dept_id=#{deptId};
 	</select>
-
-
 
 </mapper>
