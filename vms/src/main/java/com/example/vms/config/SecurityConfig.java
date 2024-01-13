@@ -43,7 +43,7 @@ public class SecurityConfig {
       .logout()
           .logoutUrl("/employee/logout")
           .logoutSuccessUrl("/employee/login")
-          .invalidateHttpSession(true);
+          .deleteCookies("X-AUTH-TOKEN");
 
         
         http.authorizeRequests()
