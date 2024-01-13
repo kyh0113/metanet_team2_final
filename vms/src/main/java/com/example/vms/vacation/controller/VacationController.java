@@ -190,16 +190,6 @@ public class VacationController {
 	        Employee employee = employeeService.selectEmployee(empId);
 	        model.addAttribute("employee", employee);
 			
-			// 팀장인지 확인
-			Authentication auths = tokenProvider.getAuthentication(token);
-			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-			for (GrantedAuthority authority : authorities) {
-				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("ROLE_LEADER")) {
-					model.addAttribute("return", returnString);
-					return "vacation/requestlist_supervisor";
-				}
-			}
 			return "vacation/requestlist_employee";
 
 		} else {
@@ -249,11 +239,6 @@ public class VacationController {
         return workingDays;
     }
 	
-	
-	
-	
-	
-
 	@ResponseBody
 	@GetMapping("/request/getrow")
 	public int getRequestRowNum(HttpServletRequest request,
@@ -271,16 +256,6 @@ public class VacationController {
 			}
 		}
 
-		// 팀장인지 확인
-		Authentication auths = tokenProvider.getAuthentication(token);
-		Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-		for (GrantedAuthority authority : authorities) {
-			// String authorityName = authority.getAuthority();
-			if (authority.getAuthority().equals("ROLE_LEADER")) {
-				isLeader = true;
-			}
-		}
-
 		// 토큰에서 empId 추출
 		String empId = tokenProvider.getEmpId(token);
 
@@ -288,11 +263,7 @@ public class VacationController {
 			state = null;
 		}
 
-		if (isLeader) {
-			rowNum = vacationService.getCountDeptRequestList(empId, state);
-		} else {
-			rowNum = vacationService.getCountRequestList(empId, state);
-		}
+		rowNum = vacationService.getCountRequestList(empId, state);
 
 		return rowNum;
 
@@ -306,24 +277,13 @@ public class VacationController {
 			@RequestParam(name = "curpage", defaultValue = "1") String curpage) {
 
 		List<VacationEmployee> requestList = null;
-		boolean isLeader = false;
-
+		
 		// 쿠키 정보
 		Cookie[] cookies = request.getCookies();
 		String token = "";
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("X-AUTH-TOKEN")) {
 				token = cookie.getValue();
-			}
-		}
-
-		// 팀장인지 확인
-		Authentication auths = tokenProvider.getAuthentication(token);
-		Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-		for (GrantedAuthority authority : authorities) {
-			// String authorityName = authority.getAuthority();
-			if (authority.getAuthority().equals("ROLE_LEADER")) {
-				isLeader = true;
 			}
 		}
 
@@ -334,54 +294,10 @@ public class VacationController {
 			state = null;
 		}
 
-		if (isLeader) {
-			requestList = vacationService.getDeptRequestList(empId, state, curpage);
-		} else {
-			requestList = vacationService.getRequestList(empId, state, curpage);
-		}
+		requestList = vacationService.getRequestList(empId, state, curpage);
 
 		System.out.println(requestList);
 		return requestList;
-	}
-
-	// 휴가 신청서 상세 조회(팀장)
-	@GetMapping("/request/list/team/{regId}")
-	public String getRequestDetail(@PathVariable String regId, Model model) {
-		// role이 팀장인지 확인 필요
-		int regIdNumber = Integer.parseInt(regId);
-		Vacation vacation = vacationService.getRequestDetail(regIdNumber);
-		// 사원 정보 검색
-		Employee employee = managerService.selectEmployee(vacation.getEmpId());
-		// 부서 이름 검색
-		String deptName = vacationService.getDeptNameByEmpId(vacation.getEmpId());
-		// 휴가 유형 검색
-		String typeName = vacationService.getVacationTypeName(vacation.getTypeId());
-		// 휴가일수 계산
-		Period period = Period.between(vacation.getStartDate(), vacation.getEndDate());
-		// 파일 리스트 가져오기
-		List<UploadFile> files = vacationService.getFileList(regIdNumber);
-		System.out.println(files);
-		System.out.println(vacation);
-		model.addAttribute("vacation", vacation);
-		model.addAttribute("employee", employee);
-		model.addAttribute("deptName", deptName);
-		model.addAttribute("typeName", typeName);
-		model.addAttribute("vacationPeriod", period.getDays() + 1);
-		model.addAttribute("files", files);
-		return "vacation/requestdetail";
-	}
-
-	// 휴가 신청서 결재(팀장)
-	@ResponseBody
-	@PostMapping("/approval")
-	public Result approvalRequest(@RequestBody Vacation vacation, Model model) {
-		// role이 팀장인지 확인 필요
-		String resultMsg = vacationService.approvalRequest(vacation);
-		model.addAttribute("resultmessage", resultMsg);
-		Result result = new Result();
-		String urlString = "redirect:/vacation/request/" + vacation.getRegId();
-		result.setResultMessage(resultMsg);
-		return result;
 	}
 
 	@PostMapping("/delete/{regId}")

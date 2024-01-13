@@ -8,11 +8,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.example.vms.common.handler.CustomAccessDeniedHandler;
 import com.example.vms.jwt.JwtAuthenticationFilter;
 import com.example.vms.jwt.JwtTokenProvider;
 
@@ -46,15 +48,17 @@ public class SecurityConfig {
         
         http.authorizeRequests()
         .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
+        .requestMatchers("/manager/create").permitAll()
         .requestMatchers("/manager/**").hasAnyRole("MANAGER")
         .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "LEADER", "MANAGER")
         .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
         .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
+        .requestMatchers("/leader/**").hasAnyRole("LEADER")
         .anyRequest().authenticated();
         
         http
-        .exceptionHandling().accessDeniedPage("/error/access-denied");
+        .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
         
         http.sessionManagement((session)->session.sessionCreationPolicy(
 				SessionCreationPolicy.STATELESS)); // 세션방식의 인증을 사용하지 않겠다는 뜻
@@ -87,5 +91,10 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+    
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 }

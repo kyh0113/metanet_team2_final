@@ -101,9 +101,9 @@
 	
 	function pagination(waiting) {
 
-		let getRowNumUrl = "/vacation/request/getrow";
+		let getRowNumUrl = "/leader/request/getrow";
 		if(waiting) {
-			getRowNumUrl = "/vacation/request/getrow?state=결재대기"
+			getRowNumUrl = "/leader/request/getrow?state=결재대기"
 		}
 
 	    fetch(getRowNumUrl)
@@ -227,7 +227,7 @@
             period.textContent = item.startDate +"~"+item.endDate;
             regDate.textContent = item.regDate;
            
-           	row.setAttribute('url', '/vacation/request/list/team/'+item.regId);
+           	row.setAttribute('url', '/leader/request/list/team/'+item.regId);
            	row.setAttribute('onclick', "showDetail(this)");
            	
             const statebtn = document.createElement('button')
@@ -249,9 +249,9 @@
 	  let waitingBtn = document.querySelector(".waiting");
 	  
 	  if (isWaiting) {
-	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=결재대기";
+	    url = "/leader/request/getlist?curpage="+currentPage+"&state=결재대기";
 	  } else {
-	    url = "/vacation/request/getlist?curpage="+currentPage+"&state=";
+	    url = "/leader/request/getlist?curpage="+currentPage+"&state=";
 	  }
 	 
       httpReq = getInstance();
