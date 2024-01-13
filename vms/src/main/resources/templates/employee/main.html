@@ -161,7 +161,7 @@
       <div class="container-fluid">
     <div class="infoBox">
         <div id="todoayInfo" class="clipBoard">
-            <p class="todayDateTitle">오늘의 날짜</p>
+            <p class="todayDateTitle" style="margin-top: 15px;">오늘의 날짜</p>
             <p class="todayDateBody"></p>
             <p class="todayTime"></p>
         </div>
@@ -169,25 +169,26 @@
             <div class="infoTop">
                 <p class="infoCountLabel">
 					<span><label th:text="${numberOfMyCertificates}"></label></span>
-                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')"> 
+                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')" style="width: 25px; height: 25px; margin-bottom: 20px;"> 
                 </p>
             </div>
             <p class="infoLabel">나의 증명서</p>
         </div>
-        <div id="approvalVacationRequestInfo" class="clipBoard">
+      <!--  <div id="approvalVacationRequestInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
 					<span><label th:text="${numberOfVacationApproval}"></label></span>
-                    <img src="/images/category.svg" onclick="moveView('vacationApprove')">
+                    <img src="/images/category.svg" onclick="moveView('vacationApprove')" style="width: 40px; height: 40px; margin-bottom: 20px;">
                 </p>
             </div>
             <p class="infoLabel">내가 결재해야할 문서</p>
         </div>
+        -->
         <div id="myVacationInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
-					<span><label th:text="${numberOfYearUsage}"></label></span>
-                    <img src="/images/person.svg" onclick="moveView('vacation')"> 
+					<span><label th:text="${employee.remains}"></label></span>
+                    <img src="/images/person.svg" onclick="moveView('vacation')" style="width: 40px; height: 40px; margin-bottom: 20px;"> 
                 </p>
             </div>
             <p class="infoLabel">나의 휴가 정보</p>
