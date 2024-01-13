@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.vms.schedule.model.ScheduleExcel;
 import com.example.vms.vacation.model.Vacation;
 import com.example.vms.vacation.model.VacationEmployee;
 
@@ -23,7 +24,7 @@ public interface IVacationRepository {
 	String selectTypeName(int typeId);
 	int selectCountRequestListByEmpId(@Param("empId") String empId, @Param("state") String state);
 	List<VacationEmployee> selectRequestListByEmpId(@Param("empId") String empId, @Param("state") String state, @Param("startNum") int startNum, @Param("endNum") int endNum );
-
+	List<ScheduleExcel> selectAllVacationByDept(@Param("deptId") int deptId);
 
 	//List<String> selectFileListByRegId(int regId);
 	//UploadFile selectFile(int fileId);
