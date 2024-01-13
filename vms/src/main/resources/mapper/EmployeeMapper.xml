@@ -138,6 +138,6 @@
 		    ), 0)
 		    AS TOTAL_DAYS
 		FROM SCHEDULE  
-		WHERE EMP_ID = 'M760001' AND TO_CHAR(START_DATE, 'YYYY') = #{year}
+		WHERE EMP_ID = #{empId} AND TO_CHAR(START_DATE, 'YYYY') = #{year}
 	</select> 
 </mapper>
