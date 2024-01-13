@@ -31,7 +31,7 @@ public class LogAspect {
 		
 		Long end = System.currentTimeMillis();
 		
-		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메서드-{}]]",(end-start), methodName);
 		return result;
 	}	
 	
@@ -56,7 +56,7 @@ public class LogAspect {
 		
 		Long end = System.currentTimeMillis();
 		
-		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메서드-{}]]",(end-start), methodName);
 		return result;
 	}	
 	
@@ -80,7 +80,7 @@ public class LogAspect {
 		
 		Long end = System.currentTimeMillis();
 		
-		log.info("[[[AOP-around 실행시간-{}milisec,실행메소드-{}]]",(end-start), methodName);
+		log.info("[[[AOP-around 실행시간-{}milisec,실행메서드-{}]]",(end-start), methodName);
 		return result;
 	}	
 	

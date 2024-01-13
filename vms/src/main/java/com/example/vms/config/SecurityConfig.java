@@ -48,7 +48,9 @@ public class SecurityConfig {
         
         http.authorizeRequests()
         .requestMatchers( "/css/**", "/js/**", "/image/**").permitAll()
-        .requestMatchers("/manager/**").hasAnyRole("MANAGER")
+
+        .requestMatchers("/manager/create").permitAll()
+        .requestMatchers("/manager/**").hasAnyRole("LEADER")
         .requestMatchers("/employee/**").permitAll()
         //.requestMatchers("/scheduler/**").permitAll()
         .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")

@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
+import com.example.vms.manager.model.Employee;
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.service.IScheduleService;
 import com.example.vms.vacation.model.UploadFile;
@@ -120,6 +121,7 @@ public class ScheduleController {
 
 		return jsonArr;
 	}
+	
 	Workbook wb = new XSSFWorkbook();
 	public void setDateCellStyle(Cell cell, LocalDate date) {
 	    CellStyle dateCellStyle = wb.createCellStyle();
@@ -132,7 +134,7 @@ public class ScheduleController {
 
 	@ResponseBody
 	@GetMapping("/download")
-	public void excelDownload(HttpServletResponse response) throws IOException {
+	public void excelDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    
 	    Sheet sheet = wb.createSheet("첫번째 시트");
 	    Row row;
@@ -142,8 +144,21 @@ public class ScheduleController {
 	    CellStyle cellStyle = wb.createCellStyle();
 	    cellStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
 	    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    
+	    Cookie[] cookies = request.getCookies();
 
-	    List<Schedule> schedules = iScheduleService.getSchedulebydeptId(2);
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				token = cookie.getValue();
+			}
+		}
+		
+		String empId = tokenProvider.getEmpId(token);
+
+        Employee employee = employeeService.selectEmployee(empId);
+
+	    List<Schedule> schedules = iScheduleService.getSchedulebydeptId(employee.getDeptId());
 
 	    // Header
 	    row = sheet.createRow(rowNum++);
@@ -173,7 +188,7 @@ public class ScheduleController {
 	            } else if (i == 2) {
 	                setDateCellStyle(cell, schedule.getStart_date());
 	            } else if (i == 3) {
-	                setDateCellStyle(cell, schedule.getEnd_date());
+	                setDateCellStyle(cell, schedule.getEnd_date().plusDays(1)); // 달력막대에 종료 날짜는 포함이 안되서 임의로 +1
 	            }
 	        }
 	    }
