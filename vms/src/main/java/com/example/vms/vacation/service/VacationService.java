@@ -74,7 +74,7 @@ public class VacationService implements IVacationService {
 
 	@Override
 	public List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage) {
-		// int rownum = vacationDao.selectCountRequestListByDept(empId, state);
+		
 		int curPageNum = Integer.parseInt(curPage);
 		int startNum = curPageNum * 10 - 9;
 		int endNum = curPageNum * 10;
