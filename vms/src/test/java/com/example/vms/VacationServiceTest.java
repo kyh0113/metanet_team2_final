@@ -21,6 +21,7 @@ import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
 import com.example.vms.schedule.repository.IScheduleRepository;
 import com.example.vms.vacation.model.UploadFile;
+import com.example.vms.vacation.model.VacationEmployee;
 import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
 import com.example.vms.vacation.service.VacationService;
@@ -220,18 +221,29 @@ public class VacationServiceTest {
         verify(scheduleDao).getAllScheduleList(startNum, endNum);
     }
 	
-	@Test 
-	void testGetDeptRequestList() {
-		
-		// empId
-		
-		
-		// state 
-		
-		
-		// curPage 
-		
-		
-		
-	}
+    @Test
+    public void testGetRequestList() {
+
+    	String empId = "123";
+        String state = "Pending";
+        String curPage = "1";
+        int curPageNum = Integer.parseInt(curPage);
+        int startNum = curPageNum * 10 - 9;
+        int endNum = curPageNum * 10;
+
+        VacationEmployee vacation1 = new VacationEmployee(1, "Pending", LocalDate.parse("2024-01-15"),
+                LocalDate.parse("2024-01-17"), LocalDate.parse("2024-01-01"), "John Doe");
+        VacationEmployee vacation2 = new VacationEmployee(2, "Pending", LocalDate.parse("2024-01-18"),
+                LocalDate.parse("2024-01-20"), LocalDate.parse("2024-01-02"), "Jane Smith");
+
+        List<VacationEmployee> expectedRequestList = Arrays.asList(vacation1, vacation2);
+
+        when(vacationDaoMock.selectRequestListByEmpId(empId, state, startNum, endNum)).thenReturn(expectedRequestList);
+
+        List<VacationEmployee> actualRequestList = vacationService.getRequestList(empId, state, curPage);
+
+        assertEquals(expectedRequestList, actualRequestList);
+
+        verify(vacationDaoMock).selectRequestListByEmpId(empId, state, startNum, endNum);
+    }
 }
