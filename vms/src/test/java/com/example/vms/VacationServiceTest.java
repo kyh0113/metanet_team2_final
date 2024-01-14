@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertNull;
 
+import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
@@ -23,6 +24,9 @@ public class VacationServiceTest {
 	
 	@Mock
 	private IVacationRepository vacationDaoMock;
+	
+	@Mock
+	private IEmployeeRepository employeeRepository;
 
 	@InjectMocks
 	private VacationService vacationService;
@@ -81,4 +85,54 @@ public class VacationServiceTest {
         // fileId가 일치하지 않는 경우에는 null을 반환해야 함
         assertNull(result);
     }
+	
+	@Test
+	void testGetDeptNameByEmpId() {
+		
+		// empId 
+        String empId = "I120001";
+        String expectedDeptName = "it";
+
+        // Mock the behavior of the employeeRepository
+        when(employeeRepository.selectDeptNameByEmpId(empId)).thenReturn(expectedDeptName);
+
+        // When
+        String actualDeptName = vacationService.getDeptNameByEmpId(empId);
+
+        // Then
+        assertEquals(expectedDeptName, actualDeptName);
+
+        // Verify that the selectDeptNameByEmpId method was called with the correct parameter
+        verify(employeeRepository).selectDeptNameByEmpId(empId);
+		
+	}
+	
+	@Test
+	void testGetScheduleListByOption() {
+		
+		// curPage
+		
+		
+		// keyword 
+		
+		
+		// option 
+		
+		
+	}
+	
+	@Test 
+	void testGetDeptRequestList() {
+		
+		// empId
+		
+		
+		// state 
+		
+		
+		// curPage 
+		
+		
+		
+	}
 }
