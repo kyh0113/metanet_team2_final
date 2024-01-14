@@ -1,6 +1,11 @@
 package com.example.vms;
 
 import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,10 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNull;
 
 import com.example.vms.employee.repository.IEmployeeRepository;
+import com.example.vms.schedule.model.ScheduleEmpDeptType;
+import com.example.vms.schedule.repository.IScheduleRepository;
 import com.example.vms.vacation.model.UploadFile;
 import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
@@ -30,6 +38,9 @@ public class VacationServiceTest {
 
 	@InjectMocks
 	private VacationService vacationService;
+	
+	@Mock
+	IScheduleRepository scheduleDao;
 
 	@BeforeEach
 	void setUp() {
@@ -89,37 +100,125 @@ public class VacationServiceTest {
 	@Test
 	void testGetDeptNameByEmpId() {
 		
-		// empId 
+		// 테스트하기 위해서 사용하는 변수들 
         String empId = "I120001";
         String expectedDeptName = "it";
 
-        // Mock the behavior of the employeeRepository
+        // employeeRepository 의 메서드 
         when(employeeRepository.selectDeptNameByEmpId(empId)).thenReturn(expectedDeptName);
 
-        // When
+        // 실제 deptName 
         String actualDeptName = vacationService.getDeptNameByEmpId(empId);
 
-        // Then
+        // 비교 
         assertEquals(expectedDeptName, actualDeptName);
 
-        // Verify that the selectDeptNameByEmpId method was called with the correct parameter
+        // 증명
         verify(employeeRepository).selectDeptNameByEmpId(empId);
 		
 	}
 	
 	@Test
-	void testGetScheduleListByOption() {
-		
-		// curPage
-		
-		
-		// keyword 
-		
-		
-		// option 
-		
-		
+	void testGetScheduleListByEmpName() {
+        String curPage = "1";
+        String keyword = "J";
+        int option = 1;
+        int startNum = 1;
+        int endNum = 10;
+
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "it", "홍성철", "Developer", "연차",
+                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "it", "홍성철", "HR Manager", "연차",
+                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+
+        List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
+
+
+        when(scheduleDao.getScheduleListByEmpName(startNum, endNum, keyword)).thenReturn(expectedScheduleList);
+
+        List<ScheduleEmpDeptType> actualScheduleList = vacationService.getScheduleListByOption(curPage, keyword, option);
+
+        assertEquals(expectedScheduleList, actualScheduleList);
+
+        verify(scheduleDao).getScheduleListByEmpName(startNum, endNum, keyword);
+
 	}
+	
+	
+
+    @Test
+    public void testGetScheduleListByOptionForDeptName() {
+        // Given
+        String curPage = "1";
+        String keyword = "IT";
+        int option = 2;
+        int startNum = 1;
+        int endNum = 10;
+
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
+                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "IT", "Jane Smith", "HR Manager", "Training",
+                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+
+        List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
+
+        when(scheduleDao.getScheduleListByDeptName(startNum, endNum, keyword)).thenReturn(expectedScheduleList);
+
+        List<ScheduleEmpDeptType> actualScheduleList = vacationService.getScheduleListByOption(curPage, keyword, option);
+
+        assertEquals(expectedScheduleList, actualScheduleList);
+
+        verify(scheduleDao).getScheduleListByDeptName(startNum, endNum, keyword);
+    }
+
+    @Test
+    public void testGetScheduleListByOptionForPosition() {
+        // Given
+        String curPage = "1";
+        String keyword = "Developer";
+        int option = 3;
+        int startNum = 1;
+        int endNum = 10;
+
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
+                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "HR", "Jane Smith", "Developer", "Training",
+                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+
+        List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
+
+        when(scheduleDao.getScheduleListByPosition(startNum, endNum, keyword)).thenReturn(expectedScheduleList);
+
+        List<ScheduleEmpDeptType> actualScheduleList = vacationService.getScheduleListByOption(curPage, keyword, option);
+
+        assertEquals(expectedScheduleList, actualScheduleList);
+
+        verify(scheduleDao).getScheduleListByPosition(startNum, endNum, keyword);
+    }
+
+    @Test
+    public void testGetScheduleListByOptionForAll() {
+        // Given
+        String curPage = "1";
+        int option = 4;
+        int startNum = 1;
+        int endNum = 10;
+
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
+                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "HR", "Jane Smith", "HR Manager", "Training",
+                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+
+        List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
+
+        when(scheduleDao.getAllScheduleList(startNum, endNum)).thenReturn(expectedScheduleList);
+
+        List<ScheduleEmpDeptType> actualScheduleList = vacationService.getScheduleListByOption(curPage, null, option);
+
+        assertEquals(expectedScheduleList, actualScheduleList);
+
+        verify(scheduleDao).getAllScheduleList(startNum, endNum);
+    }
 	
 	@Test 
 	void testGetDeptRequestList() {
