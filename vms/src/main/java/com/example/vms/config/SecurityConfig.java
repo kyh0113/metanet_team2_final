@@ -67,7 +67,6 @@ public class SecurityConfig {
 				UsernamePasswordAuthenticationFilter.class); // 스프링시큐리티에서 제공해주는거
 		// 패스워드와 이름으로 인증
 		
-		// CORS 설정 추가
         http.cors();
             
 
@@ -83,7 +82,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedMethod("*"); // POST, PATCH, GET, DELETE등 접근 가능
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
 

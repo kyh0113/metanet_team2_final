@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.repository.ICertificateRepository;
 import com.example.vms.schedule.repository.IScheduleRepository;
@@ -28,6 +30,7 @@ public class SchedulerService implements ISchedulerService{
     private ISchedulerRepository schedulerRepository;
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    @Transactional
     public void certificateScheduler() {
         log.info("certificate 스케줄러 발동");
 
