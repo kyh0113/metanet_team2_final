@@ -204,12 +204,6 @@ public class VacationService implements IVacationService {
 	public void deleteVacation(int regId) {
 		vacationDao.deleteVacation(regId);
 	}
-
-	@Override
-	public List<ScheduleExcel> selectAllVacationByDept(int deptId) {
-		
-		return vacationDao.selectAllVacationByDept(deptId);
-	}
 	
 
 }
