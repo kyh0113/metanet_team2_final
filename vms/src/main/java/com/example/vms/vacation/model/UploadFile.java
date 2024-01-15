@@ -15,6 +15,16 @@ public class UploadFile {
 	private byte[] fileData;
 	private Integer regId; // 신청서 아이디
 	
+	public UploadFile() {
+		
+	}
+	
+	public UploadFile(String name, int fileSize, String contentType) {
+		this.name = name;
+		this.contentType = contentType;
+		this.fileSize = fileSize;
+	}
+
 	public void setFileSize(Long fileSize) {
 	    this.fileSize = fileSize != null ? fileSize.intValue() : null;
 	}

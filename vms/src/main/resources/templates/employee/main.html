@@ -352,13 +352,14 @@
 						//},
 
 						eventDidMount: function (info) {
+							var start_date = new Date(info.event.start);
+							start_date.setDate(start_date.getDate()+1);
 							var end_date = new Date(info.event.end);
-							end_date.setDate(end_date.getDate() - 1); // 종료날짜에서 1일을 뺌
 
 							tippy(info.el, {
 								content: "<strong>제목:</strong>" + info.event.title + "<hr>" +
-									"시작날짜: " + info.event.start + "<br>"
-									+ "종료날짜: " + end_date,
+									"시작날짜: " + start_date.toISOString().slice(0, 10) + "<br>"
+									+ "종료날짜: " + end_date.toISOString().slice(0, 10),
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,
