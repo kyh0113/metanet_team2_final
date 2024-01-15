@@ -44,6 +44,7 @@ public class VacationService implements IVacationService {
 	ScheduleService scheduleservice;
 
 	@Override
+	@Transactional
 	public void requestVacation(Vacation vacation, MultipartFile[] files) {
 		Integer typeId = vacation.getTypeId(); // 폼에서 받아온 값
 		vacation.setTypeId(typeId);
@@ -74,7 +75,6 @@ public class VacationService implements IVacationService {
 
 	@Override
 	public List<VacationEmployee> getDeptRequestList(String empId, String state, String curPage) {
-		
 		int curPageNum = Integer.parseInt(curPage);
 		int startNum = curPageNum * 10 - 9;
 		int endNum = curPageNum * 10;
@@ -201,6 +201,7 @@ public class VacationService implements IVacationService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteVacation(int regId) {
 		vacationDao.deleteVacation(regId);
 	}

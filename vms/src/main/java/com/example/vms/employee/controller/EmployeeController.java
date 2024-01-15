@@ -96,11 +96,13 @@ public class EmployeeController {
 
 	    Employee employee = employeeService.selectEmployee(empId);
 	    if (employee == null) {
-	        throw new IllegalArgumentException("사용자가 없습니다.");
+	    	System.out.println("로그인 실패");
+	    	return "redirect:/error/login-denied";
 	    }
 
 	    if (!passwordEncoder.matches(password, employee.getPassword())) {
-	        throw new IllegalArgumentException("비밀번호 오류");
+	    	System.out.println("로그인 실패");
+	        return "redirect:/error/login-denied";
 	    } else {
 	        log.info("로그인 성공");
 
