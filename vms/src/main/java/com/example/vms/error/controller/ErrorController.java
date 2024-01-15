@@ -33,4 +33,9 @@ public class ErrorController {
 
         return "error/access-denied";
     }
+	
+	@GetMapping("/login-denied")
+	public String loginDenied(Model model, Authentication auth, HttpServletRequest req, @RequestParam(value = "errorMessage", required = false) String errorMessage) {
+		return "/error/login-denied";
+	}
 }
