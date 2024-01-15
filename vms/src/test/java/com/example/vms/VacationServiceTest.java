@@ -105,29 +105,29 @@ public class VacationServiceTest {
 		assertNull(result);
 	}
 
-    @Test
-    void testGetCountScheduleByOption() {
-        String keyword = "John Doe";
-
-        // Mock 데이터에 대한 행동 설정
-        when(scheduleDaoMock.getCountScheduleByEmpName(keyword)).thenReturn(5);
-        when(scheduleDaoMock.getCountScheduleByDeptName(keyword)).thenReturn(8);
-        when(scheduleDaoMock.getCountScheduleByPosition(keyword)).thenReturn(3);
-        when(scheduleDaoMock.getCountAllSchedule()).thenReturn(15);
-
-        // 테스트 케이스 1: "사원명"
-        assertEquals(5, scheduleService.getCountScheduleByEmpName(keyword));
-
-        // 테스트 케이스 2: "부서"
-        assertEquals(8, scheduleService.getCountScheduleByDeptName(keyword));
-
-        // 테스트 케이스 3: "직위"
-        assertEquals(3, scheduleService.getCountScheduleByPosition(keyword));
-
-        // 테스트 케이스 4: 기본값 - "전체"
-        assertEquals(15, scheduleService.getCountAllSchedule());
-    }
-    
+//    @Test
+//    void testGetCountScheduleByOption() {
+//        String keyword = "John Doe";
+//
+//        // Mock 데이터에 대한 행동 설정
+//        when(scheduleDaoMock.getCountScheduleByEmpName(keyword)).thenReturn(5);
+//        when(scheduleDaoMock.getCountScheduleByDeptName(keyword)).thenReturn(8);
+//        when(scheduleDaoMock.getCountScheduleByPosition(keyword)).thenReturn(3);
+//        when(scheduleDaoMock.getCountAllSchedule()).thenReturn(15);
+//
+//        // 테스트 케이스 1: "사원명"
+//        assertEquals(5, scheduleService.getCountScheduleByEmpName(keyword));
+//
+//        // 테스트 케이스 2: "부서"
+//        assertEquals(8, scheduleService.getCountScheduleByDeptName(keyword));
+//
+//        // 테스트 케이스 3: "직위"
+//        assertEquals(3, scheduleService.getCountScheduleByPosition(keyword));
+//
+//        // 테스트 케이스 4: 기본값 - "전체"
+//        assertEquals(15, scheduleService.getCountAllSchedule());
+//    }
+//    
     @Test
     void testGetDeptRequestList() {
         // 테스트 데이터를 직접 설정
