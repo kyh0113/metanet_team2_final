@@ -130,7 +130,7 @@ public class ManagerController {
 		Model model 
 	) {
 		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
-		String[] positions = {"팀원", "팀장"};
+		String[] positions = {"팀원", "팀장", "관리자"};
 		model.addAttribute("employee", employee);
 		model.addAttribute("departments", managerService.searchDepartments());
 		model.addAttribute("positions", positions);

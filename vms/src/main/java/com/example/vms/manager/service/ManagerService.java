@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.manager.model.Department;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.manager.model.EmployeeResponseDTO;
@@ -20,6 +23,9 @@ public class ManagerService implements IManagerService {
 
     @Autowired
     private IManagerRepository managerDao;
+    
+    @Autowired
+    private IEmployeeRepository employeeRepository;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -104,11 +110,32 @@ public class ManagerService implements IManagerService {
 
 	@Override
 	public EmployeeResponseDTO searchEmployeeByEmpId(String empId) {
-		return managerDao.searchEmployeeByEmpId(empId);
+		EmployeeResponseDTO employee = managerDao.searchEmployeeByEmpId(empId);
+		Set<String> roles = employeeRepository.getRolesByEmpId(employee.getEmpId());
+		if (roles.contains("MANAGER")) {
+			employee.setPosition("관리자");
+		} else if (roles.contains("LEADER")) {
+			employee.setPosition("팀장");
+		} else if (roles.contains("EMPLOYEE")) {
+			employee.setPosition("팀원");
+		}
+		return employee;
 	}
 
 	@Override
+	@Transactional
 	public void updateEmployee(EmployeeUpdateRequestDTO employee) {
+		String position = employee.getPosition();
+		String empId = employee.getEmpId(); 
+		managerDao.deleteEmployeeRoles(empId);
+		if (position.equals("관리자")) {
+			managerDao.insertEmployeeRole("MANAGER", empId);
+		} else if (position.equals("팀장")) {
+			managerDao.insertEmployeeRole("LEADER", empId);
+			managerDao.insertEmployeeRole("EMPLOYEE", empId);
+		} else if (position.equals("팀원")) {
+			managerDao.insertEmployeeRole("EMPLOYEE", empId);
+		}
 		managerDao.updateEmployee(employee);
 	}
 

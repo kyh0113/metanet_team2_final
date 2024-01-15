@@ -235,5 +235,15 @@
 				employees 
 		]]>
 	</select>
+	
+	<delete id="deleteEmployeeRoles">
+		DELETE EMPLOYEE_ROLES WHERE EMP_ID = #{empId}
+	</delete>
+	
+	<insert id="insertEmployeeRole">
+		INSERT INTO EMPLOYEE_ROLES(EMP_ID, ROLE_ID)
+		VALUES(#{empId}, (SELECT ROLE_ID from roles
+		where name=#{role}))
+	</insert>
 
 </mapper>
