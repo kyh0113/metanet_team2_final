@@ -137,8 +137,10 @@
 		    xhr.onreadystatechange = function () {
 		        if (xhr.readyState == 4 && xhr.status == 200) {
 		            // 성공적으로 요청이 완료되었을 때 실행할 코드
-		            alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
-		        }
+		            alert('요청이 성공적으로 접수되었습니다.\n' + xhr.responseText);
+		        } else {
+					alert('요청에 실패했습니다.\n'+xh.responseText);
+				}
 		    };
 		
 		    // JSON 데이터를 문자열로 변환하여 요청 전송
