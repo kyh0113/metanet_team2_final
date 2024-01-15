@@ -34,6 +34,7 @@ public class ManagerService implements IManagerService {
     private Map<Integer, Integer> departmentSequenceMap = new HashMap<>();
 
     @Override
+    @Transactional
     public void create(Employee employee) {
         // 아이디 생성
         String id = generateEmployeeId(employee.getDeptId(), employee.getHireDate());
@@ -155,6 +156,7 @@ public class ManagerService implements IManagerService {
 	}
 
 	@Override
+	@Transactional
 	public void updateRemains(String empId, int remains) {
 		managerDao.updateRemains(empId, remains);
 		

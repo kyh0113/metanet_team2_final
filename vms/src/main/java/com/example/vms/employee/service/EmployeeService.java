@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vms.employee.model.EmployeeVacationCountPerMonth;
 import com.example.vms.employee.model.EmployeeVacationCountPerMonthResponseDTO;
@@ -61,6 +62,7 @@ public class EmployeeService implements IEmployeeService{
 	}
 	
 	@Override
+	@Transactional
 	public String sendMail(String content, String email, String mailSubject, String mailMessage){
     	//메일 전송 성공 여부
     	boolean success = false;
@@ -124,6 +126,7 @@ public class EmployeeService implements IEmployeeService{
 	}
 	
 	@Override
+	@Transactional
 	public String changePassword(Employee employee) {
 		// 비밀번호 변경
 		int result = employeeDao.updatePassword(employee);
@@ -141,6 +144,7 @@ public class EmployeeService implements IEmployeeService{
 	}
 
 	@Override
+	@Transactional
 	public List<EmployeeVacationCountPerMonth> vacationCountPerMonth(String empId) {
 		List<EmployeeVacationCountPerMonth> monthVacationCountInformations = new ArrayList<>();
 		List<String> monthList = previousSixMonthsList();
