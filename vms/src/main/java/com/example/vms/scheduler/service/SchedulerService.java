@@ -29,7 +29,6 @@ public class SchedulerService implements ISchedulerService{
     @Autowired
     private ISchedulerRepository schedulerRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     @Transactional
     public void certificateScheduler() {
         log.info("certificate 스케줄러 발동");
@@ -62,24 +61,19 @@ public class SchedulerService implements ISchedulerService{
         }
     }
     
-
 	@Override
 	public SchedulerResult[] searchSchedulers(int start, int end, String content, int success) {
 		return schedulerRepository.searchSchedulers(start, end, content, success);
 	}
-
 
 	@Override
 	public void saveScheduler(Scheduler scheduler) {
 		schedulerDao.saveScheduler(scheduler);
 	}
 
-
 	@Override
 	public int maxSchedulerId() {
 		return schedulerDao.maxSchedulerId();
 	}
-	
-	
 
 }

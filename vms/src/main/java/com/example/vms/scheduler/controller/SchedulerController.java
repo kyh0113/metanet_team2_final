@@ -1,5 +1,6 @@
 package com.example.vms.scheduler.controller;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -7,12 +8,14 @@ import com.example.vms.scheduler.model.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.vms.certificate.model.Certificate;
 import com.example.vms.employee.service.IEmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
@@ -141,9 +144,9 @@ public class SchedulerController {
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
 
-			log.info("vacationPromoEmail 스케줄러 완료");
+			log.info("grantVacation 스케줄러 완료");
 		} catch (Exception e) {
-			log.error("vacationPromoEmail 스케줄러 에러", e);
+			log.error("grantVacation 스케줄러 에러", e);
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
@@ -185,9 +188,9 @@ public class SchedulerController {
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
 
-			log.info("vacationPromoEmail 스케줄러 완료");
+			log.info("grantVacation2 스케줄러 완료");
 		} catch (Exception e) {
-			log.error("vacationPromoEmail 스케줄러 에러", e);
+			log.error("grantVacation2 스케줄러 에러", e);
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
@@ -200,5 +203,10 @@ public class SchedulerController {
 		}
 
 	}
+	
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void certificateScheduler() {
+    	schedulerService.certificateScheduler();
+    }
 
 }
