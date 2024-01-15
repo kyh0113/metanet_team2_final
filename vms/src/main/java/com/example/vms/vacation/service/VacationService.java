@@ -89,39 +89,31 @@ public class VacationService implements IVacationService {
 	@Override
 	@Transactional
 	public String approvalRequest(Vacation vacation) {
-		int result;
-		Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
-		Schedule schedule = new Schedule();
-		schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
-		schedule.setReg_id(realvacation.getRegId());
-		schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
-		schedule.setEmp_id(realvacation.getEmpId());
-		schedule.setEnd_date(realvacation.getEndDate().plusDays(1));  // 달력 막대에 종료 날짜는 포함이 안되서 임의로 +1
-		schedule.setStart_date(realvacation.getStartDate());
-		schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
-				+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
-		schedule.setType_id(realvacation.getTypeId());
-
-		result = vacationDao.updateRequest(vacation);
-
-		scheduleservice.insertSchedule(schedule);
-
+		int result = vacationDao.updateRequest(vacation);
+		
 		if (result == 1) {
-			// 알림 메일 전송
-			// 사원 이메일 검색
-//         Vacation requestVacation = vacationDao.selectRequestByRegId(vacation.getRegId());
-//         Employee employee = employeeRepository.selectEmployee(requestVacation.getEmpId());
-//         String email = employee.getEmail();
-//         String mailSubject = "결재 알림입니다.";
-//         String mailMessage = "요청하신 휴가 결재 결과입니다.";
-//         StringBuffer content = new StringBuffer();
-//         content.append(vacation.getRegId()).append(" ");
-//         content.append(requestVacation.getTypeId()).append(" ");
-//         content.append(requestVacation.getStartDate()).append("~").append(requestVacation.getEndDate()).append(" ");
-//         content.append(requestVacation.getState());
-//         
-//         employeeService.sendMail(content.toString(), email, mailSubject, mailMessage);
+			Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
+			
+			if (realvacation != null) {
+				
+				Schedule schedule = new Schedule();
+				schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
+				schedule.setReg_id(realvacation.getRegId());
+				schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
+				schedule.setEmp_id(realvacation.getEmpId());
+				schedule.setEnd_date(realvacation.getEndDate().plusDays(1));  // 달력 막대에 종료 날짜는 포함이 안되서 임의로 +1
+				schedule.setStart_date(realvacation.getStartDate());
+				schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
+						+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
+				schedule.setType_id(realvacation.getTypeId());
+
+				scheduleservice.insertSchedule(schedule);
+				
+			} else {
+			    return "신청서 정보 없음";
+			}
 			return "결재 완료";
+			
 		} else {
 			return "결재 실패";
 		}
