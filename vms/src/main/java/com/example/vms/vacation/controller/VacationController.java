@@ -306,7 +306,7 @@ public class VacationController {
 		try {
 			System.out.println("랄랄: " + regId);
 			vacationService.deleteVacation(regId);
-			return ResponseEntity.ok().body("{\"resultMessage\": \"삭제가 성공적으로 이루어졌습니다.\"}");
+			return ResponseEntity.ok().body("{\"resultMessage\": \"취소가 성공적으로 이루어졌습니다.\"}");
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -314,7 +314,7 @@ public class VacationController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("{\"resultMessage\": \"삭제 중 오류가 발생했습니다.\"}");
+					.body("{\"resultMessage\": \"취소 중 오류가 발생했습니다.\"}");
 		}
 	}
 
