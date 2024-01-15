@@ -46,6 +46,11 @@
 	                    <option th:each="position : ${positions}" th:value="${position}" th:text="${position}" th:selected="${position == employee.position}"></option>
 	                </select>
 	            </div>
+	            
+	            <div class="form-group">
+	                <label for="status">상태</label>
+	                <input type="text" id="status" name="status" class="form-control" required th:value="${employee.status}">
+	            </div>
 	
 	
 	            <div class="form-group">
@@ -93,7 +98,7 @@
                 "email": $("#email").val(),
                 "position": $('#position').val(),
                 "phone": $("#phone").val(),
-                "status": '',
+                "status": $("#status").val(),
                 "remains": $("#remains").val(),
                 "deptId": $("#deptId").val(),
                 "retireDate": $('#retireDate').val()
