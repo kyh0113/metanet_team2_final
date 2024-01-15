@@ -72,12 +72,20 @@ public class EmployeeController {
 	// 로그아웃 기능 ( 보완 필요 ) 
 	@GetMapping("/logout")
 	public String logout(
-		HttpServletResponse response
+		HttpServletRequest request, HttpServletResponse response
 	) {
-        Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
-        cookie.setMaxAge(0); 
-        cookie.setPath("/"); 
-	    response.addCookie(cookie);
+
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("X-AUTH-TOKEN")) {
+				cookie.setMaxAge(0); 
+		        cookie.setPath("/"); 
+			}
+		}
+		
+        //Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+        
+	    //response.addCookie(cookie);
 		return "redirect:/employee/login";
 	}
 
