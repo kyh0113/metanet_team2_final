@@ -25,6 +25,9 @@ public class ErrorController {
             }
             else if(errorMessage.contains("/manager")) {
             	model.addAttribute("errorMessage", "관리자");
+            } 
+            else {
+            	model.addAttribute("errorMessage", "팀원");
             }
         }
 
