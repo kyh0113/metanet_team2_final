@@ -29,5 +29,4 @@ public interface IVacationService {
    void deleteVacation(int regId);
    int getCountScheduleByOption(String keyword, int option);
    List<ScheduleEmpDeptType> getScheduleListByOption(String curPage, String keyword, int option);
-   List<ScheduleExcel> selectAllVacationByDept(int deptId);
 }
