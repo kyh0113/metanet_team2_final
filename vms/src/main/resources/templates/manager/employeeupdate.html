@@ -39,11 +39,19 @@
 	                <label for="phone">Phone</label>
 	                <input type="text" id="phone" name="phone" class="form-control" required th:value="${employee.phone}">
 	            </div>
-	
+	       
+	            <div class="form-group">
+	                <label for="position">직책</label>
+	                <select id="position" name="position" class="form-control" required>
+	                    <option th:each="position : ${positions}" th:value="${position}" th:text="${position}" th:selected="${position == employee.position}"></option>
+	                </select>
+	            </div>
+	            
 	            <div class="form-group">
 	                <label for="status">상태</label>
 	                <input type="text" id="status" name="status" class="form-control" required th:value="${employee.status}">
 	            </div>
+	
 	
 	            <div class="form-group">
 	                <label for="remains">남은 휴일 수</label>
@@ -88,7 +96,7 @@
                 "empId": $("#empId").val(),
                 "name": $("#name").val(),
                 "email": $("#email").val(),
-                "position": '',
+                "position": $('#position').val(),
                 "phone": $("#phone").val(),
                 "status": $("#status").val(),
                 "remains": $("#remains").val(),

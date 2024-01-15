@@ -37,4 +37,7 @@ public interface IManagerRepository {
 	void updateEmployee(EmployeeUpdateRequestDTO employee);
 	void updateRemains(String empId, int remains);
 	Department[] searchDepartments();
+	
+	void deleteEmployeeRoles(@Param("empId") String empId);
+	void insertEmployeeRole(@Param("role") String role, @Param("empId") String empId);
 }
