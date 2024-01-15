@@ -24,11 +24,20 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.Assert.assertNull;
+
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.employee.service.EmployeeService;
@@ -43,17 +52,23 @@ import com.example.vms.vacation.repository.IUploadFileRepository;
 import com.example.vms.vacation.repository.IVacationRepository;
 import com.example.vms.vacation.service.VacationService;
 
+@ExtendWith(MockitoExtension.class)
 public class VacationServiceTest {
-
+	
 	@Mock
-	private IUploadFileRepository uploadFileDaoMock;
+    private IUploadFileRepository uploadFileDaoMock;
+
+    @Mock
+    private IScheduleRepository scheduleDaoMock;  // 추가된 부분
 
 	@Mock
 	private IVacationRepository vacationDaoMock;
 	
 	@Mock
 	private IEmployeeRepository employeeRepository;
-	private IScheduleRepository scheduleDaoMock;
+	
+	@Mock
+    private ScheduleService scheduleServiceMock;  // ScheduleService mock 객체 생성 (필요에 따라 추가)
 	
 	@InjectMocks
 	private ScheduleService scheduleService;
@@ -69,11 +84,15 @@ public class VacationServiceTest {
  	
     @Mock
 	IScheduleRepository scheduleDao;
- 	
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+
+	@Mock
+    private IScheduleRepository iScheduleRepository;
+	
+
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
 	@Test
     void testMaxRegIdReturnsExpectedValue() {
@@ -125,29 +144,69 @@ public class VacationServiceTest {
 		assertNull(result);
 	}
 
-//    @Test
-//    void testGetCountScheduleByOption() {
-//        String keyword = "John Doe";
-//
-//        // Mock 데이터에 대한 행동 설정
-//        when(scheduleDaoMock.getCountScheduleByEmpName(keyword)).thenReturn(5);
-//        when(scheduleDaoMock.getCountScheduleByDeptName(keyword)).thenReturn(8);
-//        when(scheduleDaoMock.getCountScheduleByPosition(keyword)).thenReturn(3);
-//        when(scheduleDaoMock.getCountAllSchedule()).thenReturn(15);
-//
-//        // 테스트 케이스 1: "사원명"
-//        assertEquals(5, scheduleService.getCountScheduleByEmpName(keyword));
-//
-//        // 테스트 케이스 2: "부서"
-//        assertEquals(8, scheduleService.getCountScheduleByDeptName(keyword));
-//
-//        // 테스트 케이스 3: "직위"
-//        assertEquals(3, scheduleService.getCountScheduleByPosition(keyword));
-//
-//        // 테스트 케이스 4: 기본값 - "전체"
-//        assertEquals(15, scheduleService.getCountAllSchedule());
-//    }
-//    
+	@Test
+	public void testGetCountScheduleByOptionForEmpName() {
+	    // Given
+	    String keyword = "John Doe";
+	    int option = 1;
+
+	    when(scheduleDao.getCountScheduleByEmpName(keyword)).thenReturn(5);
+
+	    // When
+	    int actualRowNum = vacationService.getCountScheduleByOption(keyword, option);
+
+	    // Then
+	    assertEquals(5, actualRowNum);
+	    verify(scheduleDao).getCountScheduleByEmpName(keyword);
+	}
+
+	@Test
+	public void testGetCountScheduleByOptionForDeptName() {
+	    // Given
+	    String keyword = "IT";
+	    int option = 2;
+
+	    when(scheduleDao.getCountScheduleByDeptName(keyword)).thenReturn(8);
+
+	    // When
+	    int actualRowNum = vacationService.getCountScheduleByOption(keyword, option);
+
+	    // Then
+	    assertEquals(8, actualRowNum);
+	    verify(scheduleDao).getCountScheduleByDeptName(keyword);
+	}
+
+	@Test
+	public void testGetCountScheduleByOptionForPosition() {
+	    // Given
+	    String keyword = "Developer";
+	    int option = 3;
+
+	    when(scheduleDao.getCountScheduleByPosition(keyword)).thenReturn(3);
+
+	    // When
+	    int actualRowNum = vacationService.getCountScheduleByOption(keyword, option);
+
+	    // Then
+	    assertEquals(3, actualRowNum);
+	    verify(scheduleDao).getCountScheduleByPosition(keyword);
+	}
+
+	@Test
+	public void testGetCountScheduleByOptionForAll() {
+	    // Given
+	    int option = 4;
+
+	    when(scheduleDao.getCountAllSchedule()).thenReturn(15);
+
+	    // When
+	    int actualRowNum = vacationService.getCountScheduleByOption(null, option);
+
+	    // Then
+	    assertEquals(15, actualRowNum);
+	    verify(scheduleDao).getCountAllSchedule();
+	}
+
     @Test
     void testGetDeptRequestList() {
         // 테스트 데이터를 직접 설정
@@ -470,6 +529,7 @@ public class VacationServiceTest {
 
         verify(vacationDaoMock).selectRequestListByEmpId(empId, state, startNum, endNum);
     }
+
 	
 	@Test
     void testRequestVacation() throws IOException {
@@ -545,3 +605,4 @@ public class VacationServiceTest {
     }
 	
 }
+

@@ -14,6 +14,11 @@ public class ScheduleService implements IScheduleService{
 	
 	@Autowired
 	IScheduleRepository iScheduleRepository;
+	
+	@Autowired
+    public ScheduleService(IScheduleRepository iScheduleRepository) {
+        this.iScheduleRepository = iScheduleRepository;
+    }
 
 	@Override
 	public List<Schedule> getSchedulebydeptId(int dept_id) {
