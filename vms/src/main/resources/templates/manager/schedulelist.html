@@ -80,8 +80,9 @@
 	let totalPages = 1
 		
 	window.onload = function() {	
-		viewDidLoad()
-    	searchList()
+		viewDidLoad();
+    	searchList();
+    	pagination();
 	}
 	
 	function viewDidLoad() {
@@ -169,10 +170,6 @@
   		})
 	}
     
-    function showDetail(row) {
-      let url = row.getAttribute('url');
-      location.href = url;
-    }
     
    	function getInstance(){
       if(window.XMLHttpRequest){
@@ -227,7 +224,7 @@
            	//row.setAttribute('onclick', "showDetail(this)");
            	
         });
-        pagination()
+        //pagination()
     }
 	
 	function searchList(searchPage) {
