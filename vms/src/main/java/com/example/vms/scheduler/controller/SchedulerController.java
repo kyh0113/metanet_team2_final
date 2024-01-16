@@ -2,6 +2,7 @@ package com.example.vms.scheduler.controller;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import com.example.vms.scheduler.model.Scheduler;
@@ -74,7 +75,7 @@ public class SchedulerController {
 			log.info("vacationPromoEmail 스케줄러 발동");
 
 			List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
-
+			
 			for (Employee employee : employees) {
 				log.info("Sending vacation promo email to: {}", employee.getEmail());
 				sendVacationPromoEmail(employee);
@@ -82,7 +83,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("연차 촉진 메일");
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
@@ -93,7 +94,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("연차 촉진 메일");
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);
@@ -139,7 +140,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 미만 사원에게 연차 부여");
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
@@ -150,7 +151,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 미만 사원에게 연차 부여");
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);
@@ -183,7 +184,7 @@ public class SchedulerController {
 			}
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 이상 사원에게 연차 부여");
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
@@ -194,7 +195,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 이상 사원에게 연차 부여");
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);

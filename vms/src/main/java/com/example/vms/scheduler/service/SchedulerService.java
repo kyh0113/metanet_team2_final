@@ -2,6 +2,7 @@ package com.example.vms.scheduler.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,14 +48,14 @@ public class SchedulerService implements ISchedulerService{
             }
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("certificate 스케줄러 성공");
 			scheduler.setSuccess(1); // 성공
 			saveScheduler(scheduler);
         } catch (Exception e) {
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("certificate 스케줄러 성공 실패");
 			scheduler.setSuccess(0); // 실패
 			saveScheduler(scheduler);
