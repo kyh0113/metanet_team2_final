@@ -130,10 +130,12 @@ public class ManagerController {
 		Model model 
 	) {
 		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
-		String[] positions = {"팀원", "팀장", "관리자"};
+		String[] autorities = {"팀원", "팀장", "관리자"};
+		String[] positions = {"사원", "대리", "과장", "차장", "부장"};
 		model.addAttribute("employee", employee);
 		model.addAttribute("departments", managerService.searchDepartments());
 		model.addAttribute("positions", positions);
+		model.addAttribute("authorities", autorities);
 		return "/manager/employeeupdate";
 	}
 	
