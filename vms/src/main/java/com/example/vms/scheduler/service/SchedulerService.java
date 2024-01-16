@@ -5,12 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vms.certificate.model.Certificate;
 import com.example.vms.certificate.repository.ICertificateRepository;
+import com.example.vms.employee.service.IEmployeeService;
+import com.example.vms.manager.model.Employee;
 import com.example.vms.schedule.repository.IScheduleRepository;
 import com.example.vms.scheduler.model.Scheduler;
 import com.example.vms.scheduler.model.SchedulerResult;
@@ -29,6 +32,9 @@ public class SchedulerService implements ISchedulerService{
     
     @Autowired
     private ISchedulerRepository schedulerRepository;
+    
+    @Autowired
+    private IEmployeeService employeeService;
 
     @Transactional
     public void certificateScheduler() {
@@ -76,5 +82,21 @@ public class SchedulerService implements ISchedulerService{
 	public int maxSchedulerId() {
 		return schedulerDao.maxSchedulerId();
 	}
+
+	
+	@Async
+	@Transactional
+	public void sendVacationPromoEmail(Employee employee) {
+		// 메일 내용 작성
+		String mailContent = "남은 연차: " + employee.getRemains() + "일이 남았습니다.";
+		String mailSubject = "연차 촉진 알림";
+		String mailMessage = "연차 촉진 알림";
+
+		String result = employeeService.sendMail(mailContent, employee.getEmail(), mailSubject, mailMessage);
+
+		System.out.println("메일 전송 결과: " + result);
+
+	}
+	
 
 }

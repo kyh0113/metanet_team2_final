@@ -1,5 +1,6 @@
 package com.example.vms.scheduler.service;
 
+import com.example.vms.manager.model.Employee;
 import com.example.vms.scheduler.model.Scheduler;
 import com.example.vms.scheduler.model.SchedulerResult;
 
@@ -16,4 +17,5 @@ public interface ISchedulerService {
 		String content,
 		int success
 	);
+	void sendVacationPromoEmail(Employee employee);
 }

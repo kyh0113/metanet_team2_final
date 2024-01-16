@@ -1,6 +1,5 @@
 package com.example.vms.scheduler.controller;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -9,14 +8,12 @@ import com.example.vms.scheduler.model.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.vms.certificate.model.Certificate;
 import com.example.vms.employee.service.IEmployeeService;
 import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
@@ -57,6 +54,7 @@ public class SchedulerController {
 			@RequestParam(name = "success", defaultValue = "3", required = false) int success,
 			@RequestParam(name = "content", defaultValue = "", required = false) String content) {
 		SchedulerResult[] schedulers = null;
+		System.out.println(start + " 시작 " + end + " 끝 ");
 		schedulers = schedulerService.searchSchedulers(start, end, content, success);
 		return schedulers;
 	}
@@ -67,52 +65,39 @@ public class SchedulerController {
 		return "/scheduler/list";
 	}
 
-	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
-	// @Scheduled(cron = "0/20 * * * * ?")
+	// @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
+	@Scheduled(cron = "0/20 * * * * ?")
 	public void vacationPromoEmail() {
-		try {
-			log.info("vacationPromoEmail 스케줄러 발동");
+	    try {
+	        log.info("vacationPromoEmail 스케줄러 발동");
 
-			List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
-			
-			for (Employee employee : employees) {
-				log.info("Sending vacation promo email to: {}", employee.getEmail());
-				sendVacationPromoEmail(employee);
-			}
+	        List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
 
-			Scheduler scheduler = new Scheduler();
-			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDateTime.now());
-			scheduler.setContent("연차 촉진 메일");
-			scheduler.setSuccess(1); // 성공
-			schedulerService.saveScheduler(scheduler);
+	        for (Employee employee : employees) {
+	            log.info("Sending vacation promo email to: {}", employee.getEmail());
+	            schedulerService.sendVacationPromoEmail(employee);
+	        }
 
-			log.info("vacationPromoEmail 스케줄러 완료");
-		} catch (Exception e) {
-			log.error("vacationPromoEmail 스케줄러 에러", e);
+	        Scheduler scheduler = new Scheduler();
+	        scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
+	        scheduler.setWorkDate(LocalDateTime.now());
+	        scheduler.setContent("연차 촉진 메일");
+	        scheduler.setSuccess(1); // 성공
+	        schedulerService.saveScheduler(scheduler);
 
-			Scheduler scheduler = new Scheduler();
-			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDateTime.now());
-			scheduler.setContent("연차 촉진 메일");
-			scheduler.setSuccess(0); // 실패
-			schedulerService.saveScheduler(scheduler);
+	        log.info("vacationPromoEmail 스케줄러 완료");
+	    } catch (Exception e) {
+	        log.error("vacationPromoEmail 스케줄러 에러", e);
 
-			// 예외 처리 또는 필요한 조치를 수행
-		}
+	        Scheduler scheduler = new Scheduler();
+	        scheduler.setSchedulerId(schedulerService.maxSchedulerId());
+	        scheduler.setWorkDate(LocalDateTime.now());
+	        scheduler.setContent("연차 촉진 메일");
+	        scheduler.setSuccess(0); // 실패
+	        schedulerService.saveScheduler(scheduler);
+	    }
 	}
 
-	public void sendVacationPromoEmail(Employee employee) {
-		// 메일 내용 작성
-		String mailContent = "남은 연차: " + employee.getRemains() + "일이 남았습니다.";
-		String mailSubject = "연차 촉진 알림";
-		String mailMessage = "연차 촉진 알림";
-
-		String result = employeeService.sendMail(mailContent, employee.getEmail(), mailSubject, mailMessage);
-
-		System.out.println("메일 전송 결과: " + result);
-
-	}
 
 	@Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행
 	public void grantVacation() {
@@ -144,9 +129,9 @@ public class SchedulerController {
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
 
-			log.info("grantVacation 스케줄러 완료");
+			log.info("vacationPromoEmail 스케줄러 완료");
 		} catch (Exception e) {
-			log.error("grantVacation 스케줄러 에러", e);
+			log.error("vacationPromoEmail 스케줄러 에러", e);
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
@@ -188,9 +173,9 @@ public class SchedulerController {
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
 
-			log.info("grantVacation2 스케줄러 완료");
+			log.info("vacationPromoEmail 스케줄러 완료");
 		} catch (Exception e) {
-			log.error("grantVacation2 스케줄러 에러", e);
+			log.error("vacationPromoEmail 스케줄러 에러", e);
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
@@ -203,10 +188,5 @@ public class SchedulerController {
 		}
 
 	}
-	
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
-    public void certificateScheduler() {
-    	schedulerService.certificateScheduler();
-    }
 
 }
