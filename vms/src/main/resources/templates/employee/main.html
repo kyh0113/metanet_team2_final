@@ -140,40 +140,58 @@
 			width: 100%;
 			height: 110%;
 		}
+
+		.tippy-table {
+			width: 100%;
+			border-collapse: collapse;
+			border-radius: 5px;
+			overflow: hidden;
+		}
+
+		.tippy-table td,th {
+			/*border: 1px solid #ddd;*/
+			padding: 8px;
+			text-align: left;
+			border: 2px solid #ddd;
+			
+		}
+		
+
 	</style>
 </head>
 
 <body>
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar" th:include="include/sidebar :: aside">
-	</aside>
-	<!--  Sidebar End -->
-    <!--  Main wrapper -->
-    <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header" th:include="include/header :: header">
-      </header>
-      <!--  Header End -->
-      <div class="container-fluid">
-    <div class="infoBox">
-        <div id="todoayInfo" class="clipBoard">
-            <p class="todayDateTitle" style="margin-top: 15px;">오늘의 날짜</p>
-            <p class="todayDateBody"></p>
-            <p class="todayTime"></p>
-        </div>
-        <div id="myCertificateInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${numberOfMyCertificates}"></label></span>
-                    <img src="/images/calendar-time.svg" onclick="moveView('certificate')" style="width: 25px; height: 25px; margin-bottom: 20px;"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 증명서</p>
-        </div>
-      <!--  <div id="approvalVacationRequestInfo" class="clipBoard">
+	<!--  Body Wrapper -->
+	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+		data-sidebar-position="fixed" data-header-position="fixed">
+		<!-- Sidebar Start -->
+		<aside class="left-sidebar" th:include="include/sidebar :: aside">
+		</aside>
+		<!--  Sidebar End -->
+		<!--  Main wrapper -->
+		<div class="body-wrapper">
+			<!--  Header Start -->
+			<header class="app-header" th:include="include/header :: header">
+			</header>
+			<!--  Header End -->
+			<div class="container-fluid">
+				<div class="infoBox">
+					<div id="todoayInfo" class="clipBoard">
+						<p class="todayDateTitle" style="margin-top: 15px;">오늘의 날짜</p>
+						<p class="todayDateBody"></p>
+						<p class="todayTime"></p>
+					</div>
+					<div id="myCertificateInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${numberOfMyCertificates}"></label></span>
+								<img src="/images/calendar-time.svg" onclick="moveView('certificate')"
+									style="width: 25px; height: 25px; margin-bottom: 20px;">
+							</p>
+						</div>
+						<p class="infoLabel">나의 증명서</p>
+					</div>
+					<!--  <div id="approvalVacationRequestInfo" class="clipBoard">
             <div class="infoTop">
                 <p class="infoCountLabel">
 					<span><label th:text="${numberOfVacationApproval}"></label></span>
@@ -183,15 +201,16 @@
             <p class="infoLabel">내가 결재해야할 문서</p>
         </div>
         -->
-        <div id="myVacationInfo" class="clipBoard">
-            <div class="infoTop">
-                <p class="infoCountLabel">
-					<span><label th:text="${employee.remains}"></label></span>
-                    <img src="/images/person.svg" onclick="moveView('vacation')" style="width: 40px; height: 40px; margin-bottom: 20px;"> 
-                </p>
-            </div>
-            <p class="infoLabel">나의 휴가 정보</p>
-        </div>
+					<div id="myVacationInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${employee.remains}"></label></span>
+								<img src="/images/person.svg" onclick="moveView('vacation')"
+									style="width: 40px; height: 40px; margin-bottom: 20px;">
+							</p>
+						</div>
+						<p class="infoLabel">나의 휴가 정보</p>
+					</div>
 				</div>
 
 				<div id="graphContainer">
@@ -352,13 +371,20 @@
 
 						eventDidMount: function (info) {
 							var start_date = new Date(info.event.start);
-							start_date.setDate(start_date.getDate()+1);
+							start_date.setDate(start_date.getDate() + 1);
 							var end_date = new Date(info.event.end);
 
+							var tableContent = "<table class='tippy-table'>" +
+								"<tr class='tr1'><th><strong>제목:</strong></th><td>" + info.event.title + "</td></tr>" +
+								"<tr class='tr2'><th style='color:aqua;'><strong>시작날짜:</strong></th><td style='color:aqua;'><strong>"
+									 + start_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
+								"<tr class='tr3'><th style='color:red;'><strong>종료날짜:</strong></th><td style='color:red;'><strong>" + 
+									end_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
+								"</table>";
+
+
 							tippy(info.el, {
-								content: "<strong>제목:</strong>" + info.event.title + "<hr>" +
-									"시작날짜: " + start_date.toISOString().slice(0, 10) + "<br>"
-									+ "종료날짜: " + end_date.toISOString().slice(0, 10),
+								content: tableContent,
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,

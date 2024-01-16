@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -51,9 +52,11 @@ import com.example.vms.vacation.model.VacationType;
 import com.example.vms.vacation.service.VacationService;
 import com.example.vms.vacation.service.VacationTypeService;
 
+import jakarta.mail.Session;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -81,7 +84,8 @@ public class VacationController {
 	private ScheduleService scheduleService;
 
 	@GetMapping("/request")
-	public String requestVacation(HttpServletRequest request, Model model) {
+
+	public String requestVacation(HttpServletRequest request, Model model, HttpSession session) {
 
 		Cookie[] cookies = request.getCookies();
 		String token = "";
@@ -90,16 +94,20 @@ public class VacationController {
 				token = cookie.getValue();
 			}
 		}
-
+		
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
-
 			String empId = tokenProvider.getEmpId(token);
 			Employee employee = employeeService.selectEmployee(empId);
 			model.addAttribute("employee", employee);
 			// 토큰에서 empId 추출
+
 			List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
 			model.addAttribute("vacationTypes", vacationTypes);
+			
+			String csrfToken = UUID.randomUUID().toString();  // UUID를 생성하여 세션에 저장
+			session.setAttribute("csrfToken", csrfToken);
+
 			return "vacation/request";
 
 		} else {
@@ -123,7 +131,7 @@ public class VacationController {
 	@PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
 	public ResponseEntity<String> requestVacation(HttpServletRequest request, HttpServletResponse response,
 			@ModelAttribute Vacation vacation, @RequestParam(value = "files", required = false) MultipartFile[] files,
-			Model model) {
+			Model model, HttpSession session, String csrfToken) {
 
 		// 종료 날짜 설정
 		LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
@@ -147,6 +155,12 @@ public class VacationController {
 
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
+			
+			if(csrfToken==null || "".equals(csrfToken)) {// 요청 파라미터의 UUID와 세션의 UUID를 비교하여 같을 경우에만 처리
+				throw new RuntimeException("CSRF 토큰이 없습니다.");
+			}else if(!csrfToken.equals(session.getAttribute("csrfToken"))) {
+				throw new RuntimeException("잘 못된 접근이 감지되었습니다.");
+			}
 			// 토큰에서 empId 추출
 			String empId = tokenProvider.getEmpId(token);
 
