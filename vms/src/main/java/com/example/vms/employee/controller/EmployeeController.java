@@ -241,11 +241,6 @@ public class EmployeeController {
     		model.addAttribute("numberOfMyCertificates", numberOfMyCertificates);
     		List<EmployeeVacationCountPerMonth> employeeVacationInfos = employeeService.vacationCountPerMonth(empId);
     		model.addAttribute("employeeVacationInfos", employeeVacationInfos);
-
-    		if (employeeService.isManager(empId)) {
-    			return "redirect:/manager/employee/list";
-    		}
-    		
     		
     		return "/employee/main";
 

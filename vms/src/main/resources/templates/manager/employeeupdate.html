@@ -54,10 +54,11 @@
 	                </select>
 	            </div>
 	            
-	            <div class="form-group">
+	          <!--  <div class="form-group">
 	                <label for="status">상태</label>
 	                <input type="text" id="status" name="status" class="form-control" required th:value="${employee.status}">
 	            </div>
+	            -->
 	
 	
 	            <div class="form-group">
@@ -97,6 +98,12 @@
 		let searchText = sessionStorage.getItem('searchText')
 		sessionStorage.removeItem('searchText')
 		
+		let retireDate = $('#retireDate').val()
+		let status = '재직중'
+		if (retireDate!==null) {
+			status = '퇴직'
+		}
+		
         function updateEmployee(event){
             event.preventDefault()
             var requestBody = {
@@ -105,7 +112,7 @@
                 "email": $("#email").val(),
                 "position": $('#position').val(),
                 "phone": $("#phone").val(),
-                "status": $("#status").val(),
+                "status": status,
                 "remains": $("#remains").val(),
                 "deptId": $("#deptId").val(),
                 "retireDate": $('#retireDate').val(),

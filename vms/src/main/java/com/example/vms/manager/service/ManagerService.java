@@ -49,6 +49,12 @@ public class ManagerService implements IManagerService {
         	employee.setRemains(0);
         }
         
+        if (employee.getRetireDate()==null) {
+        	employee.setStatus("재직중");
+        } else {
+        	employee.setStatus("퇴직");
+        }
+        
         // 비밀번호 암호화
         String encodedPassword = encodePassword(employee.getPassword());
         employee.setPassword(encodedPassword);
