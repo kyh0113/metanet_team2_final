@@ -94,16 +94,16 @@ public class ScheduleController {
 			System.out.println(hash.get("start"));
 			switch (color) {
 			case 1:
-				hash.put("color", "#0000FF");
+				hash.put("color", "#00ABFF");
 				break;
 			case 2:
-				hash.put("color", "#00FF00");
+				hash.put("color", "#7562FF");
 				break;
 			case 3:
-				hash.put("color", "orange");
+				hash.put("color", "#00D9FF");
 				break;
 			default:
-				hash.put("color", "#000000");
+				hash.put("color", "#5AFBD9");
 			}
 
 			jsonObj = new JSONObject(hash);
