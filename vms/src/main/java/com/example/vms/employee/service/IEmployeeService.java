@@ -26,4 +26,5 @@ public interface IEmployeeService {
 	List<EmployeeVacationCountPerMonth> vacationCountPerMonth(String empId);
 	
 	int numberOfVacationUsagesSearchByYear(String empId, String year);
+	public Boolean isManager(String empId);
 }
