@@ -1,9 +1,6 @@
 package com.example.vms.schedule.controller;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +10,6 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,15 +19,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -40,8 +30,8 @@ import com.example.vms.jwt.JwtTokenProvider;
 import com.example.vms.manager.model.Employee;
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.service.IScheduleService;
-import com.example.vms.vacation.model.UploadFile;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -137,7 +127,10 @@ public class ScheduleController {
 	@GetMapping("/download")
 	public void excelDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    
-	    Sheet sheet = wb.createSheet("첫번째 시트");
+		String dateTime=new Date().toString().replaceAll(":", "_");
+
+		//wsSheet = createSheet(sheetName, xssfWorkbook) as sheetName+dateTime;
+	    Sheet sheet = wb.createSheet(dateTime);
 	    Row row;
 	    Cell cell;
 	    int rowNum = 0;
@@ -195,10 +188,15 @@ public class ScheduleController {
 	    }
 
 	    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	    response.setHeader("Content-Disposition", "attachment;filename=calendar.xlsx");
+	    response.setHeader("Content-Disposition", "attachment;filename=calendar_" + dateTime + ".xlsx");
+	    //response.setHeader("Content-Disposition", "attachment;filename=calendar.xlsx");
 
-	    wb.write(response.getOutputStream());
-	    wb.close();
+	    //wb.write(response.getOutputStream());
+	    //wb.close();
+	    ServletOutputStream out = response.getOutputStream();
+	    wb.write(out);
+	    out.flush();
+	    
 	}
 
 
