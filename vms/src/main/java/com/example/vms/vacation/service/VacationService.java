@@ -90,29 +90,33 @@ public class VacationService implements IVacationService {
 	@Transactional
 	public String approvalRequest(Vacation vacation) {
 		int result = vacationDao.updateRequest(vacation);
+		String modal_response = "결재성공";
 		
 		if (result == 1) {
 			Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
 			
 			if (realvacation != null) {
-				
-				Schedule schedule = new Schedule();
-				schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
-				schedule.setReg_id(realvacation.getRegId());
-				schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
-				schedule.setEmp_id(realvacation.getEmpId());
-				schedule.setEnd_date(realvacation.getEndDate().plusDays(1));  // 달력 막대에 종료 날짜는 포함이 안되서 임의로 +1
-				schedule.setStart_date(realvacation.getStartDate());
-				schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
-						+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
-				schedule.setType_id(realvacation.getTypeId());
+				System.out.println("신청한 휴가 상태: "+realvacation.getState());
+				if(realvacation.getState().equals("승인")) {
+					Schedule schedule = new Schedule();
+					schedule.setCalender_Id(scheduleservice.maxScheduleId() + 1);
+					schedule.setReg_id(realvacation.getRegId());
+					schedule.setDept_id(employeeService.selectEmployee(realvacation.getEmpId()).getDeptId());
+					schedule.setEmp_id(realvacation.getEmpId());
+					schedule.setEnd_date(realvacation.getEndDate().plusDays(1));  // 달력 막대에 종료 날짜는 포함이 안되서 임의로 +1
+					schedule.setStart_date(realvacation.getStartDate());
+					schedule.setTitle("[" + getVacationTypeName(realvacation.getTypeId()) + "] "
+							+ employeeService.selectEmployee(realvacation.getEmpId()).getName());
+					schedule.setType_id(realvacation.getTypeId());
 
-				scheduleservice.insertSchedule(schedule);
-				
+					scheduleservice.insertSchedule(schedule);
+				} else if(realvacation.getState().equals("반려")) {
+					modal_response = "반려 성공";
+				}
 			} else {
 			    return "신청서 정보 없음";
 			}
-			return "결재 완료";
+			return modal_response;
 			
 		} else {
 			return "결재 실패";

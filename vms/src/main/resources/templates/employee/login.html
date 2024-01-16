@@ -17,7 +17,7 @@
             </div>
             <div class="card-body">
                 <form id="login" th:action="@{/employee/login}" method="post" class="needs-validation" novalidate>
-
+					<input type="text" name="csrfToken" th:value="${session.csrfToken}" style= "display: none;">  <!--세션의 UUID를 입력폼에 저장-->
                     <div class="form-group">
                         <label for="empId">ID:</label>
                         <input type="text" class="form-control" id="empId" name="empId" required autofocus />
