@@ -91,7 +91,7 @@
 	
 	let currentPage = sessionStorage.getItem('currentPage')
 	sessionStorage.removeItem('currentPage')
-	let isWaiting = sessionStorage.setItem('isWaiting', isWaiting)
+	let isWaiting = sessionStorage.getItem('isWaiting')
 	sessionStorage.removeItem('isWaiting')
 	
     $(document).ready(function(){
