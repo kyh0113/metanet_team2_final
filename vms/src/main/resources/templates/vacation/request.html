@@ -18,7 +18,6 @@
 </head>
 
 <body>
-
 	<!--  Body Wrapper -->
 	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
 		data-sidebar-position="fixed" data-header-position="fixed">
@@ -38,6 +37,7 @@
 				<div class="container mt-5 custom-container" style="margin-right:150px;">
 					<form id="vacationForm" th:action="@{/vacation/request}" method="post" enctype="multipart/form-data"
 						class="needs-validation p-3" novalidate> <!-- border 및 p-3 클래스 추가 -->
+						<input type="text" name="csrfToken" th:value="${session.csrfToken}" style= "display: none;">  <!--세션의 UUID를 입력폼에 저장-->
 						<h4 style="font-weight: bold;">휴가신청서</h4>
 						<br>
 						<div class="form-group">

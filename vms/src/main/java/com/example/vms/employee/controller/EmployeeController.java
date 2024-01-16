@@ -3,6 +3,7 @@ package com.example.vms.employee.controller;
 import java.lang.ProcessHandle.Info;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Set;
 
 import org.apache.jasper.tagplugins.jstl.core.If;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,7 +67,9 @@ public class EmployeeController {
 	private ICertificateService certificateService;
 
 	@GetMapping("/login")
-	public String showLoginPage() {
+	public String showLoginPage(Model model, HttpSession session) {
+		String csrfToken = UUID.randomUUID().toString();  // UUID를 생성하여 세션에 저장
+		session.setAttribute("csrfToken", csrfToken);
 		return "employee/login";
 	}
 
@@ -97,9 +101,16 @@ public class EmployeeController {
 
 	@PostMapping("/login")
 
-	public ResponseEntity<String> login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> login(@RequestParam String empId, @RequestParam String password, 
+			HttpServletRequest request, HttpServletResponse response,String csrfToken, HttpSession session) {
 	    log.info("EMP_ID: {}", empId);
 	    System.out.println("로그인로그이");
+	    
+	    if(csrfToken==null || "".equals(csrfToken)) {// 요청 파라미터의 UUID와 세션의 UUID를 비교하여 같을 경우에만 처리
+			throw new RuntimeException("CSRF 토큰이 없습니다.");
+		}else if(!csrfToken.equals(session.getAttribute("csrfToken"))) {
+			throw new RuntimeException("잘 못된 접근이 감지되었습니다.");
+		}
 
 	    Employee employee = employeeService.selectEmployee(empId);
 	    if (employee == null) {
@@ -108,7 +119,7 @@ public class EmployeeController {
 	        System.out.println("서버 응답: " + responseEntity.getBody());
 	        return responseEntity;
 	    }
-
+	    
 	    if (!passwordEncoder.matches(password, employee.getPassword())) {
 	        System.out.println("로그인 실패2");
 	        ResponseEntity<String> responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -128,7 +139,10 @@ public class EmployeeController {
 			ResponseEntity<String> responseEntity = null;
 	        
 	        Set<String> roles = employeeService.getRolesByEmpId(employee.getEmpId());
-	        if(roles.contains("MANAGER")) {
+	        
+	        if (employee.getStatus().equals("퇴직")) {
+	        	responseEntity = responseEntity.ok("redirect:/certificate/request");
+	        } else if(roles.contains("MANAGER")) {
 				responseEntity = ResponseEntity.ok("redirect:/manager/employee/list");
 	        }
 			else {
@@ -162,27 +176,43 @@ public class EmployeeController {
 	
 	// 아이디 찾기 기능
 	@GetMapping("/find-employeeid")
-    public String findEmployeeId(){
+    public String findEmployeeId(HttpSession session){
+		String csrfToken = UUID.randomUUID().toString();  // UUID를 생성하여 세션에 저장
+		session.setAttribute("csrfToken", csrfToken);
         return "employee/findEmpId";
     }
 	
 	@ResponseBody
 	@PostMapping("/find-employeeid")
-    public Result findEmployeeId(Employee employee){
-		String msg = employeeService.findEmpId(employee);
-		Result rst = new Result();
-        rst.setResultMessage(msg);
-        return rst;
-    }
+	public Result findEmployeeId(Employee employee, @RequestHeader("X-CSRF-TOKEN") String csrfToken,HttpSession session) {
+	    if (csrfToken == null || "".equals(csrfToken)) {
+	        throw new RuntimeException("CSRF 토큰이 없습니다.");
+	    } else if (!csrfToken.equals(String.valueOf(session.getAttribute("csrfToken")))) {
+	        throw new RuntimeException("잘 못된 접근이 감지되었습니다.");
+	    }
+
+	    String msg = employeeService.findEmpId(employee);
+	    Result rst = new Result();
+	    rst.setResultMessage(msg);
+	    return rst;
+	}
+
 	// 비밀번호 찾기 기능
 	@GetMapping("/find-password")
-    public String findPassword(){
+    public String findPassword(HttpSession session){
+		String csrfToken = UUID.randomUUID().toString();  // UUID를 생성하여 세션에 저장
+		session.setAttribute("csrfToken", csrfToken);
         return "employee/findPassword";
     }
 	 
 	@ResponseBody
 	@PostMapping("/find-password")
-	public Mail findPassword(Employee employee, HttpSession session) {
+	public Mail findPassword(Employee employee, HttpSession session, @RequestHeader("X-CSRF-TOKEN") String csrfToken) {
+		if (csrfToken == null || "".equals(csrfToken)) {// 요청 파라미터의 UUID와 세션의 UUID를 비교하여 같을 경우에만 처리
+			throw new RuntimeException("CSRF 토큰이 없습니다.");
+		} else if (!csrfToken.equals(session.getAttribute("csrfToken"))) {
+			throw new RuntimeException("잘 못된 접근이 감지되었습니다.");
+		}
         Map<String, String> findPwdResult = employeeService.findPassword(employee);
         Mail mail = new Mail();
         mail.setSubject(findPwdResult.get("message"));
@@ -197,14 +227,22 @@ public class EmployeeController {
 	
 	// 비밀번호 변경 기능
 	@GetMapping("/change-password")
-    public String changePassword(){
+    public String changePassword(HttpSession session){
+		String csrfToken = UUID.randomUUID().toString();  // UUID를 생성하여 세션에 저장
+		session.setAttribute("csrfToken", csrfToken);
         return "employee/changePassword";
     }
 	 
 	@ResponseBody
 	@PostMapping("/change-password")
-	public Result changePassword(String password, HttpSession session) {
+	public Result changePassword(String password, HttpSession session, @RequestHeader("X-CSRF-TOKEN") String csrfToken) {
 		//비밀번호 변경
+		if (csrfToken == null || "".equals(csrfToken)) {// 요청 파라미터의 UUID와 세션의 UUID를 비교하여 같을 경우에만 처리
+			throw new RuntimeException("CSRF 토큰이 없습니다.");
+		} else if (!csrfToken.equals(session.getAttribute("csrfToken"))) {
+			throw new RuntimeException("잘 못된 접근이 감지되었습니다.");
+		}
+		
 		Employee employee = new Employee();
 		employee.setEmpId((String)session.getAttribute("empId"));
 		employee.setName((String)session.getAttribute("name"));
