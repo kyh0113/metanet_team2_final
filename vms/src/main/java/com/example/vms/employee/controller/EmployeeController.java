@@ -128,7 +128,10 @@ public class EmployeeController {
 			ResponseEntity<String> responseEntity = null;
 	        
 	        Set<String> roles = employeeService.getRolesByEmpId(employee.getEmpId());
-	        if(roles.contains("MANAGER")) {
+	        
+	        if (employee.getStatus().equals("퇴직")) {
+	        	responseEntity = responseEntity.ok("redirect:/certificate/request");
+	        } else if(roles.contains("MANAGER")) {
 				responseEntity = ResponseEntity.ok("redirect:/manager/employee/list");
 	        }
 			else {
