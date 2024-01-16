@@ -19,4 +19,5 @@ public class EmployeeUpdateRequestDTO {
     private int remains;
     private int deptId;
     private Date hireDate;
+    private String authority;
 }

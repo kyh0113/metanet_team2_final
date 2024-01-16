@@ -3,7 +3,9 @@ package com.example.vms.employee.controller;
 import java.lang.ProcessHandle.Info;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.jasper.tagplugins.jstl.core.If;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +96,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/login")
+
 	public ResponseEntity<String> login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
 	    log.info("EMP_ID: {}", empId);
 	    System.out.println("로그인로그이");
@@ -122,7 +125,16 @@ public class EmployeeController {
 	        cookie.setPath("/");
 	        response.addCookie(cookie);
 
-	        ResponseEntity<String> responseEntity = ResponseEntity.ok("redirect:/employee/main");
+			ResponseEntity<String> responseEntity = null;
+	        
+	        Set<String> roles = employeeService.getRolesByEmpId(employee.getEmpId());
+	        if(roles.contains("MANAGER")) {
+				responseEntity = ResponseEntity.ok("redirect:/manager/employee/list");
+	        }
+			else {
+				responseEntity = ResponseEntity.ok("redirect:/employee/main");
+			}
+	        				
 	        System.out.println("서버 응답: " + responseEntity.getBody());
 	        return responseEntity;
 	    }
@@ -241,6 +253,7 @@ public class EmployeeController {
     		model.addAttribute("numberOfMyCertificates", numberOfMyCertificates);
     		List<EmployeeVacationCountPerMonth> employeeVacationInfos = employeeService.vacationCountPerMonth(empId);
     		model.addAttribute("employeeVacationInfos", employeeVacationInfos);
+    		
     		return "/employee/main";
 
         } else {

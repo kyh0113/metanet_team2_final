@@ -49,6 +49,12 @@ public class ManagerService implements IManagerService {
         	employee.setRemains(0);
         }
         
+        if (employee.getRetireDate()==null) {
+        	employee.setStatus("재직중");
+        } else {
+        	employee.setStatus("퇴직");
+        }
+        
         // 비밀번호 암호화
         String encodedPassword = encodePassword(employee.getPassword());
         employee.setPassword(encodedPassword);
@@ -120,11 +126,11 @@ public class ManagerService implements IManagerService {
 		EmployeeResponseDTO employee = managerDao.searchEmployeeByEmpId(empId);
 		Set<String> roles = employeeRepository.getRolesByEmpId(employee.getEmpId());
 		if (roles.contains("MANAGER")) {
-			employee.setPosition("관리자");
+			employee.setAuthority("관리자");
 		} else if (roles.contains("LEADER")) {
-			employee.setPosition("팀장");
+			employee.setAuthority("팀장");
 		} else if (roles.contains("EMPLOYEE")) {
-			employee.setPosition("팀원");
+			employee.setAuthority("팀원");
 		}
 		return employee;
 	}
@@ -132,7 +138,7 @@ public class ManagerService implements IManagerService {
 	@Override
 	@Transactional
 	public void updateEmployee(EmployeeUpdateRequestDTO employee) {
-		String position = employee.getPosition();
+		String position = employee.getAuthority();
 		String empId = employee.getEmpId(); 
 		managerDao.deleteEmployeeRoles(empId);
 		if (position.equals("관리자")) {
