@@ -17,7 +17,7 @@
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Home</span>
             </li>
-            <li class="sidebar-item" th:if="${auth == null}">
+            <li class="sidebar-item" th:if="${auth == nul && employee.status == '재직중'}">
               <a class="sidebar-link" href="/employee/main" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
@@ -25,11 +25,11 @@
                 <span class="hide-menu">메인페이지</span>
               </a>
             </li>
-            <li class="nav-small-cap" th:if="${auth == null}">
+            <li class="nav-small-cap" th:if="${auth == null && employee.status == '재직중'}">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Service</span>
             </li>
-            <li class="sidebar-item" th:if="${auth == null}">
+            <li class="sidebar-item" th:if="${auth == null && employee.status == '재직중'}">
               <a class="sidebar-link" href="/vacation/request" aria-expanded="false">
                 <span>
 					<i class="ti ti-writing"></i>
@@ -37,7 +37,7 @@
                 <span class="hide-menu">휴가신청</span>
               </a>
             </li>
-            <li class="sidebar-item" th:if="${auth == null}">
+            <li class="sidebar-item" th:if="${auth == null && employee.status == '재직중'}">
               <a class="sidebar-link" href="/vacation/request/list" aria-expanded="false">
                 <span>
 					<i class="ti ti-calendar-event"></i>
@@ -45,7 +45,7 @@
                 <span class="hide-menu">휴가 신청 목록</span>
               </a>
             </li>
-            <li class="sidebar-item" th:if="${auth == null}">
+            <li class="sidebar-item" th:if="${auth == null && employee.status == '재직중'}">
               <a class="sidebar-link" href="/leader/request/list" aria-expanded="true">
                 <span>
 					<i class="ti ti-square-check"></i>
