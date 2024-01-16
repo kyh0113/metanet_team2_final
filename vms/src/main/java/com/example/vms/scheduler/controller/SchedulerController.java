@@ -57,7 +57,6 @@ public class SchedulerController {
 			@RequestParam(name = "success", defaultValue = "3", required = false) int success,
 			@RequestParam(name = "content", defaultValue = "", required = false) String content) {
 		SchedulerResult[] schedulers = null;
-		System.out.println(start + " 시작 " + end + " 끝 ");
 		schedulers = schedulerService.searchSchedulers(start, end, content, success);
 		return schedulers;
 	}
