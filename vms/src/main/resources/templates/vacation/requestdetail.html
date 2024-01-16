@@ -91,6 +91,8 @@
 	
 	let currentPage = sessionStorage.getItem('currentPage')
 	sessionStorage.removeItem('currentPage')
+	let isWaiting = sessionStorage.setItem('isWaiting', isWaiting)
+	sessionStorage.removeItem('isWaiting')
 	
     $(document).ready(function(){
       $('.approval-btn').click(function(){
@@ -163,6 +165,7 @@
 	
 	function toRequestListView() {
 		sessionStorage.setItem('currentPage', currentPage)
+		sessionStorage.setItem('isWaiting', isWaiting)
 	}
     /*]]>*/
   </script>
