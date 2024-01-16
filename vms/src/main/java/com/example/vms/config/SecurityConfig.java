@@ -53,7 +53,7 @@ public class SecurityConfig {
         .requestMatchers("/employee/**").permitAll()
         .requestMatchers("/error/**").permitAll()
         .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
-        .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")
+        .requestMatchers("/certificate/**").permitAll()
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/leader/**").hasAnyRole("LEADER")
         .anyRequest().authenticated(); // 나머지는 인증된 사용자만 접근 가능
