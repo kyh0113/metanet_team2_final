@@ -7,6 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -90,35 +92,37 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/login")
-	public String login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
 	    log.info("EMP_ID: {}", empId);
 	    System.out.println("로그인로그이");
 
 	    Employee employee = employeeService.selectEmployee(empId);
 	    if (employee == null) {
-	    	System.out.println("로그인 실패");
-	    	return "redirect:/error/login-denied";
+	        System.out.println("로그인 실패1");
+	        ResponseEntity<String> responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 올바르지 않습니다.");
+	        System.out.println("서버 응답: " + responseEntity.getBody());
+	        return responseEntity;
 	    }
 
 	    if (!passwordEncoder.matches(password, employee.getPassword())) {
-	    	System.out.println("로그인 실패");
-	        return "redirect:/error/login-denied";
+	        System.out.println("로그인 실패2");
+	        ResponseEntity<String> responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 올바르지 않습니다.");
+	        System.out.println("서버 응답: " + responseEntity.getBody());
+	        return responseEntity;
 	    } else {
 	        log.info("로그인 성공");
 
 	        String token = tokenProvider.generateToken(employee);
 	        System.out.println("토큰 출력: " + token);
-	        
-	        // 토큰을 클라이언트로 전송
-	        // 헤더에서 토큰을 읽어와서 sessionStorage에 저장하기 위함 
-	        //response.setHeader("X-AUTH-TOKEN", token); 
-	        
+
 	        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
 	        cookie.setMaxAge(-1);
 	        cookie.setPath("/");
 	        response.addCookie(cookie);
-	        				
-	        return "redirect:/employee/main";
+
+	        ResponseEntity<String> responseEntity = ResponseEntity.ok("redirect:/employee/main");
+	        System.out.println("서버 응답: " + responseEntity.getBody());
+	        return responseEntity;
 	    }
 	}
 
