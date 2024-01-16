@@ -152,8 +152,12 @@
 			/*border: 1px solid #ddd;*/
 			padding: 8px;
 			text-align: left;
-			border: 2px solid #ddd;
+			border: 2px solid white;
 			
+		}
+		.tippy-box[data-theme~='custom-theme'] {
+   			background-color: #2ECCFA; /* 배경색을 원하는 색상으로 변경하세요 */
+    		color: white; /* 글자색을 조절하세요 */
 		}
 		
 
@@ -375,19 +379,24 @@
 							var end_date = new Date(info.event.end);
 
 							var tableContent = "<table class='tippy-table'>" +
-								"<tr class='tr1'><th><strong>제목:</strong></th><td>" + info.event.title + "</td></tr>" +
-								"<tr class='tr2'><th style='color:aqua;'><strong>시작날짜:</strong></th><td style='color:aqua;'><strong>"
+								"<tr class='tr1'><th><strong>제목</strong></th><td><strong>" + info.event.title + "</strong></td></tr>" +
+								"<tr class='tr2'><th><strong>시작날짜</strong></th><td><strong>"
 									 + start_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
-								"<tr class='tr3'><th style='color:red;'><strong>종료날짜:</strong></th><td style='color:red;'><strong>" + 
+								"<tr class='tr3'><th><strong>종료날짜</strong></th><td><strong>" + 
 									end_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
 								"</table>";
-
 
 							tippy(info.el, {
 								content: tableContent,
 								placement: 'bottom',
 								trigger: 'mouseenter',
 								allowHTML: true,
+								// backgroundColor 추가
+								duration: 200, // 이 부분은 선택적이며 필요에 따라 조절할 수 있습니다.
+								arrow: true,
+								arrowType: 'round',
+								size: 'large',
+								theme: 'custom-theme',
 							});
 						},
 

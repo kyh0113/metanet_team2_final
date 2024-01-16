@@ -275,5 +275,14 @@ public class CertificateController {
     	}
    
     }
+    
+// // 증명서 진위 확인 화면 
+//    @GetMapping("/certificate/verificate")
+//    public String verificatePage(
+//    	HttpServletRequest request,
+//        Model model
+//    ) {
+//    	return "certificate/ex-cerificateverification";
+//    }
    
 }

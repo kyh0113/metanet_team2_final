@@ -6,6 +6,37 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login Page</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+	<style>
+		#certificate-btn{
+			width: 100%;
+			border: 0px;
+			height: 40px;
+		}
+		#certificate-btn:hover{
+			width: 100%;
+			border: 0px;
+			height: 40px;
+			background-color: gainsboro;
+		}
+     	#verificateBody {
+         padding: 20px;
+     	}
+        video {
+            max-width: 400px;
+            max-height: 200px;
+            margin-bottom: 20px;
+            background-color: dodgerblue;
+        }
+        #QRVerificate {
+            text-align: center;
+        }
+        .large-input {
+          height: 30px;
+          font-size: 16px; 
+          width: 300px;
+        }
+
+	</style>
 </head>
 
 <body class="bg-light d-flex align-items-center">
@@ -38,17 +69,62 @@
 					<button type="button" class="btn btn-primary btn-block" onclick="submitLoginForm()">Login</button>
 				</form>
 			</div>
-			<div class="card-footer text-center">
+			<div class="card-footer text-center" style="padding-bottom: 20px;">
 				<div class="mt-3">
 					<a th:href="@{/employee/find-employeeid}">사원번호(아이디) 찾기</a> |
-					<a th:href="@{/employee/find-password}">비밀번호 찾기</a>
+					<a th:href="@{/employee/find-password}">비밀번호 찾기</a>	
+				</div>
+			</div>
+			<div class="certificate">
+				<button id="certificate-btn" onclick="openVerificationModal()">증명서 검증하기</button>
+			</div>
+		</div>
+	</div>
+	<!-- 모달 코드 추가 -->
+	<div class="modal fade" id="verificationModal" tabindex="-1" role="dialog" aria-labelledby="verificationModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="verificationModalLabel">증명서 진위 확인</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!-- 여기에 증명서 검증 페이지의 내용을 추가 -->
+					<div id="verificateBody">
+						<h4 style="font-weight: bold; margin-bottom: 30px;">증명서 진위 확인</h4>
+						<div id="QRVerificate">
+							<h4 class="mb-4" style="font-weight: bold;">QR 코드 카메라로 검증</h4>
+							<video id="video" playsinline class="mb-3"></video>
+							<br>
+							<button class="btn btn-primary" onclick="scanQRCode()">QR 코드 스캔 시작</button>
+							<p id="verificationResult"></p>
+						</div>
+	
+						<div id="inputVerificate" class="mt-5 d-flex flex-column align-items-center">
+							<h4 class="mb-4" style="font-weight: bold;">입력 폼으로 검증</h4>
+							<div class="mb-3 text-start">
+								<label for="certificateId" class="form-label">증명서 ID</label>
+								<input type="text" class="form-control large-input" id="certificateId" name="certificateId">
+							</div>
+	
+							<div class="mb-3 text-start">
+								<label for="empId" class="form-label">사원 ID</label>
+								<input type="text" class="form-control large-input" id="qempId" name="empId">
+							</div>
+	
+							<button id="inputVerificateButotn" class="btn btn-primary"
+								onclick="inputVerificateButtonTapped()" style="border-radius: 12px;">
+								제출
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<!-- jQuery 라이브러리 추가 -->
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 	<!-- AJAX 및 알림을 위한 JavaScript 코드 추가 -->
 	<script th:inline="javascript">
@@ -74,8 +150,95 @@
 				}
 			});
 		}
-    /*]]>*/
 	</script>
+	
+	<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+	<script>
+		const video = document.getElementById('video');
+		const qrResultElement = document.getElementById('verificationResult');
+		let scanner;
+
+		async function scanQRCode() {
+			try {
+				const stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}});
+
+				video.srcObject = stream;
+
+				scanner = new Instascan.Scanner({video: video, charset: 'UTF-8'});
+
+				scanner.addListener('scan', function (result) {
+					verifyCertificate(result);
+					// 스캔이 완료되면 카메라 정지
+					stopCamera();
+				});
+
+				Instascan.Camera.getCameras().then(cameras => {
+					if (cameras.length > 0) {
+						scanner.start(cameras[0]);
+					} else {
+						console.error('사용 가능한 카메라가 없습니다.');
+					}
+				});
+			} catch (error) {
+				console.error('카메라에 접근할 수 없습니다:', error);
+			}
+		}
+
+		function verifyCertificate(qrCodeData) {
+			// 실제로는 서버로 데이터를 전송하여 검증하는 로직이 들어가야 함
+			// 여기서는 간단한 예시로 '인증 성공' 또는 '인증 실패' 메시지를 반환함
+
+			let datas = qrCodeData.split(',')
+			let certificateId = datas[0]
+			let empId = datas[1]
+			certificateView(empId, certificateId)
+
+			return
+		}
+
+		function stopCamera() {
+			if (scanner) {
+				scanner.stop();
+			}
+			if (video.srcObject) {
+				const tracks = video.srcObject.getTracks();
+				tracks.forEach(track => track.stop());
+				video.srcObject = null;
+			}
+		}
+
+		var openedWindow;
+
+		function certificateView(empId, certificateId) {
+			if (openedWindow && !openedWindow.closed) {
+				openedWindow.close(); // 기존 창이 열려있다면 닫기
+			}
+
+			const previewUrl = '/certificate/verificate/view?empId=' + empId + '&certificateId=' + certificateId;
+			openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+		}
+
+		function inputVerificateButtonTapped() {
+			let certificateId = document.getElementById('certificateId').value
+			let empId = document.getElementById('qempId').value
+			console.log(certificateId);
+			console.log("444"+empId);
+			certificateView(empId, certificateId);
+		}
+
+	</script>
+	
+	
+	<!-- jQuery 및 Bootstrap 라이브러리 추가 -->
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<script th:inline="javascript">
+		function openVerificationModal() {
+			$('#verificationModal').modal('show');
+		}
+	</script>
+
 
 </body>
 

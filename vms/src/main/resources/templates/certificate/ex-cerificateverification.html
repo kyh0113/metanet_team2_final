@@ -43,20 +43,12 @@
   <!--  Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar" th:include="include/sidebar :: aside">
+    <aside class="left-sidebar" th:include="include/blank-sidebar :: aside">
 	</aside>
-	<!--  Sidebar End -->
-    <!--  Main wrapper -->		
+    <!--  Main wrapper -->
     <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header" th:include="include/header :: header">
-      </header>
-      <!--  Header End -->
       <div class="container-fluid">
-		  
-
-
+	
     <div id="QRVerificate">
         <h4 style="font-weight: bold;">증명서 진위 확인</h4>
         <video id="video" playsinline class="mb-3"></video>
@@ -68,7 +60,6 @@
       </div>
     </div>
   </div>
-
 
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
