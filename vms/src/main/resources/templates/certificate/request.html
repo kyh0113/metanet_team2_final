@@ -50,17 +50,17 @@
                 <tr>
                     <td>재직증명서</td>
                     <td>재직을 증명하는 문서입니다.</td>
-                    <td><button th:if="${employee.retireDate == null}" onclick="certificatePreViewOpen('재직증명서')"
+                    <td><button th:if="${employee.status == '재직중'}" onclick="certificatePreViewOpen('재직증명서')"
                             class="btn btn-primary">미리보기</button></td>
-                    <td><button th:if="${employee.retireDate == null}" onclick="requestCertificate('재직증명서')"
+                    <td><button th:if="${employee.status == '재직중'}" onclick="requestCertificate('재직증명서')"
                             class="btn btn-success">신청</button></td>
                 </tr>
                 <tr>
                     <td>퇴직증명서</td>
                     <td>퇴사를 증명하는 문서입니다.</td>
-                    <td><button th:if="${employee.retireDate != null}" onclick="certificatePreViewOpen('퇴직증명서')"
+                    <td><button th:if="${employee.status != '재직중'}" onclick="certificatePreViewOpen('퇴직증명서')"
                             class="btn btn-primary">미리보기</button></td>
-                    <td><button th:if="${employee.retireDate != null}" onclick="requestCertificate('퇴직증명서')"
+                    <td><button th:if="${employee.status != '재직중'}" onclick="requestCertificate('퇴직증명서')"
                             class="btn btn-success">신청</button></td>
                 </tr>
             </tbody>
