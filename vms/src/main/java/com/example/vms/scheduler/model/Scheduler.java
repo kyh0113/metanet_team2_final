@@ -1,6 +1,7 @@
 package com.example.vms.scheduler.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class Scheduler {
 	Integer schedulerId;
-	LocalDate workDate;
+	LocalDateTime workDate;
 	String content;
 	Integer success;
 }
