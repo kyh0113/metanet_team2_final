@@ -13,11 +13,11 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
           <ul id="sidebarnav">
-            <li class="nav-small-cap">
+            <li class="nav-small-cap" th:if="${auth == null}">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Home</span>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/employee/main" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
@@ -25,11 +25,11 @@
                 <span class="hide-menu">메인페이지</span>
               </a>
             </li>
-            <li class="nav-small-cap">
+            <li class="nav-small-cap" th:if="${auth == null}">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Service</span>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/vacation/request" aria-expanded="false">
                 <span>
 					<i class="ti ti-writing"></i>
@@ -37,7 +37,7 @@
                 <span class="hide-menu">휴가신청</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/vacation/request/list" aria-expanded="false">
                 <span>
 					<i class="ti ti-calendar-event"></i>
@@ -45,7 +45,7 @@
                 <span class="hide-menu">휴가 신청 목록</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/leader/request/list" aria-expanded="false">
                 <span>
 					<i class="ti ti-square-check"></i>
@@ -53,7 +53,7 @@
                 <span class="hide-menu">휴가 결재</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/certificate/request" aria-expanded="false">
                 <span>
 					<i class="ti ti-certificate"></i>
@@ -61,12 +61,48 @@
                 <span class="hide-menu">증명서 발급</span>
               </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item" th:if="${auth == null}">
               <a class="sidebar-link" href="/certificate/view" aria-expanded="false">
                 <span>
 					<i class="ti ti-list"></i>
                 </span>
                 <span class="hide-menu">증명서 신청 목록</span>
+              </a>
+            </li>
+            <li class="nav-small-cap" th:if="${auth != null}">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Admin</span>
+            </li>
+            <li class="sidebar-item" th:if="${auth != null}">
+              <a class="sidebar-link" href="/manager/employee/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">조직관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item" th:if="${auth != null}">
+              <a class="sidebar-link" href="/manager/schedule/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-luggage"></i>
+                </span>
+                <span class="hide-menu">휴가관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item" th:if="${auth != null}">
+              <a class="sidebar-link" href="/manager/scheduler/list" aria-expanded="false">
+                <span>
+					<i class="ti ti-clock-2"></i>
+                </span>
+                <span class="hide-menu">스케줄러 관리</span>
+              </a>
+            </li>
+            <li class="sidebar-item" th:if="${auth != null}">
+              <a class="sidebar-link" href="/manager/certificate/verificate" aria-expanded="false">
+                <span>
+					<i class="ti ti-id-badge"></i>
+                </span>
+                <span class="hide-menu">인증서 검증</span>
               </a>
             </li>
             <li class="nav-small-cap">
@@ -79,42 +115,6 @@
 				<i class="ti ti-logout"></i>
                 </span>
                 <span class="hide-menu">Logout</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Admin</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/manager/employee/list" aria-expanded="false">
-                <span>
-					<i class="ti ti-users"></i>
-                </span>
-                <span class="hide-menu">조직관리</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/manager/schedule/list" aria-expanded="false">
-                <span>
-					<i class="ti ti-luggage"></i>
-                </span>
-                <span class="hide-menu">휴가관리</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/manager/scheduler/list" aria-expanded="false">
-                <span>
-					<i class="ti ti-clock-2"></i>
-                </span>
-                <span class="hide-menu">스케줄러 관리</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/manager/certificate/verificate" aria-expanded="false">
-                <span>
-					<i class="ti ti-id-badge"></i>
-                </span>
-                <span class="hide-menu">인증서 검증</span>
               </a>
             </li>
           </ul>
