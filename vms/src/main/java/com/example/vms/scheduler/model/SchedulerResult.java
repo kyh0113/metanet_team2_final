@@ -1,6 +1,7 @@
 package com.example.vms.scheduler.model;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 import lombok.ToString;
@@ -11,7 +12,7 @@ public class SchedulerResult {
     private int totalRows;
     private int num;
     private int scheduleId;
-    private Date workDate;
+    private LocalDateTime workDate;
     private String content;
     private int success;
     

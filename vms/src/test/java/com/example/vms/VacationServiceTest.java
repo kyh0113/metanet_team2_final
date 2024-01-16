@@ -410,10 +410,23 @@ public class VacationServiceTest {
         int startNum = 1;
         int endNum = 10;
 
-        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "it", "홍성철", "Developer", "연차",
-                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
-        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "it", "홍성철", "HR Manager", "연차",
-                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType();
+        schedule1.setCalendarId("1");
+        schedule1.setDeptName("IT");
+        schedule1.setEmpName("홍성철");
+        schedule1.setPosition("Developer");
+        schedule1.setTypeName("연차");
+        schedule1.setStartDate(LocalDate.parse("2024-01-15"));
+        schedule1.setEndDate(LocalDate.parse("2024-01-17"));
+        
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType();
+        schedule2.setCalendarId("2");
+        schedule2.setDeptName("IT");
+        schedule2.setEmpName("홍성철");
+        schedule2.setPosition("HRManager");
+        schedule2.setTypeName("연차");
+        schedule2.setStartDate(LocalDate.parse("2024-01-18"));
+        schedule2.setEndDate(LocalDate.parse("2024-01-20"));
 
         List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
 
@@ -439,10 +452,23 @@ public class VacationServiceTest {
         int startNum = 1;
         int endNum = 10;
 
-        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
-                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
-        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "IT", "Jane Smith", "HR Manager", "Training",
-                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType();
+        schedule1.setCalendarId("1");
+        schedule1.setDeptName("IT");
+        schedule1.setEmpName("홍성철");
+        schedule1.setPosition("Developer");
+        schedule1.setTypeName("연차");
+        schedule1.setStartDate(LocalDate.parse("2024-01-15"));
+        schedule1.setEndDate(LocalDate.parse("2024-01-17"));
+        
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType();
+        schedule2.setCalendarId("2");
+        schedule2.setDeptName("IT");
+        schedule2.setEmpName("홍성철");
+        schedule2.setPosition("HRManager");
+        schedule2.setTypeName("연차");
+        schedule2.setStartDate(LocalDate.parse("2024-01-18"));
+        schedule2.setEndDate(LocalDate.parse("2024-01-20"));
 
         List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
 
@@ -464,10 +490,23 @@ public class VacationServiceTest {
         int startNum = 1;
         int endNum = 10;
 
-        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
-                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
-        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "HR", "Jane Smith", "Developer", "Training",
-                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType();
+        schedule1.setCalendarId("1");
+        schedule1.setDeptName("IT");
+        schedule1.setEmpName("홍성철");
+        schedule1.setPosition("Developer");
+        schedule1.setTypeName("연차");
+        schedule1.setStartDate(LocalDate.parse("2024-01-15"));
+        schedule1.setEndDate(LocalDate.parse("2024-01-17"));
+        
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType();
+        schedule2.setCalendarId("2");
+        schedule2.setDeptName("IT");
+        schedule2.setEmpName("홍성철");
+        schedule2.setPosition("HRManager");
+        schedule2.setTypeName("연차");
+        schedule2.setStartDate(LocalDate.parse("2024-01-18"));
+        schedule2.setEndDate(LocalDate.parse("2024-01-20"));
 
         List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
 
@@ -488,10 +527,23 @@ public class VacationServiceTest {
         int startNum = 1;
         int endNum = 10;
 
-        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType("1", "IT", "John Doe", "Developer", "Meeting",
-                LocalDate.parse("2024-01-15"), LocalDate.parse("2024-01-17"));
-        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType("2", "HR", "Jane Smith", "HR Manager", "Training",
-                LocalDate.parse("2024-01-18"), LocalDate.parse("2024-01-20"));
+        ScheduleEmpDeptType schedule1 = new ScheduleEmpDeptType();
+        schedule1.setCalendarId("1");
+        schedule1.setDeptName("IT");
+        schedule1.setEmpName("홍성철");
+        schedule1.setPosition("Developer");
+        schedule1.setTypeName("연차");
+        schedule1.setStartDate(LocalDate.parse("2024-01-15"));
+        schedule1.setEndDate(LocalDate.parse("2024-01-17"));
+        
+        ScheduleEmpDeptType schedule2 = new ScheduleEmpDeptType();
+        schedule2.setCalendarId("2");
+        schedule2.setDeptName("IT");
+        schedule2.setEmpName("홍성철");
+        schedule2.setPosition("HRManager");
+        schedule2.setTypeName("연차");
+        schedule2.setStartDate(LocalDate.parse("2024-01-18"));
+        schedule2.setEndDate(LocalDate.parse("2024-01-20"));
 
         List<ScheduleEmpDeptType> expectedScheduleList = Arrays.asList(schedule1, schedule2);
 

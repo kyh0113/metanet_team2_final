@@ -107,20 +107,23 @@
 		    pagination.innerHTML = '';  // 기존 페이지 번호 제거
 			
 			//이전 페이지 이동 버튼
-			let prev = document.createElement('li');
-		    prev.classList.add('page-item');
-		    
-			let prevLink = document.createElement('a');
-		    prevLink.classList.add('page-link');
-		    prevLink.textContent = '<';
-		    prevLink.addEventListener('click', (event) => {
-				currentPage--;
-				if(currentPage < 1) currentPage = 1;
-				showList();
-				movePage();
-			});
-		    prev.appendChild(prevLink);
-		    pagination.appendChild(prev);
+			if (rowNum != 0) {
+				let prev = document.createElement('li');
+			    prev.classList.add('page-item');
+			    
+				let prevLink = document.createElement('a');
+			    prevLink.classList.add('page-link');
+			    prevLink.textContent = '<';
+			    prevLink.addEventListener('click', (event) => {
+					currentPage--;
+					if(currentPage < 1) currentPage = 1;
+					showList();
+					movePage();
+				});
+			    prev.appendChild(prevLink);
+			    pagination.appendChild(prev); 
+			}
+			
 		    
 		    for (var i = 1; i <= totalPages; i++) {
 		        var li = document.createElement('li');
@@ -145,22 +148,25 @@
 		        li.appendChild(a);
 		        pagination.appendChild(li);
 	    	}
+	    	
 	    	//다음 페이지 이동 버튼
-			let next = document.createElement('li');
-		    next.classList.add('page-item');
-		    
-			let nextLink = document.createElement('a');
-		    nextLink.classList.add('page-link');
-		    nextLink.textContent = '>';
-		    nextLink.addEventListener('click', (event) => {
-				currentPage++;
-				if(currentPage > totalPages) currentPage--;
-				showList();
-				movePage();
-			});
-		    next.appendChild(nextLink);
-		    pagination.appendChild(next);
-  
+	    	if (rowNum!=0) {
+				let next = document.createElement('li');
+			    next.classList.add('page-item');
+			    
+				let nextLink = document.createElement('a');
+			    nextLink.classList.add('page-link');
+			    nextLink.textContent = '>';
+			    nextLink.addEventListener('click', (event) => {
+					currentPage++;
+					if(currentPage > totalPages) currentPage--;
+					showList();
+					movePage();
+				});
+			    next.appendChild(nextLink);
+			    pagination.appendChild(next);
+			}
+
   		})
 	}
 	

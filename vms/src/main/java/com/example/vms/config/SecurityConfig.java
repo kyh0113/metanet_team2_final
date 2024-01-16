@@ -51,15 +51,16 @@ public class SecurityConfig {
         .requestMatchers("/manager/create").permitAll()
         .requestMatchers("/manager/**").hasAnyRole("MANAGER")
         .requestMatchers("/employee/**").permitAll()
+        .requestMatchers("/error/**").permitAll()
         .requestMatchers("/scheduler/**").hasAnyRole("MANAGER")
         .requestMatchers("/certificate/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/vacation/**").hasAnyRole("EMPLOYEE", "LEADER")
         .requestMatchers("/leader/**").hasAnyRole("LEADER")
-        .anyRequest().authenticated();
+        .anyRequest().authenticated(); // 나머지는 인증된 사용자만 접근 가능
         
         http
         .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
-        
+    
         http.sessionManagement((session)->session.sessionCreationPolicy(
 				SessionCreationPolicy.STATELESS)); // 세션방식의 인증을 사용하지 않겠다는 뜻
 		
@@ -83,7 +84,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedMethod("*"); // POST, PATCH, GET, DELETE등 접근 가능
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
 

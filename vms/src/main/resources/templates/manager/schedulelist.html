@@ -80,8 +80,9 @@
 	let totalPages = 1
 		
 	window.onload = function() {	
-		viewDidLoad()
-    	searchList()
+		viewDidLoad();
+    	searchList();
+    	pagination();
 	}
 	
 	function viewDidLoad() {
@@ -108,22 +109,25 @@
 	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
 	
 		//이전 페이지 이동 버튼
-		let prev = document.createElement('li');
-	    prev.classList.add('page-item');
-	    
-		let prevLink = document.createElement('a');
-	    prevLink.classList.add('page-link');
-	    prevLink.textContent = '<';
-	    prevLink.addEventListener('click', (event) => {
-			if(currentPage <= 1) { 
-				currentPage = 1
-			} else {
-				currentPage -= 1 
-				searchList(currentPage)
-			}
-		});
-	    prev.appendChild(prevLink);
-	    pagination.appendChild(prev);
+		if (rowNum>0) {
+			let prev = document.createElement('li');
+		    prev.classList.add('page-item');
+		    
+			let prevLink = document.createElement('a');
+		    prevLink.classList.add('page-link');
+		    prevLink.textContent = '<';
+		    prevLink.addEventListener('click', (event) => {
+				if(currentPage <= 1) { 
+					currentPage = 1
+				} else {
+					currentPage -= 1 
+					searchList(currentPage)
+				}
+			});
+		    prev.appendChild(prevLink);
+		    pagination.appendChild(prev);
+		}
+
 	        
 	    for (let i = 1; i <= totalPages; i++) {
 	        let li = document.createElement('li');
@@ -148,31 +152,29 @@
 	        pagination.appendChild(li);
 	    }
 	    //다음 페이지 이동 버튼
-		let next = document.createElement('li');
-	    next.classList.add('page-item');
-	    
-		let nextLink = document.createElement('a');
-	    nextLink.classList.add('page-link');
-	    nextLink.textContent = '>';
-	    nextLink.onclick = () => {
-			if(currentPage >= totalPages) { 
-				currentPage = totalPages 
-			} else {
-				currentPage += 1 
+	    if (rowNum>0) {
+			let next = document.createElement('li');
+		    next.classList.add('page-item');
+		    
+			let nextLink = document.createElement('a');
+		    nextLink.classList.add('page-link');
+		    nextLink.textContent = '>';
+		    nextLink.onclick = () => {
+				if(currentPage >= totalPages) { 
+					currentPage = totalPages 
+				} else {
+					currentPage += 1 
+				}
+				searchList(currentPage);				
+	
 			}
-			searchList(currentPage);				
-
+		    next.appendChild(nextLink);
+		    pagination.appendChild(next);
 		}
-	    next.appendChild(nextLink);
-	    pagination.appendChild(next);
-  
+
   		})
 	}
     
-    function showDetail(row) {
-      let url = row.getAttribute('url');
-      location.href = url;
-    }
     
    	function getInstance(){
       if(window.XMLHttpRequest){
@@ -227,7 +229,7 @@
            	//row.setAttribute('onclick', "showDetail(this)");
            	
         });
-        pagination()
+        //pagination()
     }
 	
 	function searchList(searchPage) {

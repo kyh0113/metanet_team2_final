@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.vms.employee.controller.EmployeeController;
 import com.example.vms.employee.model.Mail;
 import com.example.vms.employee.model.Result;
 import com.example.vms.employee.service.EmployeeService;
@@ -55,7 +57,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/vacation")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -80,11 +84,9 @@ public class VacationController {
 	private ScheduleService scheduleService;
 
 	@GetMapping("/request")
-	public String requestVacation(
-		HttpServletRequest request,
-		Model model, HttpSession session
-	) {
-		
+
+	public String requestVacation(HttpServletRequest request, Model model, HttpSession session) {
+
 		Cookie[] cookies = request.getCookies();
 		String token = "";
 		for (Cookie cookie : cookies) {
@@ -96,8 +98,8 @@ public class VacationController {
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
 			String empId = tokenProvider.getEmpId(token);
-	        Employee employee = employeeService.selectEmployee(empId);
-	        model.addAttribute("employee", employee);
+			Employee employee = employeeService.selectEmployee(empId);
+			model.addAttribute("employee", employee);
 			// 토큰에서 empId 추출
 
 			List<VacationType> vacationTypes = vacationTypeService.getAllVacationType();
@@ -111,7 +113,7 @@ public class VacationController {
 		} else {
 			return "redirect:/employee/login";
 		}
-	
+
 	}
 
 	@GetMapping("/getDaysForVacationType")
@@ -127,7 +129,7 @@ public class VacationController {
 	}
 
 	@PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
-	public String requestVacation(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<String> requestVacation(HttpServletRequest request, HttpServletResponse response,
 			@ModelAttribute Vacation vacation, @RequestParam(value = "files", required = false) MultipartFile[] files,
 			Model model, HttpSession session, String csrfToken) {
 
@@ -162,13 +164,33 @@ public class VacationController {
 			// 토큰에서 empId 추출
 			String empId = tokenProvider.getEmpId(token);
 
-	        Employee employee = employeeService.selectEmployee(empId);
-	        model.addAttribute("employee", employee);
-			
+			Employee employee = employeeService.selectEmployee(empId);
+
+			model.addAttribute("employee", employee);
+
 			// 휴가 정보 설정
 			vacation.setEmpId(empId);
+
+			// 휴가 일수 계산
+			int requestedVacationDays = calculateWorkingDaysBetween(vacation.getStartDate(), vacation.getEndDate());
+
+			// 남은 연차 가져오기
+			int remainingVacationDays = employee.getRemains();
 			
-			vacation.setVacationDays(calculateWorkingDaysBetween(vacation.getStartDate(), vacation.getEndDate()));
+//			if(remainingVacationDays <requestedVacationDays) { // 남은 연차보다 휴가일수가 많으면
+//				// 아래의 휴가 등록 코드가 실행되지 않고 다시 폼으로 이동하여
+//				// alert창이 떴으면 좋겠어. '남은 연차가 부족하여 휴가 신청할 수 없습니다.' 라고.
+//				model.addAttribute("insufficientVacation", true);
+//				return "vacation/request";
+//			}
+			
+			if (remainingVacationDays < requestedVacationDays) {
+	            // 남은 연차가 부족할 때
+				return ResponseEntity.ok("insufficientVacation");
+	        }
+			
+
+			vacation.setVacationDays(requestedVacationDays);
 
 			// 휴가 등록
 			vacationService.requestVacation(vacation, files);
@@ -176,12 +198,14 @@ public class VacationController {
 			// 쿠키에 토큰을 설정 (클라이언트 사이드에서 사용)
 			response.setHeader("Set-Cookie", "X-AUTH-TOKEN=" + token + "; Path=/; HttpOnly");
 
-			return "redirect:/vacation/request/list";
-		} else {
-			// 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
-			return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
-		}
+			return ResponseEntity.ok("success");
+	    } else {
+	        // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalidToken");
+	    }
 	}
+
+	
 
 	// 휴가 신청서 목록 조회
 	@GetMapping("/request/list")
@@ -199,11 +223,11 @@ public class VacationController {
 		}
 		// 토큰 유효성 검사
 		if (tokenProvider.validateToken(token)) {
-			
+
 			String empId = tokenProvider.getEmpId(token);
-	        Employee employee = employeeService.selectEmployee(empId);
-	        model.addAttribute("employee", employee);
-			
+			Employee employee = employeeService.selectEmployee(empId);
+			model.addAttribute("employee", employee);
+
 			return "vacation/requestlist_employee";
 
 		} else {
@@ -223,11 +247,11 @@ public class VacationController {
 		String typeName = vacationService.getVacationTypeName(vacation.getTypeId());
 		// 휴가일수 계산
 		int workingDays = calculateWorkingDaysBetween(vacation.getStartDate(), vacation.getEndDate());
-		
+
 		// 파일 리스트 가져오기
 		List<UploadFile> files = vacationService.getFileList(regIdNumber);
 		System.out.println(files);
-		
+
 		System.out.println(vacation);
 		model.addAttribute("vacation", vacation);
 		model.addAttribute("employee", employee);
@@ -237,22 +261,21 @@ public class VacationController {
 		model.addAttribute("files", files);
 		return "vacation/requestdetail_employee";
 	}
-	
-	
+
 	public static int calculateWorkingDaysBetween(LocalDate startDate, LocalDate endDate) {
-        int workingDays = 0;
-        LocalDate currentDate = startDate;
+		int workingDays = 0;
+		LocalDate currentDate = startDate;
 
-        while (!currentDate.isAfter(endDate)) {
-            if (currentDate.getDayOfWeek() != DayOfWeek.SATURDAY && currentDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                workingDays++;
-            }
-            currentDate = currentDate.plusDays(1);
-        }
+		while (!currentDate.isAfter(endDate)) {
+			if (currentDate.getDayOfWeek() != DayOfWeek.SATURDAY && currentDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+				workingDays++;
+			}
+			currentDate = currentDate.plusDays(1);
+		}
 
-        return workingDays;
-    }
-	
+		return workingDays;
+	}
+
 	@ResponseBody
 	@GetMapping("/request/getrow")
 	public int getRequestRowNum(HttpServletRequest request,
@@ -291,7 +314,7 @@ public class VacationController {
 			@RequestParam(name = "curpage", defaultValue = "1") String curpage) {
 
 		List<VacationEmployee> requestList = null;
-		
+
 		// 쿠키 정보
 		Cookie[] cookies = request.getCookies();
 		String token = "";
@@ -320,7 +343,7 @@ public class VacationController {
 		try {
 			System.out.println("랄랄: " + regId);
 			vacationService.deleteVacation(regId);
-			return ResponseEntity.ok().body("{\"resultMessage\": \"삭제가 성공적으로 이루어졌습니다.\"}");
+			return ResponseEntity.ok().body("{\"resultMessage\": \"취소가 성공적으로 이루어졌습니다.\"}");
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -328,7 +351,7 @@ public class VacationController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("{\"resultMessage\": \"삭제 중 오류가 발생했습니다.\"}");
+					.body("{\"resultMessage\": \"취소 중 오류가 발생했습니다.\"}");
 		}
 	}
 

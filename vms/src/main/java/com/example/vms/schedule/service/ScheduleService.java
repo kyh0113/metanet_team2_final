@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
@@ -26,6 +27,7 @@ public class ScheduleService implements IScheduleService{
 	}
 
 	@Override
+	@Transactional
 	public void insertSchedule(Schedule schedule) {
 		iScheduleRepository.insertSchedule(schedule);
 	}
