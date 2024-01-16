@@ -43,6 +43,12 @@ public class ManagerService implements IManagerService {
         employee.setEmpId(id);
         employee.setPassword(id);
         
+        Integer remains = employee.getRemains();
+        
+        if (remains == null) {
+        	employee.setRemains(0);
+        }
+        
         // 비밀번호 암호화
         String encodedPassword = encodePassword(employee.getPassword());
         employee.setPassword(encodedPassword);
