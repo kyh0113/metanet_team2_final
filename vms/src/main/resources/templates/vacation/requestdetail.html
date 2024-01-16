@@ -88,6 +88,12 @@
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script th:inline="javascript">
 	/*<![CDATA[*/
+	
+	let currentPage = sessionStorage.getItem('currentPage')
+	sessionStorage.removeItem('currentPage')
+	let isWaiting = sessionStorage.setItem('isWaiting', isWaiting)
+	sessionStorage.removeItem('isWaiting')
+	
     $(document).ready(function(){
       $('.approval-btn').click(function(){
         $.ajax({
@@ -155,6 +161,11 @@
 	            alert(thrownError);
 	          }
 	    });
+	}
+	
+	function toRequestListView() {
+		sessionStorage.setItem('currentPage', currentPage)
+		sessionStorage.setItem('isWaiting', isWaiting)
 	}
     /*]]>*/
   </script>
@@ -224,7 +235,7 @@
       </div>
     </div>
 	<div class="text-left mt-3">
-	  <a class="" href="/leader/request/list?return=true" th:text="목록보기">목록보기</a>
+	  <a class="" href="/leader/request/list" th:text="목록보기" onclick="toRequestListView()">목록보기</a>
 	</div>
   </div>
   <!-- The Modal -->
