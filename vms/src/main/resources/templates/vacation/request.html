@@ -81,7 +81,7 @@
 							<input type="file" id="file" name="files" class="form-control-file" multiple>
 						</div>
 
-						<button type="submit" class="btn btn-primary" onclik="showAlert()">제출</button>
+						<button type="submit" class="btn btn-primary">제출</button>
 					</form>
 				</div>
 
@@ -96,26 +96,51 @@
 
 	<!-- 폼 유효성 검사 스크립트 추가 -->
 	<script>
-		/*document.getElementById("vacationForm").addEventListener("submit", function (event) {
+
+		function showAlert() {
+			alert("남은 연차가 부족하여 휴가 신청할 수 없습니다.");
+			document.getElementById("vacationForm").reset();
+			//window.location.href = '/vacation/request'; // 이 부분을 해당 페이지의 URL로 변경
+		}
+
+
+
+
+		document.getElementById("vacationForm").addEventListener("submit", function (event) {
 			event.preventDefault();
 			fetch('http://localhost:8082/vacation/request', {
 				method: 'POST',
 				body: new FormData(event.target),
 			})
-				.then(response => response.text())
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.text();
+				})
 				.then(data => {
-					showAlert(data);
-					// 이후 필요한 처리 추가
+					if (data === "success") {
+						console.log("data아아아아:" + data);
+						window.location.href = '/vacation/request/list';
+					} else if (data === "insufficientVacation") {
+						showAlert();
+					} else if (data === "invalidToken") {
+						window.location.href = '/employee/login';
+					} else {
+						console.error('Failed to request vacation');
+					}
 				})
 				.catch(error => console.error('Error:', error));
 		});
 
-		function showAlert(response) {
-			if (response === "notAllowed") {
-					alert("휴가잔여일수 부족!!");
-			}
-		}  */
-			
+
+
+
+
+
+
+
+
 		function setEndDate() {
 			var startDate = document.getElementById("startDate").value;
 			var selectedTypeId = document.getElementById("typeId").value;
@@ -177,8 +202,8 @@
 				});
 			}, false);
 		})();
-		
-		
+
+
 
 	</script>
 </body>
