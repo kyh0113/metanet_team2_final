@@ -65,8 +65,8 @@ public class SchedulerController {
 		return "/scheduler/list";
 	}
 
-	// @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
-	@Scheduled(cron = "0/20 * * * * ?")
+	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
+	// @Scheduled(cron = "0/20 * * * * ?")
 	public void vacationPromoEmail() {
 	    try {
 	        log.info("vacationPromoEmail 스케줄러 발동");

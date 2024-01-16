@@ -121,7 +121,7 @@ public class VacationController {
 	}
 
 	@PostMapping(path = "/request", consumes = "multipart/form-data; charset=UTF-8", produces = "application/json")
-	public String requestVacation(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<String> requestVacation(HttpServletRequest request, HttpServletResponse response,
 			@ModelAttribute Vacation vacation, @RequestParam(value = "files", required = false) MultipartFile[] files,
 			Model model) {
 
@@ -163,9 +163,18 @@ public class VacationController {
 			// 남은 연차 가져오기
 			int remainingVacationDays = employee.getRemains();
 			
-//			if(requestedVacationDays>remainingVacationDays) {
-//				return "notAllowed"; // 휴가잔여일수 부족한 경우
+//			if(remainingVacationDays <requestedVacationDays) { // 남은 연차보다 휴가일수가 많으면
+//				// 아래의 휴가 등록 코드가 실행되지 않고 다시 폼으로 이동하여
+//				// alert창이 떴으면 좋겠어. '남은 연차가 부족하여 휴가 신청할 수 없습니다.' 라고.
+//				model.addAttribute("insufficientVacation", true);
+//				return "vacation/request";
 //			}
+			
+			if (remainingVacationDays < requestedVacationDays) {
+	            // 남은 연차가 부족할 때
+				return ResponseEntity.ok("insufficientVacation");
+	        }
+			
 
 			vacation.setVacationDays(requestedVacationDays);
 
@@ -175,11 +184,11 @@ public class VacationController {
 			// 쿠키에 토큰을 설정 (클라이언트 사이드에서 사용)
 			response.setHeader("Set-Cookie", "X-AUTH-TOKEN=" + token + "; Path=/; HttpOnly");
 
-			return "redirect:/vacation/request/list";
-		} else {
-			// 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
-			return "redirect:/employee/login"; // 또는 다른 처리 방식을 선택하세요.
-		}
+			return ResponseEntity.ok("success");
+	    } else {
+	        // 토큰이 유효하지 않으면 로그인 페이지로 리다이렉트
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalidToken");
+	    }
 	}
 
 	
