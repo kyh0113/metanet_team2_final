@@ -253,6 +253,7 @@ public class EmployeeController {
     		model.addAttribute("numberOfMyCertificates", numberOfMyCertificates);
     		List<EmployeeVacationCountPerMonth> employeeVacationInfos = employeeService.vacationCountPerMonth(empId);
     		model.addAttribute("employeeVacationInfos", employeeVacationInfos);
+    		
     		return "/employee/main";
 
         } else {

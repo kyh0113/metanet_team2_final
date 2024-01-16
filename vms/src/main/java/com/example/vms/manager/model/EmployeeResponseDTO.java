@@ -22,4 +22,5 @@ public class EmployeeResponseDTO {
     private int remains;
     private int deptId;
     private String deptName;
+    private String authority;
 }

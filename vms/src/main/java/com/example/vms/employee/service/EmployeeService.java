@@ -278,4 +278,16 @@ public class EmployeeService implements IEmployeeService{
 	public int numberOfVacationUsagesSearchByYear(String empId,String year) {
 		return employeeDao.numberOfVacationUsagesSearchByYear(empId, year);
 	}
+	
+	public Boolean isManager(String empId) {
+		
+		Set<String> roles = employeeDao.getRolesByEmpId(empId);
+		 
+		if (roles.contains("MANAGER")) {
+			return true;
+		} else {
+			return false;
+		}
+	
+	}
 }
