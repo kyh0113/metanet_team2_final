@@ -1,6 +1,7 @@
 package com.example.vms.scheduler.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import com.example.vms.scheduler.model.Scheduler;
@@ -67,36 +68,34 @@ public class SchedulerController {
 	// @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
 	@Scheduled(cron = "0/20 * * * * ?")
 	public void vacationPromoEmail() {
-		try {
-			log.info("vacationPromoEmail 스케줄러 발동");
+	    try {
+	        log.info("vacationPromoEmail 스케줄러 발동");
 
-			List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
+	        List<Employee> employees = managerService.findEmployeesWithAtLeastOneVacation();
 
-			for (Employee employee : employees) {
-				log.info("Sending vacation promo email to: {}", employee.getEmail());
-				schedulerService.sendVacationPromoEmail(employee);
-			}
+	        for (Employee employee : employees) {
+	            log.info("Sending vacation promo email to: {}", employee.getEmail());
+	            schedulerService.sendVacationPromoEmail(employee);
+	        }
 
-			Scheduler scheduler = new Scheduler();
-			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
-			scheduler.setContent("연차 촉진 메일");
-			scheduler.setSuccess(1); // 성공
-			schedulerService.saveScheduler(scheduler);
+	        Scheduler scheduler = new Scheduler();
+	        scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
+	        scheduler.setWorkDate(LocalDateTime.now());
+	        scheduler.setContent("연차 촉진 메일");
+	        scheduler.setSuccess(1); // 성공
+	        schedulerService.saveScheduler(scheduler);
 
-			log.info("vacationPromoEmail 스케줄러 완료");
-		} catch (Exception e) {
-			log.error("vacationPromoEmail 스케줄러 에러", e);
+	        log.info("vacationPromoEmail 스케줄러 완료");
+	    } catch (Exception e) {
+	        log.error("vacationPromoEmail 스케줄러 에러", e);
 
-			Scheduler scheduler = new Scheduler();
-			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
-			scheduler.setContent("연차 촉진 메일");
-			scheduler.setSuccess(0); // 실패
-			schedulerService.saveScheduler(scheduler);
-
-			
-		}
+	        Scheduler scheduler = new Scheduler();
+	        scheduler.setSchedulerId(schedulerService.maxSchedulerId());
+	        scheduler.setWorkDate(LocalDateTime.now());
+	        scheduler.setContent("연차 촉진 메일");
+	        scheduler.setSuccess(0); // 실패
+	        schedulerService.saveScheduler(scheduler);
+	    }
 	}
 
 
@@ -125,7 +124,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 미만 사원에게 연차 부여");
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
@@ -136,7 +135,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 미만 사원에게 연차 부여");
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);
@@ -169,7 +168,7 @@ public class SchedulerController {
 			}
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 이상 사원에게 연차 부여");
 			scheduler.setSuccess(1); // 성공
 			schedulerService.saveScheduler(scheduler);
@@ -180,7 +179,7 @@ public class SchedulerController {
 
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerService.maxSchedulerId());
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("1년 이상 사원에게 연차 부여");
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);

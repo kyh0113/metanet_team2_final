@@ -2,6 +2,7 @@ package com.example.vms.scheduler.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -35,7 +36,6 @@ public class SchedulerService implements ISchedulerService{
     @Autowired
     private IEmployeeService employeeService;
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     @Transactional
     public void certificateScheduler() {
         log.info("certificate 스케줄러 발동");
@@ -54,37 +54,35 @@ public class SchedulerService implements ISchedulerService{
             }
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("certificate 스케줄러 성공");
 			scheduler.setSuccess(1); // 성공
 			saveScheduler(scheduler);
         } catch (Exception e) {
 			Scheduler scheduler = new Scheduler();
 			scheduler.setSchedulerId(schedulerDao.maxSchedulerId() + 1);
-			scheduler.setWorkDate(LocalDate.now());
+			scheduler.setWorkDate(LocalDateTime.now());
 			scheduler.setContent("certificate 스케줄러 성공 실패");
 			scheduler.setSuccess(0); // 실패
 			saveScheduler(scheduler);
         }
     }
     
-
 	@Override
 	public SchedulerResult[] searchSchedulers(int start, int end, String content, int success) {
 		return schedulerRepository.searchSchedulers(start, end, content, success);
 	}
-
 
 	@Override
 	public void saveScheduler(Scheduler scheduler) {
 		schedulerDao.saveScheduler(scheduler);
 	}
 
-
 	@Override
 	public int maxSchedulerId() {
 		return schedulerDao.maxSchedulerId();
 	}
+
 	
 	@Async
 	@Transactional
@@ -99,7 +97,6 @@ public class SchedulerService implements ISchedulerService{
 		System.out.println("메일 전송 결과: " + result);
 
 	}
-	
 	
 
 }

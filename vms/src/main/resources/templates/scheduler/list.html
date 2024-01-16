@@ -6,6 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
 		integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	<script src="https://momentjs.com/downloads/moment.min.js"></script>
+
 	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
 	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
 	<title>스케줄러 목록 페이지</title>
@@ -164,7 +166,9 @@
 				cellSchedulerId.innerHTML = item.scheduleId;
 
 				let cellWorkDate = newRow.insertCell(1);
-				cellWorkDate.innerHTML = item.workDate;
+				cellWorkDate.innerHTML = formatLocalDateTime(item.workDate);
+				
+				console.log(formatLocalDateTime(item.workDate))
 
 				let cellContent = newRow.insertCell(2);
 				cellContent.innerHTML = item.content;
@@ -265,6 +269,24 @@
 			}
 			currentPage = willChangePage
 			fetchDatas(currentPage)
+		}
+		
+		
+		function formatLocalDateTime(localDateTimeString) {
+		    const localDateTime = new Date(localDateTimeString); // 문자열을 Date 객체로 변환
+		
+		    if (isNaN(localDateTime.getTime())) {
+		        return '유효하지 않은 날짜';
+		    }
+		
+		    const year = localDateTime.getFullYear();
+		    const month = (localDateTime.getMonth() + 1).toString().padStart(2, '0');
+		    const day = localDateTime.getDate().toString().padStart(2, '0');
+		    const hours = localDateTime.getHours().toString().padStart(2, '0');
+		    const minutes = localDateTime.getMinutes().toString().padStart(2, '0');
+		    const seconds = localDateTime.getSeconds().toString().padStart(2, '0');
+		
+		    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분 ${seconds}초`;
 		}
 
 	</script>
