@@ -43,7 +43,7 @@
 	            <div class="form-group">
 	                <label for="authority">권한</label>
 	                <select id="authority" name="authority" class="form-control" required>
-	                    <option th:each="authority : ${authorities}" th:value="${authority}" th:text="${authority}" th:selected="${authority == employee.position}"></option>
+	                    <option th:each="authority : ${authorities}" th:value="${authority}" th:text="${authority}" th:selected="${authority == employee.authority}"></option>
 	                </select>
 	            </div>
 	            
