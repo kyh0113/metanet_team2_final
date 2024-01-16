@@ -115,6 +115,7 @@ public class ManagerController {
 	        Employee employee = managerService.selectEmployee(empId);
 	        model.addAttribute("employee", employee);
 			model.addAttribute("numberOfEmployees", managerService.numberOfEmployees());
+			model.addAttribute("auth", "MANAGER");
 			return "/manager/list";
 	        
 		} else {
@@ -155,18 +156,8 @@ public class ManagerController {
 			String empId = tokenProvider.getEmpId(token);
 	        Employee employee = employeeService.selectEmployee(empId);
 	        model.addAttribute("employee", employee);
-			
-			// 관리자인지 확인
-			Authentication auths = tokenProvider.getAuthentication(token);
-			Collection<? extends GrantedAuthority> authorities = auths.getAuthorities();
-			for (GrantedAuthority authority : authorities) {
-				//System.out.println(authority.getAuthority());
-				// String authorityName = authority.getAuthority();
-				if (authority.getAuthority().equals("ROLE_MANAGER")) {
-					return "manager/schedulelist";
-				}
-			}
-			return "redirect:/employee/login";
+			model.addAttribute("auth", "MANAGER");
+			return "manager/schedulelist";
 
 		} else {
 			return "redirect:/employee/login";
@@ -232,6 +223,7 @@ public class ManagerController {
 			String empId = tokenProvider.getEmpId(token);
 	        Employee employee = managerService.selectEmployee(empId);
 	        model.addAttribute("employee", employee);
+	        model.addAttribute("auth", "MANAGER");
 			return "/scheduler/list";		
 		} else {
 			return "redirect:/employee/login";
@@ -259,6 +251,7 @@ public class ManagerController {
             String empId = tokenProvider.getEmpId(token);
     		EmployeeResponseDTO employee = managerService.searchEmployeeByEmpId(empId);
     		model.addAttribute("employee", employee);
+    		model.addAttribute("auth", "MANAGER");
             return "certificate/certificateverificationpage";      	
         }
         

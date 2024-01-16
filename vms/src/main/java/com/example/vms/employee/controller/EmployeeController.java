@@ -3,7 +3,9 @@ package com.example.vms.employee.controller;
 import java.lang.ProcessHandle.Info;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.jasper.tagplugins.jstl.core.If;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +92,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/login")
-	public String login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response) {
+	public String login(@RequestParam String empId, @RequestParam String password, HttpServletRequest request, HttpServletResponse response, Model model) {
 	    log.info("EMP_ID: {}", empId);
 	    System.out.println("로그인로그이");
 
@@ -117,6 +119,11 @@ public class EmployeeController {
 	        cookie.setMaxAge(-1);
 	        cookie.setPath("/");
 	        response.addCookie(cookie);
+	        
+	        Set<String> roles = employeeService.getRolesByEmpId(employee.getEmpId());
+	        if(roles.contains("MANAGER")) {
+	        	return "redirect:/manager/employee/list";
+	        }
 	        				
 	        return "redirect:/employee/main";
 	    }
