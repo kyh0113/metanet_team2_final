@@ -76,11 +76,12 @@
 	/*<![CDATA[*/
 
 	let httpReq=null;
-	let returnParameter = /*[[${return}]]*/;
-	if(returnParameter === 'false') {
-		removeSessionItem();
-	}
+	//let returnParameter = /*[[${return}]]*/;
+	//if(returnParameter === 'false') {
+	//	removeSessionItem();
+	//}
 	let currentPage = parseInt(getSessionItem('currentPage')) || 1;
+	removeSessionItem()
 	
 	window.onload = function() {			
     	showList();
