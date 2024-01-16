@@ -64,8 +64,8 @@ public class SchedulerController {
 		return "/scheduler/list";
 	}
 
-	@Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
-	// @Scheduled(cron = "0/20 * * * * ?")
+	// @Scheduled(cron = "0 0 0 1 12 ?") // 매년 12월 1일 자정
+	@Scheduled(cron = "0/20 * * * * ?")
 	public void vacationPromoEmail() {
 		try {
 			log.info("vacationPromoEmail 스케줄러 발동");
@@ -74,7 +74,7 @@ public class SchedulerController {
 
 			for (Employee employee : employees) {
 				log.info("Sending vacation promo email to: {}", employee.getEmail());
-				sendVacationPromoEmail(employee);
+				schedulerService.sendVacationPromoEmail(employee);
 			}
 
 			Scheduler scheduler = new Scheduler();
@@ -95,21 +95,10 @@ public class SchedulerController {
 			scheduler.setSuccess(0); // 실패
 			schedulerService.saveScheduler(scheduler);
 
-			// 예외 처리 또는 필요한 조치를 수행
+			
 		}
 	}
 
-	public void sendVacationPromoEmail(Employee employee) {
-		// 메일 내용 작성
-		String mailContent = "남은 연차: " + employee.getRemains() + "일이 남았습니다.";
-		String mailSubject = "연차 촉진 알림";
-		String mailMessage = "연차 촉진 알림";
-
-		String result = employeeService.sendMail(mailContent, employee.getEmail(), mailSubject, mailMessage);
-
-		System.out.println("메일 전송 결과: " + result);
-
-	}
 
 	@Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행
 	public void grantVacation() {
