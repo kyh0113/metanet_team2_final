@@ -102,8 +102,8 @@
 		
 		let retireDate = $('#retireDate').val()
 		let status = '재직중'
-		if (retireDate!==null) {
-			status = '퇴직'
+		if (retireDate !== null && retireDate !== "") {
+		    status = '퇴직';
 		}
 		
         function updateEmployee(event){
