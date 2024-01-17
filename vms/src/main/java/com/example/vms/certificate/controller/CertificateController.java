@@ -246,16 +246,19 @@ public class CertificateController {
     	Model model
     ) {
     	CertificateResponseDTO[] certificates = certificateService.searchCertificatesByCertificateId(certificateId);
+
     	if (certificates.length==0) {
     		return "/certificate/certificateverificateerror";
     	} else {
 
     		for (CertificateResponseDTO cert: certificates) {
-    			if (cert.getEmpId().equals(empId)) {
+
+    			//if (cert.getEmpId().equals(empId)) {
     	    		String type = cert.getType();
     	        	model.addAttribute("certificate", cert);
     	        	model.addAttribute("download", true);
     	        	String qrImage;
+        	    	System.out.println(cert);
     	        	try {
     	        		qrImage = grCodeGenerator.getQRCodeImage(certificateId+","+empId, 100, 100);
     	            	model.addAttribute("qrImage", qrImage);
@@ -269,7 +272,7 @@ public class CertificateController {
     	        	} else if (type.equals("경력증명서")) {
     	        		return "/certificate/certificateverificatesuccess";
     	        	}
-    			}
+    			//}
     		}
     		return "/certificate/certificateverificateerror";
     	}
