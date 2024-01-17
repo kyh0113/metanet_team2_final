@@ -27,4 +27,5 @@ public interface IEmployeeService {
 	
 	int numberOfVacationUsagesSearchByYear(String empId, String year);
 	public Boolean isManager(String empId);
+	Boolean isLeader(String empId);
 }
