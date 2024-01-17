@@ -263,11 +263,11 @@ public class CertificateController {
     	        		e.printStackTrace();
     	        	}
     	        	if (type.equals("재직증명서")) {
-    	        		return "/certificate/employmentcertificate";
+    	        		return "/certificate/certificateverificatesuccess";
     	        	} else if (type.equals("퇴직증명서")) {
-    	        		return "/certificate/retirementcertificate";
+    	        		return "/certificate/certificateverificatesuccess";
     	        	} else if (type.equals("경력증명서")) {
-    	        		return "/certificate/careercertificate";
+    	        		return "/certificate/certificateverificatesuccess";
     	        	}
     			}
     		}

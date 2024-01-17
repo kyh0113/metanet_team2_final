@@ -27,7 +27,7 @@
             max-width: 400px;
             max-height: 200px;
             margin-bottom: 20px;
-            background-color: dodgerblue;
+            border: 1px solid dodgerblue;
         }
         #QRVerificate {
             text-align: center;
@@ -89,7 +89,7 @@
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="verificationModalLabel">증명서 진위 확인</h5>
+					<h3 class="modal-title" id="verificationModalLabel" style="font-weight: bold;">증명서 진위 확인</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -97,12 +97,11 @@
 				<div class="modal-body">
 					<!-- 여기에 증명서 검증 페이지의 내용을 추가 -->
 					<div id="verificateBody">
-						<h4 style="font-weight: bold; margin-bottom: 30px;">증명서 진위 확인</h4>
 						<div id="QRVerificate">
 							<h4 class="mb-4" style="font-weight: bold;">QR 코드 카메라로 검증</h4>
 							<video id="video" playsinline class="mb-3"></video>
 							<br>
-							<button class="btn btn-primary" onclick="scanQRCode()">QR 코드 스캔 시작</button>
+							<button class="btn btn-primary" onclick="scanQRCode()" style="border-radius: 12px;">QR 코드 스캔 시작</button>
 							<p id="verificationResult"></p>
 						</div>
 	
