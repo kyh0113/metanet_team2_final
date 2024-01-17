@@ -1,12 +1,5 @@
 package com.example.vms;
 
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -25,23 +20,17 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.assertNull;
-
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import com.example.vms.employee.repository.IEmployeeRepository;
 import com.example.vms.employee.service.EmployeeService;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.schedule.model.Schedule;
 import com.example.vms.schedule.model.ScheduleEmpDeptType;
 import com.example.vms.schedule.repository.IScheduleRepository;
 import com.example.vms.schedule.service.ScheduleService;
@@ -271,6 +260,7 @@ public class VacationServiceTest {
         vacation.setStartDate(LocalDate.now());
         vacation.setEndDate(LocalDate.now().plusDays(1));
         vacation.setTypeId(1);
+        vacation.setState("승인");
 
         when(vacationDaoMock.selectRequestByRegId(anyInt())).thenReturn(vacation);
         when(vacationDaoMock.updateRequest(any(Vacation.class))).thenReturn(1);
@@ -292,6 +282,38 @@ public class VacationServiceTest {
         verify(scheduleservice, times(1)).maxScheduleId();
         verify(employeeService, times(2)).selectEmployee(anyString());
         verify(employeeMock, times(1)).getDeptId();
+    }
+	
+	@Test
+    public void testApprovalRequest() {
+		// 테스트할 Vacation 객체 생성
+        Vacation vacation = new Vacation();
+        vacation.setRegId(123);
+        vacation.setEmpId("employee123");
+        vacation.setStartDate(LocalDate.now());
+        vacation.setEndDate(LocalDate.now().plusDays(2)); // 예시로 2일 동안의 휴가
+        vacation.setTypeId(1);
+        vacation.setState("거절"); // "승인"이 아닌 상태로 설정
+
+        // VacationDao의 mock 객체 설정
+        when(vacationDaoMock.updateRequest(vacation)).thenReturn(1); // 휴가 승인 성공
+        when(vacationDaoMock.selectRequestByRegId(vacation.getRegId())).thenReturn(vacation);
+
+        // EmployeeService의 mock 객체 설정
+        Employee employeeMock = mock(Employee.class);
+        when(employeeMock.getDeptId()).thenReturn(1);
+        when(employeeService.selectEmployee(anyString())).thenReturn(employeeMock);
+        
+        // Service 호출
+        //VacationService vacationService = new VacationService(vacationDaoMock, scheduleservice, employeeService);
+        String result = vacationService.approvalRequest(vacation);
+
+        // "결재 완료"가 아니라 "결재 실패"가 반환되어야 함
+        assertEquals("결재 완료", result);
+
+        // ScheduleService의 어떠한 메서드도 호출되지 않아야 함
+        verify(scheduleService, never()).maxScheduleId();
+        verify(scheduleService, never()).insertSchedule(any(Schedule.class));
     }
 
     @Test

@@ -153,6 +153,9 @@
 	<div class="container">
 		<div class="title">
 			<h4>휴가신청서</h4>
+			<div class="btn-container text-right">
+		        <button th:text="${vacation.state}" type="button" class="btn btn-primary" id="state" disabled></button>
+		      </div>
 		</div>
 		<hr>
 		<div class="row">
@@ -201,6 +204,11 @@
 				</tbody>
 			</table>
 		</div>
+		
+		<div class="row" th:if="${vacation.deniedContent != null}">
+	      <div class="col-sm-3 label" th:text="|반려 사유|"/>
+	      <div class="col-sm-9" th:text="${vacation.deniedContent}"/>
+	    </div>
 
 		<div class="row text-right">
 			<div class="col-sm-12">

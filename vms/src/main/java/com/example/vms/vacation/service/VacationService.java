@@ -90,7 +90,6 @@ public class VacationService implements IVacationService {
 	@Transactional
 	public String approvalRequest(Vacation vacation) {
 		int result = vacationDao.updateRequest(vacation);
-		String modal_response = "결재성공";
 		
 		if (result == 1) {
 			Vacation realvacation = vacationDao.selectRequestByRegId(vacation.getRegId());
@@ -110,13 +109,11 @@ public class VacationService implements IVacationService {
 					schedule.setType_id(realvacation.getTypeId());
 
 					scheduleservice.insertSchedule(schedule);
-				} else if(realvacation.getState().equals("반려")) {
-					modal_response = "반려 성공";
-				}
+				} 
 			} else {
 			    return "신청서 정보 없음";
 			}
-			return modal_response;
+			return "결재 완료";
 			
 		} else {
 			return "결재 실패";
