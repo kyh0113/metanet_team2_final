@@ -290,4 +290,14 @@ public class EmployeeService implements IEmployeeService{
 		}
 	
 	}
+	
+	public Boolean isLeader(String empId) {
+		Set<String> roles = employeeDao.getRolesByEmpId(empId);
+		 
+		if (roles.contains("LEADER")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
