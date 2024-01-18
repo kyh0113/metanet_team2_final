@@ -107,7 +107,7 @@
 	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
 	    let pagination = document.querySelector('.pagination');
 	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
-	
+	    	
 		//이전 페이지 이동 버튼
 		if (rowNum>0) {
 			let prev = document.createElement('li');
@@ -192,7 +192,6 @@
           if(httpReq.status >= 200 && httpReq.status < 300){
     
              data = JSON.parse(httpReq.responseText)
-             console.log(data)
              reloadTable(data);
 
           }else{
@@ -229,7 +228,6 @@
            	//row.setAttribute('onclick', "showDetail(this)");
            	
         });
-        //pagination()
     }
 	
 	function searchList(searchPage) {
@@ -244,6 +242,8 @@
 	    
 	    httpReq.open("GET", url);
 	    httpReq.send();
+	    
+	    pagination();
 	}
 	
 	function selectOptionChange() {
