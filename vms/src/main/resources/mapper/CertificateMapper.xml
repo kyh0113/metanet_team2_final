@@ -1,0 +1,108 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.certificate.repository.ICertificateRepository">
+	
+	<select id="searchMaxCertificateId" resultType="java.lang.Integer">
+	  SELECT 
+	  NVL(MAX(CERTIFICATE_ID), 0) 
+	  FROM CERTIFICATION
+	</select>
+
+	 <select id="searchCertificateIdByEmpId" resultType="java.lang.Integer">
+	   SELECT CERTIFICATE_ID
+	   FROM CERTIFICATION
+	   WHERE EMP_ID=#{empId}
+	 </select>
+	 
+	<insert id="createCertificate" parameterType="com.example.vms.certificate.model.Certificate">
+	    INSERT INTO 
+	    CERTIFICATION (
+	        CERTIFICATE_ID, 
+	        REG_DATE, 
+	        TYPE, 
+	        EMP_ID
+	    )
+	    VALUES (
+	        #{certificateId},
+	        #{regDate, jdbcType=DATE}, 
+	        #{type},
+	        #{empId}
+	    )
+	</insert>
+	
+    <select id="searchCertificatesByEmpId" resultType="com.example.vms.certificate.model.CertificateResponseDTO">
+        <![CDATA[
+        SELECT
+            e.EMP_ID AS empId,
+            e.NAME AS empName,
+            e.EMAIL,
+            e.POSITION,
+            e.GENDER,
+            e.BIRTH,
+            e.HIRE_DATE AS hireDate,
+            e.RETIRE_DATE AS retireDate,
+            e.PHONE,
+            e.STATUS,
+            c.CERTIFICATE_ID AS certificateId,
+            c.REG_DATE AS regDate,
+            c.TYPE,
+            c.REASON,
+            d.NAME AS deptName
+        FROM
+            employees e
+        JOIN
+            Certification c ON e.EMP_ID = c.EMP_ID
+        JOIN
+            departments d ON e.DEPT_ID = d.DEPT_ID
+        WHERE
+            e.EMP_ID = #{empId}
+        ]]>
+    </select>
+    
+    <select id="searchCertificatesByCertificateId" resultType="com.example.vms.certificate.model.CertificateResponseDTO">
+		        <![CDATA[
+        SELECT
+            e.EMP_ID AS empId,
+            e.NAME AS empName,
+            e.EMAIL,
+            e.POSITION,
+            e.GENDER,
+            e.BIRTH,
+            e.HIRE_DATE AS hireDate,
+            e.RETIRE_DATE AS retireDate,
+            e.PHONE,
+            e.STATUS,
+            c.CERTIFICATE_ID AS certificateId,
+            c.REG_DATE AS regDate,
+            c.TYPE,
+            c.REASON,
+            d.NAME AS deptName
+        FROM
+            employees e
+        JOIN
+            Certification c ON e.EMP_ID = c.EMP_ID
+        JOIN
+            departments d ON e.DEPT_ID = d.DEPT_ID
+        WHERE
+            c.CERTIFICATE_ID = #{certificateId}
+        ]]>
+	</select>
+    
+    <delete id="deleteCertificate">
+		DELETE Certification WHERE certificate_id=#{certificateId}
+	</delete>
+	<select id="searchDepartNameByDeptId" resultType="java.lang.String">
+		SELECT NAME FROM DEPARTMENTS WHERE DEPT_ID=#{deptId}
+	</select>
+	
+	<select id="searchCertificates" resultType="com.example.vms.certificate.model.Certificate">
+		SELECT 
+			CERTIFICATE_ID AS certificateId,
+			REG_DATE AS regDate,
+			TYPE AS type,
+			REASON AS reason,
+			EMP_ID AS empId
+		FROM CERTIFICATION
+	</select>
+</mapper>

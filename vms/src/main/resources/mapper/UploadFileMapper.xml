@@ -1,0 +1,37 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.vms.vacation.repository.IUploadFileRepository">
+<insert id="insertUploadFile" parameterType="com.example.vms.vacation.model.UploadFile">
+    INSERT INTO UPLOAD_FILES (
+        file_id, name, file_size, content_type, file_data, reg_id
+    ) VALUES (
+        #{fileId, jdbcType=NUMERIC}, #{name, jdbcType=VARCHAR}, #{fileSize, jdbcType=NUMERIC}, #{contentType, jdbcType=VARCHAR},
+        #{fileData, jdbcType=BLOB}, #{regId, jdbcType=NUMERIC}
+    )
+</insert>
+
+<select id="maxFileId" resultType="int">
+	SELECT NVL(MAX(FILE_ID), 0) FROM UPLOAD_FILES
+</select>
+
+<select id ="selectFileListByRegId" resultType="com.example.vms.vacation.model.UploadFile" parameterType="int">
+    SELECT FILE_ID AS fileId,
+     	   NAME AS name
+    FROM UPLOAD_FILES 
+    WHERE FILE_SIZE != 0 
+    AND REG_ID=#{regId}
+</select>
+
+<select id="selectFile" parameterType="int" resultType="com.example.vms.vacation.model.UploadFile">
+	SELECT FILE_ID AS fileId,
+		   NAME AS name,
+		   FILE_SIZE AS fileSize,
+		   CONTENT_TYPE AS contentType,
+	 	   FILE_DATA AS fileData,
+		   REG_ID AS reg_id
+	FROM UPLOAD_FILES
+	WHERE FILE_ID = #{fileId}
+</select>
+
+</mapper>

@@ -1,0 +1,72 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.example.vms.scheduler.repository.ISchedulerRepository">
+	<select id="searchSchedulers"
+		resultType="com.example.vms.scheduler.model.SchedulerResult">
+		SELECT
+		S.totalRows,
+		S.num,
+		S.scheduleId,
+		S.workDate,
+		S.content,
+		s.success
+		FROM (
+
+		SELECT
+		(
+		SELECT
+		COUNT(*)
+		FROM
+		SCHEDULER
+		WHERE
+		<if test="success != 3">
+			SUCCESS = #{success} AND
+		</if>
+		<if test="content != null">
+			CONTENT LIKE '%' || #{content} || '%'
+		</if>
+		) AS totalRows,
+		ROWNUM as NUM,
+		SCHEDULER_ID AS scheduleId,
+		WORK_DATE AS workDate,
+		CONTENT,
+		SUCCESS
+		FROM
+		SCHEDULER
+		WHERE
+
+		<if test="success != 3">
+			SUCCESS = #{success} AND
+		</if>
+		<if test="content != null">
+			CONTENT LIKE '%' || #{content} || '%'
+		 </if>
+		) s
+		WHERE
+		NUM BETWEEN #{start} AND #{end}
+	</select>
+
+	<select id="maxSchedulerId" resultType="int">
+		SELECT NVL(MAX(SCHEDULER_ID),0) FROM
+		SCHEDULER
+	</select>
+
+
+	<insert id="saveScheduler"
+		parameterType="com.example.vms.scheduler.model.Scheduler">
+		INSERT INTO SCHEDULER (
+		scheduler_id, work_date, content,
+		success
+		)
+		VALUES (
+		#{schedulerId},
+		#{workDate},
+		#{content},
+		#{success}
+		)
+	</insert>
+
+
+</mapper>

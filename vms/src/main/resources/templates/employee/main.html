@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/common/main.js"></script>
+	<script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://unpkg.com/tippy.js@6.3.1/dist/tippy-bundle.umd.min.js"></script>
+	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
+	<title>메인 페이지</title>
+	<style>
+		.clipBoard {
+			border: 1px solid #000000;
+			border-radius: 15px;
+			display: inline-block;
+			padding-right: 20px;
+			padding-left: 20px;
+			color: #252C58;
+			box-sizing: border-box;
+			margin: 20px;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.todayTime {
+			font-size: 24px;
+			font-weight: 300px;
+			line-height: 30px;
+			opacity: 0.5;
+		}
+
+		.todayDateBody,
+		.todayDateTitle {
+			font-size: 18px;
+			font-weight: 300px;
+		}
+
+		.infoCountLabel {
+			font-size: 38px;
+			font-weight: 600px;
+			margin: 15px;
+			/* 마진을 0으로 설정 */
+			align-items: center;
+		}
+
+		#myCertificateInfo,
+		#approvalVacationRequestInfo,
+		#myVacationInfo {
+			padding-top: 20px;
+		}
+
+		#myCertificateInfo img {
+			position: relative;
+			left: 36%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+			box-sizing: content-box;
+			/* 변경된 부분 */
+		}
+
+		#approvalVacationRequestInfo img {
+			position: relative;
+			left: 60%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+
+		#myVacationInfo img {
+			position: relative;
+			left: 24%;
+			height: 28px;
+			width: 28px;
+			background-color: #E6EAF5;
+			padding: 7px;
+			border-radius: 17.5px;
+		}
+
+		.infoLabel {
+			font-size: 16px;
+			font-weight: 300px;
+		}
+
+		.infoButton {
+			margin-left: 15px;
+		}
+
+		#graphContainer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 10px;
+			align-items: flex-start;
+		}
+
+		.infoBox {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		#calendar {
+			flex: 1;
+			/* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+			max-width: 43%;
+			/* 최대 너비 설정 */
+			max-height: 53%;
+		}
+
+		#myChart {
+			flex: 1;
+			/* 비율 조정을 위한 설정, 예를 들어 2:1 비율 */
+			max-width: 45%;
+			/* 최대 너비 설정 */
+			max-height: 95%;
+		}
+
+		span {
+			position: relative;
+			top: -8px;
+		}
+
+		#excelContainer img {
+			width: 40px;
+			height: 40px;
+		}
+
+		.container {
+			position: relative;
+			top: 100px;
+			width: 100%;
+			height: 110%;
+		}
+
+		.tippy-table {
+			width: 100%;
+			border-collapse: collapse;
+			border-radius: 5px;
+			overflow: hidden;
+		}
+
+		.tippy-table td,th {
+			/*border: 1px solid #ddd;*/
+			padding: 8px;
+			text-align: left;
+			border: 2px solid white;
+			
+		}
+		.tippy-box[data-theme~='custom-theme'] {
+   			background-color: #2ECCFA; /* 배경색을 원하는 색상으로 변경하세요 */
+    		color: white; /* 글자색을 조절하세요 */
+		}
+		
+
+	</style>
+</head>
+
+<body>
+	<!--  Body Wrapper -->
+	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+		data-sidebar-position="fixed" data-header-position="fixed">
+		<!-- Sidebar Start -->
+		<aside class="left-sidebar" th:include="include/sidebar :: aside">
+		</aside>
+		<!--  Sidebar End -->
+		<!--  Main wrapper -->
+		<div class="body-wrapper">
+			<!--  Header Start -->
+			<header class="app-header" th:include="include/header :: header">
+			</header>
+			<!--  Header End -->
+			<div class="container-fluid">
+				<div class="infoBox">
+					<div id="todoayInfo" class="clipBoard">
+						<p class="todayDateTitle" style="margin-top: 15px;">오늘의 날짜</p>
+						<p class="todayDateBody"></p>
+						<p class="todayTime"></p>
+					</div>
+					<div id="myCertificateInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${numberOfMyCertificates}"></label></span>
+								<img src="/images/calendar-time.svg" onclick="moveView('certificate')"
+									style="width: 25px; height: 25px; margin-bottom: 20px;">
+							</p>
+						</div>
+						<p class="infoLabel">나의 증명서</p>
+					</div>
+					<!--  <div id="approvalVacationRequestInfo" class="clipBoard">
+            <div class="infoTop">
+                <p class="infoCountLabel">
+					<span><label th:text="${numberOfVacationApproval}"></label></span>
+                    <img src="/images/category.svg" onclick="moveView('vacationApprove')" style="width: 40px; height: 40px; margin-bottom: 20px;">
+                </p>
+            </div>
+            <p class="infoLabel">내가 결재해야할 문서</p>
+        </div>
+        -->
+					<div id="myVacationInfo" class="clipBoard">
+						<div class="infoTop">
+							<p class="infoCountLabel">
+								<span><label th:text="${employee.remains}"></label></span>
+								<img src="/images/person.svg" onclick="moveView('vacation')"
+									style="width: 40px; height: 40px; margin-bottom: 20px;">
+							</p>
+						</div>
+						<p class="infoLabel">나의 휴가 정보</p>
+					</div>
+				</div>
+
+				<div id="graphContainer">
+					<div id='calendar'></div>
+					<div th:if="${isLeader == true}" id="excelContainer">
+						<form id="downloadForm" action="/calendar/download" method="get">
+							<button type="submit" style="background: none; border: none; padding: 0; margin: 0;">
+								<img src="/images/excelDownload.png" alt="excelDownloadButton">
+							</button>
+						</form>
+					</div>
+					<canvas id="myChart"></canvas>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+
+		/*<![CDATA[*/
+		// 데이터 정의
+		let employeeVacationInfos = /*[[${employeeVacationInfos}]]*/;
+		let empId = /*[[${employee.empId}]]*/;
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridMonth'
+		});
+		calendar.render();
+
+		var data = {
+			labels: [
+				employeeVacationInfos[0].month,
+				employeeVacationInfos[1].month,
+				employeeVacationInfos[2].month,
+				employeeVacationInfos[3].month,
+				employeeVacationInfos[4].month,
+				employeeVacationInfos[5].month],
+			datasets: [{
+				label: '월별 사용 휴가 일수',
+				data: [
+					employeeVacationInfos[0].monthPerCount,
+					employeeVacationInfos[1].monthPerCount,
+					employeeVacationInfos[2].monthPerCount,
+					employeeVacationInfos[3].monthPerCount,
+					employeeVacationInfos[4].monthPerCount,
+					employeeVacationInfos[5].monthPerCount
+				], // 각 막대의 높이
+				backgroundColor: 'rgba(75, 192, 192, 0.2)', // 막대 색상
+				borderColor: 'rgba(75, 192, 192, 1)', // 막대 테두리 색상
+				borderWidth: 1 // 막대 테두리 너비
+			}]
+		};
+
+		// 차트 옵션 정의
+		var options = {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		};
+
+		// 막대 그래프 생성
+		var ctx = document.getElementById('myChart').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: data,
+			options: options
+		});
+
+
+
+		function updateDateTime() {
+			var todayDateBodyTag = document.querySelector('.todayDateBody');
+			var now = new Date();
+
+			var year = now.getFullYear();
+			var month = ('0' + (now.getMonth() + 1)).slice(-2);
+			var day = ('0' + now.getDate()).slice(-2);
+			var dayOfWeek = getDayOfWeek(now.getDay());
+
+			todayDateBodyTag.innerHTML = year + '년 ' + month + '월 ' + day + '일 (' + dayOfWeek + ')';
+		}
+
+		function getDayOfWeek(dayIndex) {
+			var daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+			return daysOfWeek[dayIndex];
+		}
+
+		function updateClock() {
+			var todayTimeTag = document.querySelector('.todayTime');
+			var now = new Date();
+			var hours = ('0' + now.getHours()).slice(-2);
+			var minutes = ('0' + now.getMinutes()).slice(-2);
+			var seconds = ('0' + now.getSeconds()).slice(-2);
+
+			todayTimeTag.innerHTML = hours + ':' + minutes + ':' + seconds;
+
+			updateDateTime(); // 시간이 업데이트될 때마다 날짜와 요일도 함께 업데이트
+		}
+
+		function viewDidLoad() {
+			updateClock(); // 페이지 로드시 한번 호출
+			setInterval(updateClock, 1000); // 1초마다 업데이트
+		}
+
+		function moveView(viewName) {
+			switch (viewName) {
+				case 'certificate':
+					window.location.href = "/certificate/view"
+					break
+				case 'vacationApprove':
+					window.location.href = "/vacation/request/list"
+					break
+				case 'vacation':
+					window.location.href = "/vacation/request/list"
+				default:
+					break
+			}
+		}
+
+		viewDidLoad()
+		/*]]>*/
+
+		document.addEventListener('DOMContentLoaded', function () {
+			$(function () {
+				var request = $.ajax({
+					url: "/calendar/calendar-admin", // 변경하기
+					method: "GET",
+					dataType: "json"
+				});
+
+				request.done(function (data) {
+					
+					var calendarEl = document.getElementById('calendar');
+
+					var calendar = new FullCalendar.Calendar(calendarEl, {
+						//initialDate: '2022-02-07',
+						initialView: 'dayGridMonth',
+						headerToolbar: {
+							left: 'prev,next today',
+							center: 'title',
+							right: 'dayGridMonth'
+						},
+						editable: true,
+						droppable: true, // this allows things to be dropped onto the calendar
+						drop: function (arg) {
+							// is the "remove after drop" checkbox checked?
+							if (document.getElementById('drop-remove').checked) {
+								// if so, remove the element from the "Draggable Events" list
+								arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+							}
+						},
+						//eventMouseEnter: function (arg) {
+						//	insertModalOpen("눌렀어?");
+						//},
+
+						eventDidMount: function (info) {
+							var start_date = new Date(info.event.start);
+							start_date.setDate(start_date.getDate() + 1);
+							var end_date = new Date(info.event.end);
+
+							var tableContent = "<table class='tippy-table'>" +
+								"<tr class='tr1'><th><strong>제목</strong></th><td><strong>" + info.event.title + "</strong></td></tr>" +
+								"<tr class='tr2'><th><strong>시작날짜</strong></th><td><strong>"
+									 + start_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
+								"<tr class='tr3'><th><strong>종료날짜</strong></th><td><strong>" + 
+									end_date.toISOString().slice(0, 10) + "</strong></td></tr>" +
+								"</table>";
+
+							tippy(info.el, {
+								content: tableContent,
+								placement: 'bottom',
+								trigger: 'mouseenter',
+								allowHTML: true,
+								// backgroundColor 추가
+								duration: 200, // 이 부분은 선택적이며 필요에 따라 조절할 수 있습니다.
+								arrow: true,
+								arrowType: 'round',
+								size: 'large',
+								theme: 'custom-theme',
+							});
+						},
+
+						events: data
+					});
+
+					calendar.render();
+				});
+
+
+				request.fail(function (jqXHR, textStatus) {
+					alert("Request failed: " + textStatus);
+				});
+			});
+
+		});
+
+	</script>
+</body>
+<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/sidebarmenu.js"></script>
+<script src="../../assets/js/app.min.js"></script>
+<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+
+</html>

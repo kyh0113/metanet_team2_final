@@ -2,13 +2,20 @@ package com.example.vms.manager.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.vms.employee.repository.IEmployeeRepository;
+import com.example.vms.manager.model.Department;
 import com.example.vms.manager.model.Employee;
+import com.example.vms.manager.model.EmployeeResponseDTO;
+import com.example.vms.manager.model.EmployeeUpdateRequestDTO;
 import com.example.vms.manager.repository.IManagerRepository;
 
 @Service
@@ -18,12 +25,16 @@ public class ManagerService implements IManagerService {
     private IManagerRepository managerDao;
     
     @Autowired
+    private IEmployeeRepository employeeRepository;
+    
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     // 부서별로 가장 큰 일련번호를 저장하는 맵
     private Map<Integer, Integer> departmentSequenceMap = new HashMap<>();
 
     @Override
+    @Transactional
     public void create(Employee employee) {
         // 아이디 생성
         String id = generateEmployeeId(employee.getDeptId(), employee.getHireDate());
@@ -31,6 +42,18 @@ public class ManagerService implements IManagerService {
         // 아이디 및 비밀번호 설정
         employee.setEmpId(id);
         employee.setPassword(id);
+        
+        Integer remains = employee.getRemains();
+        
+        if (remains == null) {
+        	employee.setRemains(0);
+        }
+        
+        if (employee.getRetireDate()==null) {
+        	employee.setStatus("재직중");
+        } else {
+        	employee.setStatus("퇴직");
+        }
         
         // 비밀번호 암호화
         String encodedPassword = encodePassword(employee.getPassword());
@@ -81,5 +104,78 @@ public class ManagerService implements IManagerService {
 	@Override
 	public Employee selectEmployee(String empId) {
 		return managerDao.selectEmployee(empId);
+	}
+
+	@Override
+	public EmployeeResponseDTO[] searchEmployees(int start, int end, String empId) {
+		if (empId==null || empId.equals("")) {
+			return managerDao.searchEmployees(start, end);
+		} else {
+			System.out.println(empId);
+			return managerDao.searchEmployeesWithEmpId(start, end, empId);
+		}
+	}
+
+	@Override
+	public int numberOfEmployees() {
+		return managerDao.numberOfEmployees();
+	}
+
+	@Override
+	public EmployeeResponseDTO searchEmployeeByEmpId(String empId) {
+		EmployeeResponseDTO employee = managerDao.searchEmployeeByEmpId(empId);
+		Set<String> roles = employeeRepository.getRolesByEmpId(employee.getEmpId());
+		if (roles.contains("MANAGER")) {
+			employee.setAuthority("관리자");
+		} else if (roles.contains("LEADER")) {
+			employee.setAuthority("팀장");
+		} else if (roles.contains("EMPLOYEE")) {
+			employee.setAuthority("팀원");
+		}
+		return employee;
+	}
+
+	@Override
+	@Transactional
+	public void updateEmployee(EmployeeUpdateRequestDTO employee) {
+		String position = employee.getAuthority();
+		String empId = employee.getEmpId(); 
+		managerDao.deleteEmployeeRoles(empId);
+		if (position.equals("관리자")) {
+			managerDao.insertEmployeeRole("MANAGER", empId);
+		} else if (position.equals("팀장")) {
+			managerDao.insertEmployeeRole("LEADER", empId);
+			managerDao.insertEmployeeRole("EMPLOYEE", empId);
+		} else if (position.equals("팀원")) {
+			managerDao.insertEmployeeRole("EMPLOYEE", empId);
+		}
+		managerDao.updateEmployee(employee);
+	}
+
+	@Override
+	public Department[] searchDepartments() {
+		return managerDao.searchDepartments();
+	}
+
+	@Override
+	public int searchEmployeeRemains() {
+		return 0;
+	}
+
+	@Override
+	public List<Employee> getAllEmployees() {
+		return managerDao.getAllEmployees();
+	}
+
+	@Override
+	@Transactional
+	public void updateRemains(String empId, int remains) {
+		managerDao.updateRemains(empId, remains);
+		
+	}
+
+	@Override
+	public List<Employee> findEmployeesWithAtLeastOneVacation() {
+		return managerDao.findEmployeesWithAtLeastOneVacation();
 	}
 }

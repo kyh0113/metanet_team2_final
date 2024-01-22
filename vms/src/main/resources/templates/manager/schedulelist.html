@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>휴가 신청 내역</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../../assets/css/styles.min.css" />
+  
+  <style>
+
+	table tr td {
+      cursor: pointer;
+    }
+    
+    h4 {
+      margin: 10px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .table th, .table td {
+      text-align: center;
+    }
+
+    .status-btn {
+      cursor: pointer;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      display: inline-block;
+      font-size: medium;
+    }
+
+    .status-승인 {
+      background-color: rgb(60, 155, 234);
+      color: #fff;
+    }
+
+    .status-결재대기 {
+      background-color: rgb(163, 163, 163);
+      color: #fff;
+    }
+
+    .status-반려 {
+      background-color: rgb(255, 0, 0);
+      color: #fff;
+    }
+
+    .waiting {
+      font-size: small;
+      font-weight: lighter;
+      color: rgb(163, 163, 163);
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    
+    .waiting.active {
+	  font-size: small;
+      font-weight: bold;
+      color: black;
+      margin-left: 10px;
+      cursor: pointer;
+	}
+  </style>
+  
+  <script th:inline="javascript">
+	/*<![CDATA[*/
+	
+	let httpReq=null;
+	let currentPage = parseInt(1)
+	let keyword = ''
+	let option = 0
+	let totalPages = 1
+		
+	window.onload = function() {	
+		viewDidLoad();
+    	searchList();
+    	pagination();
+	}
+	
+	function viewDidLoad() {
+		document.getElementById('searchTypeSelect').value = 0 
+		document.getElementById('searchInput').disabled = true
+	}
+	
+	function pagination() {
+		 
+		let getRowNumUrl = '/manager/schedule/getrow?keyword='+keyword+'&option='+option
+		
+	    fetch(getRowNumUrl)
+  		.then((response) => response.json())
+  		.then((data) => {
+			  
+  		let rowNum = data;
+	    // 페이지당 행 수 및 현재 페이지 등의 변수 설정
+	    let rowsPerPage = 10;
+	
+	    // 전체 페이지 수 계산
+	    totalPages = Math.ceil(rowNum / rowsPerPage);
+	    // 페이지 번호를 동적으로 생성하여 HTML에 추가
+	    let pagination = document.querySelector('.pagination');
+	    pagination.innerHTML = '';  // 기존 페이지 번호 제거 
+	    	
+		//이전 페이지 이동 버튼
+		if (rowNum>0) {
+			let prev = document.createElement('li');
+		    prev.classList.add('page-item');
+		    
+			let prevLink = document.createElement('a');
+		    prevLink.classList.add('page-link');
+		    prevLink.textContent = '<';
+		    prevLink.addEventListener('click', (event) => {
+				if(currentPage <= 1) { 
+					currentPage = 1
+				} else {
+					currentPage -= 1 
+					searchList(currentPage)
+				}
+			});
+		    prev.appendChild(prevLink);
+		    pagination.appendChild(prev);
+		}
+
+	        
+	    for (let i = 1; i <= totalPages; i++) {
+	        let li = document.createElement('li');
+	        li.classList.add('page-item');
+	
+	        let a = document.createElement('a');
+	        a.classList.add('page-link');
+	      
+	        // 페이지 번호 텍스트 설정
+	        a.textContent = i;
+	
+			// 현재 페이지 active
+	        if(i == currentPage) {
+				li.classList.add('active');
+			}
+			a.onclick = () => {
+				currentPage = parseInt(i)		
+				searchList(currentPage)
+			}
+	
+	        li.appendChild(a);
+	        pagination.appendChild(li);
+	    }
+	    //다음 페이지 이동 버튼
+	    if (rowNum>0) {
+			let next = document.createElement('li');
+		    next.classList.add('page-item');
+		    
+			let nextLink = document.createElement('a');
+		    nextLink.classList.add('page-link');
+		    nextLink.textContent = '>';
+		    nextLink.onclick = () => {
+				if(currentPage >= totalPages) { 
+					currentPage = totalPages 
+				} else {
+					currentPage += 1 
+				}
+				searchList(currentPage);				
+	
+			}
+		    next.appendChild(nextLink);
+		    pagination.appendChild(next);
+		}
+
+  		})
+	}
+    
+    
+   	function getInstance(){
+      if(window.XMLHttpRequest){
+         httpReq = new XMLHttpRequest(); 
+      }else if(window.ActiveXObject){ 
+         httpReq = new ActiveXObject("Msxml2.XMLHTTP");
+      }else{
+        throw new Error("AJAX 지원하지 않습니다"); 
+      }
+      return httpReq;  
+   	}
+   	
+   	function handlerStateChange(){
+       if(httpReq.readyState == 4){ //1. 서버에서 응답이 왔다면
+          if(httpReq.status >= 200 && httpReq.status < 300){
+    
+             data = JSON.parse(httpReq.responseText)
+             reloadTable(data);
+
+          }else{
+             alert("status Text : " + httpReq.status);
+          }
+       }
+   }
+   
+   function reloadTable(requestData) {
+        const tbody = document.getElementById('requestTableBody');
+        tbody.innerHTML = '';
+
+        requestData.forEach(function (item) {
+            row = tbody.insertRow(); 
+            calId = row.insertCell(0);
+            deptName = row.insertCell(1);
+            empName = row.insertCell(2);
+            position = row.insertCell(3);
+            typeName = row.insertCell(4);
+            startDate = row.insertCell(5);
+            endDate = row.insertCell(6);
+            //period = row.insertCell(5);
+         
+            calId.textContent = item.calendarId;
+            deptName.textContent = item.deptName;
+            empName.textContent = item.empName;
+            position.textContent = item.position;
+            typeName.textContent = item.typeName;
+            startDate.textContent = item.startDate;
+            endDate.textContent = item.endDate;
+            //period.textContent = item.startDate +" ~ "+item.endDate;
+            
+           	//row.setAttribute('url', '/vacation/requestd/'+item.regId);   //상세페이지 경로
+           	//row.setAttribute('onclick', "showDetail(this)");
+           	
+        });
+    }
+	
+	function searchList(searchPage) {
+		currentPage = searchPage || 1 
+	    let searchKeyword = document.getElementById('searchInput').value;
+	    keyword = searchKeyword
+	    let selectOptionValue = document.getElementById('searchTypeSelect').value;
+	    option = selectOptionValue
+	    let url = "/manager/schedule/getlist?keyword=" + searchKeyword + "&option=" + selectOptionValue + "&curPage=" + currentPage;
+	    httpReq = getInstance();
+	    httpReq.onreadystatechange = handlerStateChange;
+	    
+	    httpReq.open("GET", url);
+	    httpReq.send();
+	    
+	    pagination();
+	}
+	
+	function selectOptionChange() {
+	    let selectOptionValue = parseInt(document.getElementById('searchTypeSelect').value);
+	    let searchInput = document.getElementById('searchInput');
+	    searchInput.disabled = (selectOptionValue === 0);
+	    switch (selectOptionValue) {
+	        case 1:
+	            searchInput.placeholder = '사원명 입력';
+	            break;
+	        case 2:
+	            searchInput.placeholder = '부서 입력';
+	            break;
+	        case 3:
+	            searchInput.placeholder = '직위 입력';
+	            break;
+	        default:
+          		searchInput.placeholder = '';
+          		searchInput.value = '';
+	            break;
+	    }
+	}
+    
+    /*]]>*/
+  </script>
+</head>
+<body>
+	
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar" th:include="include/sidebar :: aside">
+	</aside>
+	<!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header" th:include="include/header :: header">
+      </header>
+      <!--  Header End -->
+      <div class="container-fluid">
+		  
+
+	<div class="container">
+	  <h4>휴가 신청 내역 <!--<span class="waiting" onclick="showWaiting()">취소 내역</span>--></h4>
+	
+	  <table class="table">
+	    <thead>
+	      <tr>
+	        <th>번호</th>
+	        <th>부서</th>
+	        <th>사원명</th>
+	        <th>직위</th>
+	        <th>휴가 유형</th>
+	        <th>시작일</th>
+	        <th>종료일</th>
+	      </tr>
+	    </thead>
+	    <tbody id = "requestTableBody">
+	    </tbody>
+	  </table>
+	  <div class="input-group mb-3">
+	   <select class="col-2 custom-select" id="searchTypeSelect" onchange="selectOptionChange()" style="margin-right: 10px;">
+	        <option value="0">전체</option>
+	        <option value="1">사원명</option>
+	        <option value="2">부서</option>
+	    	<option value="3">직위</option>
+	    </select>
+	    <input type="text" class="form-control" id="searchInput">
+	    <div class="input-group-append">
+	      <button class="btn btn-outline-secondary" type="button" onclick="searchList()">검색</button>
+	    </div>
+	  </div>
+	  <ul class="pagination justify-content-center">
+	  </ul>
+	</div>
+	
+	
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/sidebarmenu.js"></script>
+<script src="../../assets/js/app.min.js"></script>
+<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+</html>

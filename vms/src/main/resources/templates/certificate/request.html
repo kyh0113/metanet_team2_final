@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>증명서 발급</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+  	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
+</head>
+<body>
+	
+		
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar" th:include="include/sidebar :: aside">
+	</aside>
+	<!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header" th:include="include/header :: header">
+      </header>
+      <!--  Header End -->
+      <div class="container-fluid">
+		  
+    <div class="container mt-5">
+        <h4 style="margin-bottom: 20px; font-weight: bold;">증명서 발급</h4>
+        <table class="table" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th>양식명</th>
+                    <th>양식설명</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>경력증명서</td>
+                    <td>경력을 증명하는 문서입니다.</td>
+                    <td><button onclick="certificatePreViewOpen('경력증명서')" class="btn btn-primary">미리보기</button></td>
+                    <td><button onclick="requestCertificate('경력증명서')" class="btn btn-success">신청</button></td>
+                </tr>
+                <tr>
+                    <td>재직증명서</td>
+                    <td>재직을 증명하는 문서입니다.</td>
+                    <td><button th:if="${employee.status == '재직중'}" onclick="certificatePreViewOpen('재직증명서')"
+                            class="btn btn-primary">미리보기</button></td>
+                    <td><button th:if="${employee.status == '재직중'}" onclick="requestCertificate('재직증명서')"
+                            class="btn btn-success">신청</button></td>
+                </tr>
+                <tr>
+                    <td>퇴직증명서</td>
+                    <td>퇴사를 증명하는 문서입니다.</td>
+                    <td><button th:if="${employee.status != '재직중'}" onclick="certificatePreViewOpen('퇴직증명서')"
+                            class="btn btn-primary">미리보기</button></td>
+                    <td><button th:if="${employee.status != '재직중'}" onclick="requestCertificate('퇴직증명서')"
+                            class="btn btn-success">신청</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+      </div>
+    </div>
+  </div>
+
+    
+    <script th:inline="javascript">
+	    /*<![CDATA[*/
+	    var openedWindow;
+	
+	    function certificatePreViewOpen(type) {
+	        if (openedWindow && !openedWindow.closed) {
+	            openedWindow.close(); // 기존 창이 열려있다면 닫기
+	        }
+
+	        const empId = /*[[${employee.empId}]]*/;
+	        const previewUrl = '/certificate/request/view?emp_id=' + empId + '&type=' + type;
+	        openedWindow = window.open(previewUrl, '_blank', 'width=1000, height=1000, scrollbars=true');
+	    }
+	    
+	    function requestCertificate(certifiateType) {
+			var url = '/certificate/generate';
+			const empId = /*[[${employee.empId}]]*/;
+			var requestBody = {
+			    emp_id: empId,
+			    type: certifiateType
+			};
+			
+			// AJAX 요청 생성
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			// 요청 완료 시 실행될 함수 설정
+			xhr.onreadystatechange = function () {
+			    if (xhr.readyState == 4 && xhr.status == 200) {
+			        // 성공적으로 요청이 완료되었을 때 실행할 코드
+			        alert('요청이 성공적으로 접수되었습니다.\n접수 번호 : ' + xhr.responseText);
+			    }
+			};
+			
+			// JSON 데이터를 문자열로 변환하여 요청 전송
+			xhr.send(JSON.stringify(requestBody));
+        }
+	    /*]]>*/
+	</script>
+</body>
+<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/sidebarmenu.js"></script>
+<script src="../../assets/js/app.min.js"></script>
+<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+</html>

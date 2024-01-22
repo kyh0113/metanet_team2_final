@@ -1,30 +1,227 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vacation Request Form</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Vacation Request Form</title>
+   <!-- 부트스트랩 4 링크 추가 -->
+   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+   <link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+   <link rel="stylesheet" href="../../assets/css/styles.min.css" />
+
+   <style>
+      body {
+         background-color: #FFFFFF;
+      }
+   </style>
 </head>
+
 <body>
+   <!--  Body Wrapper -->
+   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+      data-sidebar-position="fixed" data-header-position="fixed">
+      <!-- Sidebar Start -->
+      <aside class="left-sidebar" th:include="include/sidebar :: aside">
+      </aside>
+      <!--  Sidebar End -->
+      <!--  Main wrapper -->
+      <div class="body-wrapper">
+         <!--  Header Start -->
+         <header class="app-header" th:include="include/header :: header">
+         </header>
+         <!--  Header End -->
+         <div class="container-fluid">
 
-     <form id="vacationForm" th:action="@{/vacation/request}" method="post">
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required><br>
 
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required><br>
+            <div class="container mt-5 custom-container" style="margin-right:150px;">
+               <form id="vacationForm" th:action="@{/vacation/request}" method="post" enctype="multipart/form-data"
+                  class="needs-validation p-3" novalidate> <!-- border 및 p-3 클래스 추가 -->
+                  <input type="text" name="csrfToken" th:value="${session.csrfToken}" style="display: none;">
+                  <!--세션의 UUID를 입력폼에 저장-->
+                  <h4 style="font-weight: bold;">휴가신청서</h4>
+                  <br>
+                  <div class="form-group">
+                     <label for="typeId">휴가 유형</label>
+                     <select id="typeId" name="typeId" class="form-control" required onchange="setEndDate()">
+                        <option value="" selected disabled>휴가 유형을 선택하세요</option>
+                        <option th:each="type, stat : ${vacationTypes}" th:value="${type.typeId}"
+                           th:text="${type.name}" th:selected="${stat.index eq 0}"></option>
+                     </select>
+                     <div class="invalid-feedback">휴가 유형을 선택하세요.</div>
+                  </div>
 
-    <label for="regDate">Registration Date:</label>
-    <input type="date" id="regDate" name="regDate" required><br>
+                  <div class="form-group">
+                     <label for="startDate">시작일</label>
+                     <input type="date" id="startDate" name="startDate" class="form-control" required
+                        onchange="setEndDate()">
+                     <div class="invalid-feedback">시작 날짜를 선택하세요.</div>
+                  </div>
 
-    <label for="content">Content:</label>
-    <input type="text" id="content" name="content" required><br>
+                  <div class="form-group">
+                     <label for="endDate">종료일</label>
+                     <input type="date" id="endDate" name="endDate" class="form-control" required>
+                     <div class="invalid-feedback">종료 날짜를 선택하세요.</div>
+                  </div>
 
-    <label for="typeId">Type ID:</label>
-    <input type="text" id="typeId" name="typeId" required><br>
+                  <div class="form-group">
+                     <label for="regDate">등록일</label>
+                     <input type="date" id="regDate" name="regDate" class="form-control" style="display: none;" required>
+                     <p id="regDateText"></p>
+                  </div>
 
-    <input type="submit" value="제출">
-    </form>
+                  <div class="form-group">
+                     <label for="content">내용</label>
+                     <textarea id="content" name="content" class="form-control" rows="8" required></textarea>
+                     <!-- rows 속성 조절 -->
+                     <div class="invalid-feedback">내용을 입력하세요.</div>
+                  </div>
 
+                  <div class="form-group">
+                     <label for="file">파일 업로드</label>
+                     <input type="file" id="file" name="files" class="form-control-file" multiple>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">제출</button>
+               </form>
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+   <!-- 부트스트랩 4 스크립트 추가 -->
+   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+   <!-- 폼 유효성 검사 스크립트 추가 -->
+   <script>
+      todayDateAdjust()
+      function showAlert() {
+         alert("남은 연차가 부족하여 휴가 신청할 수 없습니다.");
+         document.getElementById("vacationForm").reset();
+         //window.location.href = '/vacation/request'; // 이 부분을 해당 페이지의 URL로 변경
+      }
+
+      document.getElementById("vacationForm").addEventListener("submit", function (event) {
+         event.preventDefault();
+
+         const serverUrl = window.location.origin;
+         const requestUrl = "/vacation/request";
+
+         fetch(requestUrl, {
+            method: 'POST',
+            body: new FormData(event.target),
+         })
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.text();
+            })
+            .then(data => {
+               if (data === "success") {
+
+                  window.location.href = '/vacation/request/list';
+               } else if (data === "insufficientVacation") {
+                  showAlert();
+               } else if (data === "invalidToken") {
+                  window.location.href = '/employee/login';
+               } else {
+                  console.error('Failed to request vacation');
+               }
+            })
+            .catch(error => console.error('Error:', error));
+      });
+
+
+
+
+      function todayDateAdjust() {
+         var today = new Date();
+         var regDate = today.toISOString().split('T')[0];
+         document.getElementById("regDate").value = regDate;
+         document.getElementById("regDateText").textContent = regDate;
+      }
+
+
+
+
+      function setEndDate() {
+         var startDate = document.getElementById("startDate").value;
+         var selectedTypeId = document.getElementById("typeId").value;
+
+         fetch('http://localhost:8082/vacation/getDaysForVacationType?typeId=' + selectedTypeId, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+               'Content-Type': 'application/json'
+            }
+         })
+            .then(response => {
+               if (!response.ok) {
+                  throw new Error('Network response was not ok');
+               }
+               return response.json();
+            })
+            .then(data => {
+               console.log('Data:', data);
+
+               var days = data.days; // 객체에서 'days' 프로퍼티를 가져오기
+
+               // days 값에 따라 endDate를 설정
+               if (!isNaN(days) && days !== null) {
+                  var startDate = new Date(document.getElementById("startDate").value);
+                  if (!isNaN(startDate.getTime())) {
+                     startDate.setDate(startDate.getDate() + days - 1);
+                     document.getElementById("endDate").valueAsDate = startDate;
+                  }
+               } else {
+                  // days가 유효하지 않은 경우 또는 null인 경우 endDate를 startDate로 설정
+                  document.getElementById("endDate").value = document.getElementById("startDate").value;
+               }
+
+               // 자동으로 현재 날짜로 regDate 설정
+               var today = new Date();
+               var regDate = today.toISOString().split('T')[0];
+               document.getElementById("regDate").value = regDate;
+               document.getElementById("regDateText").textContent = regDate;
+
+               // 선택한 휴가 유형의 days 출력
+               console.log('Selected Vacation Type Days:', days);
+            })
+            .catch(error => console.error('Error:', error));
+      }
+
+      (function () {
+         'use strict';
+         window.addEventListener('load', function () {
+            // 폼 유효성 검사를 적용합니다.
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function (form) {
+               form.addEventListener('submit', function (event) {
+                  if (form.checkValidity() === false) {
+                     event.preventDefault();
+                     event.stopPropagation();
+                  }
+                  form.classList.add('was-validated');
+               }, false);
+            });
+         }, false);
+      })();
+
+
+
+   </script>
 </body>
+<script src="/js/common.js" defer></script>
+<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/sidebarmenu.js"></script>
+<script src="../../assets/js/app.min.js"></script>
+<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+
 </html>

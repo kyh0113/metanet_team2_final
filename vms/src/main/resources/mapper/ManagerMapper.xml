@@ -1,8 +1,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.vms.manager.repository.IManagerRepository">
-<select id="selectEmployee" parameterType="String" resultType="com.example.vms.manager.model.Employee">
+<mapper
+	namespace="com.example.vms.manager.repository.IManagerRepository">
+	<select id="selectEmployee" parameterType="String"
+		resultType="com.example.vms.manager.model.Employee">
 		<![CDATA[
 			SELECT 
 				EMP_ID AS empId,
@@ -21,28 +23,227 @@
 			FROM 
 				employees 
 			WHERE EMP_ID=#{empId}
-		]]>		
+		]]>
 	</select>
 
 
-<insert id="create" parameterType="com.example.vms.manager.model.Employee">
-    INSERT INTO EMPLOYEES (
-        emp_id, name, password, email, position, gender, birth, hire_date, retire_date, phone, status, remains, dept_id
-    )
-    VALUES (
-        #{empId},
-        #{name},
-        #{password},
-        #{email},
-        #{position},
-        #{gender},
-        #{birth, jdbcType=DATE},
-        #{hireDate, jdbcType=DATE},
-        #{retireDate, jdbcType=DATE},
-        #{phone},
-        #{status},
-        #{remains, jdbcType=NUMERIC},
-        #{deptId}
-    )
-</insert>
+	<insert id="create"
+		parameterType="com.example.vms.manager.model.Employee">
+		INSERT INTO EMPLOYEES (
+		emp_id, name, password, email,
+		position, gender, birth, hire_date,
+		retire_date, phone, status,
+		remains, dept_id
+		)
+		VALUES (
+		#{empId},
+		#{name},
+		#{password},
+		#{email},
+		#{position},
+		#{gender},
+		#{birth, jdbcType=DATE},
+		#{hireDate,
+		jdbcType=DATE},
+		#{retireDate, jdbcType=DATE},
+		#{phone},
+		#{status},
+		#{remains, jdbcType=NUMERIC},
+		#{deptId}
+		)
+	</insert>
+
+	<select id="searchEmployees"
+		resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		A.EMP_ID AS empId,
+		A.NAME,
+		A.PASSWORD,
+		A.EMAIL,
+		A.POSITION,
+		A.GENDER,
+		A.BIRTH,
+		A.HIRE_DATE AS hireDate,
+		A.RETIRE_DATE AS retireDate,
+		A.PHONE,
+		A.STATUS,
+		A.REMAINS,
+		A.DEPT_ID AS deptId,
+		A.DEPTNAME
+	FROM (
+	    SELECT 
+	        E.EMP_ID,
+	        E.NAME,
+	        E.PASSWORD,
+	        E.EMAIL,
+	        E.POSITION,
+	        E.GENDER,
+	        E.BIRTH,
+	        E.HIRE_DATE, 
+	        E.RETIRE_DATE,
+	        E.PHONE, 
+	        E.STATUS,
+	        E.REMAINS, 
+	        E.DEPT_ID, 
+	        D.NAME AS DEPTNAME,
+	        ROW_NUMBER() OVER (ORDER BY E.EMP_ID) AS ROW_NUM
+	    FROM 
+	        EMPLOYEES E
+	    JOIN 
+	        DEPARTMENTS D ON E.DEPT_ID = D.DEPT_ID
+	) A
+	WHERE 
+	ROW_NUM BETWEEN #{start} AND #{end}
+]]>
+	</select>
+
+	<select id="searchEmployeesWithEmpId"
+		resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		A.EMP_ID AS empId,
+		A.NAME,
+		A.PASSWORD,
+		A.EMAIL,
+		A.POSITION,
+		A.GENDER,
+		A.BIRTH,
+		A.HIRE_DATE AS hireDate,
+		A.RETIRE_DATE AS retireDate,
+		A.PHONE,
+		A.STATUS,
+		A.REMAINS,
+		A.DEPT_ID AS deptId,
+		A.DEPTNAME
+	FROM (
+	    SELECT 
+	        E.EMP_ID,
+	        E.NAME,
+	        E.PASSWORD,
+	        E.EMAIL,
+	        E.POSITION,
+	        E.GENDER,
+	        E.BIRTH,
+	        E.HIRE_DATE, 
+	        E.RETIRE_DATE,
+	        E.PHONE, 
+	        E.STATUS,
+	        E.REMAINS, 
+	        E.DEPT_ID, 
+	        D.NAME AS DEPTNAME,
+	        ROW_NUMBER() OVER (ORDER BY E.EMP_ID) AS ROW_NUM
+	    FROM 
+	        EMPLOYEES E
+	    JOIN 
+	        DEPARTMENTS D ON E.DEPT_ID = D.DEPT_ID
+		WHERE E.EMP_ID=#{empId}
+	) A
+	WHERE 
+	ROW_NUM BETWEEN #{start} AND #{end}
+]]>
+	</select>
+
+	<select id="searchEmployeeByEmpId"
+		resultType="com.example.vms.manager.model.EmployeeResponseDTO">
+<![CDATA[
+	SELECT 
+		E.EMP_ID AS empId,
+		E.NAME,
+		E.PASSWORD,
+		E.EMAIL,
+		E.POSITION,
+		E.GENDER,
+		E.BIRTH,
+		E.HIRE_DATE AS hireDate, 
+		E.RETIRE_DATE AS retireDate,
+		E.PHONE, 
+		E.STATUS,
+		E.REMAINS, 
+		E.DEPT_ID AS deptId,
+		D.NAME AS DEPTNAME
+	from EMPLOYEES E
+	JOIN DEPARTMENTS D on E.DEPT_ID = D.DEPT_ID 
+	where E.EMP_ID = #{empId}
+]]>
+	</select>
+
+	<select id="numberOfEmployees" resultType="int">
+		SELECT COUNT(*) FROM
+		EMPLOYEES
+	</select>
+
+	<update id="updateRemains">
+		UPDATE employees
+		SET REMAINS = #{remains}
+		WHERE EMP_ID = #{empId}
+	</update>
+
+
+	<update id="updateEmployee"
+		parameterType="com.example.vms.manager.model.EmployeeUpdateRequestDTO">
+		UPDATE EMPLOYEES
+		SET
+		EMP_ID=#{empId},
+		NAME=#{name},
+		EMAIL=#{email},
+		POSITION=#{position},
+		RETIRE_DATE=#{retireDate,
+		jdbcType=DATE},
+		PHONE=#{phone},
+		STATUS=#{status},
+		REMAINS=#{remains},
+		DEPT_ID=#{deptId}
+		WHERE
+		EMP_ID=#{empId}
+	</update>
+
+	<select id="searchDepartments"
+		resultType="com.example.vms.manager.model.Department">
+		SELECT
+		DEPT_ID AS deptId,
+		NAME AS name
+		FROM DEPARTMENTS
+	</select>
+	
+	
+	<select id="findEmployeesWithAtLeastOneVacation"
+		resultType="com.example.vms.manager.model.Employee">
+		<![CDATA[
+			SELECT * FROM employees WHERE remains >= 1
+				]]>
+	</select>
+
+	<select id="getAllEmployees"
+		resultType="com.example.vms.manager.model.Employee">
+		<![CDATA[
+			SELECT 
+				EMP_ID AS empId,
+				NAME AS name,
+				PASSWORD AS password,
+				EMAIL AS email,
+				POSITION AS position,
+				GENDER AS gender,
+				BIRTH AS birth,
+				HIRE_DATE AS hireDate,
+				RETIRE_DATE AS retireDate,
+				PHONE AS phone,
+				STATUS AS status,
+				REMAINS AS remains,
+				DEPT_ID AS deptId
+			FROM 
+				employees 
+		]]>
+	</select>
+	
+	<delete id="deleteEmployeeRoles">
+		DELETE EMPLOYEE_ROLES WHERE EMP_ID = #{empId}
+	</delete>
+	
+	<insert id="insertEmployeeRole">
+		INSERT INTO EMPLOYEE_ROLES(EMP_ID, ROLE_ID)
+		VALUES(#{empId}, (SELECT ROLE_ID from roles
+		where name=#{role}))
+	</insert>
+
 </mapper>

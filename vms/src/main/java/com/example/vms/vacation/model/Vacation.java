@@ -1,5 +1,6 @@
 package com.example.vms.vacation.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,13 +16,18 @@ public class Vacation {
    private Integer regId;
     private String state;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    private LocalDate endDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date regDate;
+    private LocalDate regDate;
     private String deniedContent;
     private String content;
     private String empId;
-    private Integer typeId;
+    private Integer typeId; // 휴가 유형
+    private int vacationDays;
+    
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 }

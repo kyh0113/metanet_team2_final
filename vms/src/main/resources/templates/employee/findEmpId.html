@@ -1,35 +1,64 @@
 <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">	
+
 <head>
-    <meta charset="UTF-8">
-    <title>아이디 찾기</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
+	<title>아이디 찾기</title>
 </head>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
-    function sendInfo(){
-        $.ajax({
-            url:"/employee/find-employeeid",
-            type:"post",
-            dataType:"json",
-            timeout : 5000,
-            data:{ 
+	function sendInfo() {
+		var csrfToken = '[[${session.csrfToken}]]';
+		console.log(csrfToken);
+
+		$.ajax({
+			url: "/employee/find-employeeid",
+			type: "post",
+			dataType: "json",
+			timeout: 5000,
+			beforeSend: function (xhr) {
+				// CSRF 토큰을 헤더에 추가
+				xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+			},
+			data: {
 				"name": $("#name").val(),
 				"email": $("#email").val()
 			},
-            success: function(data){ 
-                alert(data.resultMessage);
-                console.log(data.resultMessage);
-            },
-            error : function(xhr, ajaxSettings, thrownError) {
-		       alert(thrownError);
-		   }
-        });
-    }
+			success: function (data) {
+				alert(data.resultMessage);
+				console.log(data.resultMessage);
+			},
+			error: function (xhr, ajaxSettings, thrownError) {
+				console.error("에러 발생: " + thrownError);
+				alert(thrownError);
+			}
+		});
+	}
 </script>
-<body>
-    <div id="find_id" name="find_id">
-		<input type="text" name="name" id="name" placeholder="이름">
-		<input type="text" name="email" id="email" placeholder="아매일">
-		<button type="button" id="sendBtn" name="sendBtn" onclick="sendInfo()">아이디 찾기</button>
-    </div>
+
+<body class="bg-light">
+	<div class="container mt-5">
+		<div class="card mx-auto" style="max-width: 400px;">
+			<div class="card-header">
+				<h5 class="card-title text-center">아이디 찾기</h5>
+			</div>
+			<div class="card-body">
+				<div class="form-group">
+					<input type="text" class="form-control" id="name" name="name" placeholder="이름">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="email" name="email" placeholder="이메일">
+				</div>
+				<button type="button" class="btn btn-primary btn-block" id="sendBtn" name="sendBtn"
+					onclick="sendInfo()">아이디 찾기</button>
+			</div>
+		</div>
+	</div>
 </body>
+
+
 </html>

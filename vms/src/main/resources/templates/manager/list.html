@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+  	<link rel="stylesheet" href="../../assets/css/styles.min.css" />
+    <title>직원 조회</title>
+    <style>
+		 #searchForm {
+            margin-top: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #employeeTable {
+            text-align: center;
+        }
+        #pageButton {
+            margin-top: 20px;
+        }
+        .currentPage {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+	
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar" th:include="include/sidebar :: aside">
+	</aside>
+	<!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header" th:include="include/header :: header">
+      </header>
+      <!--  Header End -->
+      <div class="container-fluid">
+		  
+	<h4 style="font-weight: bold;">사원 관리</h4>	  
+		  
+	<div id="searchForm">
+            <div class="input-group">
+                <input type="text" id="emp_id_form" class="form-control" placeholder="사원ID 입력" name="keyword">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" onclick="searchButtonTapped()">검색</button>
+                </div>
+            </div>
+    </div>
+
+    <div id="employeeTable">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">사원번호</th>
+                    <th scope="col">사원이름</th>
+                    <th scope="col">부서</th>
+                    <th scope="col">이메일</th>
+                    <th scope="col">핸드폰번호</th>
+                    <th scope="col">입사일</th>
+                    <th scope="col" colspan="1"></th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+				
+            </tbody>
+        </table>
+    
+		<div id="pageButton" class="d-flex justify-content-center">
+		    <nav id="paginationNavigation" aria-label="Page navigation example">
+		        <ul class="pagination">
+		            <li class="page-item" id="preButton">
+		                <a class="page-link" href="#" onclick="previousButtonTapped()"><</a>
+		            </li>
+		            <th:block th:each="pageNum : ${#numbers.sequence(1, (numberOfEmployees/10)+1)}">
+		                <li class="page-item" th:classappend="${pageNum == currentPage} ? 'active' : ''">
+							<a class="page-link" href="#" th:attr="data-page=${pageNum}" th:text="${pageNum}" onclick="loadEmployeesInformation(this.getAttribute('data-page'))"></a>
+		                </li>
+		            </th:block>
+		            <li class="page-item" id="nextButton">
+		                <a class="page-link" href="#" onclick="nextButtonTapped()">></a>
+		            </li>
+		        </ul>
+		    </nav>
+		</div>
+    </div>
+
+
+      </div>
+    </div>
+  </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var numberOfEmployees = /*[[${numberOfEmployees}]]*/;
+        var searchText;
+        var currentPage = parseInt(pageLoad()) || 1
+        var start = 0
+        var end = 10 
+    	var step = 10
+    	if (searchText === null || searchText === undefined || searchText !== '') {
+			searchButtonTapped()
+		} else {
+			loadEmployeesInformation(currentPage)
+		}
+        function loadEmployeesInformation(number) {
+	        if (currentPage==-1) {
+	             return
+            }
+            currentPage = number
+            start = (currentPage - 1) * step
+            end = currentPage * step
+            updateButtonVisibility()
+
+			var url = '/manager/employees?start='+start+'&end='+end
+
+
+            var xhr = new XMLHttpRequest()
+            xhr.open('GET', url, true)
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText)
+                    reloadTable(data)
+                } else {
+                    console.error('Failed to load data')
+                }
+            }
+
+            xhr.send()
+
+        }
+        function reloadTable(employees) {
+			
+            var tbody = document.getElementById('employeeTableBody')
+            tbody.innerHTML = ''
+
+            employees.forEach(function (item) {
+                var row = tbody.insertRow() 
+                var empCol = row.insertCell(0);
+                var nameCol = row.insertCell(1);
+                var deptNameCol = row.insertCell(2);
+                var emailCol = row.insertCell(3);
+                var phoneCol = row.insertCell(4);
+                var hireDateCol = row.insertCell(5);
+                var editButtonCol = row.insertCell(6);
+
+                empCol.textContent = item.empId;
+                nameCol.textContent = item.name;
+                deptNameCol.textContent = item.deptName;
+                emailCol.textContent = item.email;
+                phoneCol.textContent = item.phone;
+                hireDateCol.textContent = item.hireDate;
+                
+                var editButton = document.createElement('button')
+                editButton.classList.add('btn', 'btn-warning');
+                editButton.textContent = '수정'
+                editButton.addEventListener('click', function() { 
+                    pageSave()
+                    location.href = '/manager/employee/update/'+item.empId
+                })
+                editButtonCol.appendChild(editButton);
+            })
+           updateButtonVisibility()
+        }
+        function updateButtonVisibility() {
+            var preButton = document.getElementById('preButton');
+            var nextButton = document.getElementById('nextButton');
+            var paginationNavigation = document.getElementById('paginationNavigation'); 
+
+            preButton.style.display = currentPage <= 1 ? 'none' : 'inline-block';
+            nextButton.style.display = end >= numberOfEmployees ? 'none' : 'inline-block';
+
+			if (numberOfEmployees <= 1) {
+			    // numberOfEmployees가 1 이하인 경우에만 pageButton을 숨깁니다.
+			    paginationNavigation.style.display = 'none';
+			} else {
+			    paginationNavigation.style.display = 'block';
+			}
+			            // 선택된 페이지에 "active" 클래스 추가
+            var pageItems = document.querySelectorAll('.pagination .page-item')
+            pageItems.forEach(function(item) {
+                item.classList.remove('active')
+            });
+		    pageItems[currentPage].classList.add('active')
+		    
+    	}
+         function pageSave() {
+            sessionStorage.setItem('managerEmployeeCurrentPage', currentPage)
+            let searchText = document.getElementById('emp_id_form').value
+            sessionStorage.setItem('searchText', searchText)
+        }
+
+        function pageLoad() {
+            let currentPage = sessionStorage.getItem('managerEmployeeCurrentPage')
+            sessionStorage.removeItem('managerEmployeeCurrentPage')
+            searchText = sessionStorage.getItem('searchText')
+            sessionStorage.removeItem('searchText')
+            document.getElementById('emp_id_form').value = searchText
+            return currentPage
+        }
+        function previousButtonTapped() {
+			loadEmployeesInformation(parseInt(currentPage)-1)
+		}
+		function nextButtonTapped() {
+			loadEmployeesInformation(parseInt(currentPage)+1)
+		}
+		function searchButtonTapped() {
+			let searchEmpId = document.getElementById('emp_id_form').value;
+			currentPage = 1
+			start = (currentPage - 1) * step
+            end = currentPage * step
+			let url = '/manager/employees?start='+start+'&end='+end+'&empId='+searchEmpId
+
+            var xhr = new XMLHttpRequest()
+            xhr.open('GET', url, true)
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText)
+                    if (data.length==1 || data.length==0) {
+						numberOfEmployees = data.length
+					} else {
+						numberOfEmployees = /*[[${numberOfEmployees}]]*/;
+					}
+                    reloadTable(data)
+                 
+                } else {
+                    console.error('Failed to load data')
+                }
+            }
+            xhr.send()
+		}
+        /*]]>*/
+    </script>
+
+</body>
+<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../assets/js/sidebarmenu.js"></script>
+<script src="../../assets/js/app.min.js"></script>
+<script src="../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="../../assets/libs/simplebar/dist/simplebar.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+</html>

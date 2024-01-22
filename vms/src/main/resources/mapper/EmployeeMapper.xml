@@ -2,7 +2,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.vms.employee.repository.IEmployeeRepository">
-<select id="selectEmployee" parameterType="String" resultType="com.example.vms.manager.model.Employee">
+<select id="selectEmployee" parameterType="string" resultType="com.example.vms.manager.model.Employee">
 		<![CDATA[
 			SELECT 
 				EMP_ID AS empId,
@@ -63,6 +63,14 @@
    		]]>
 	</select>
 	
+	<select id="selectDeptNameByEmpId" parameterType="java.lang.String" resultType="java.lang.String">
+	    SELECT D.NAME 
+	    FROM DEPARTMENTS D 
+	    JOIN EMPLOYEES E 
+	    ON D.DEPT_ID = E.DEPT_ID 
+	    WHERE E.EMP_ID=#{empId}
+	</select>
+	
 	<update id="updatePassword" parameterType="com.example.vms.manager.model.Employee">
 		UPDATE EMPLOYEES
       SET 
@@ -70,4 +78,66 @@
       WHERE 
          EMP_ID=#{empId} AND NAME=#{name} AND EMAIL=#{email}
 	</update>
+	
+	<select id="searchVacationApprovalWaiting" resultType="com.example.vms.employee.model.VacationApprovalWaiting">
+		SELECT 
+			VR.REG_ID,
+			VR.STATE,
+			VR.START_DATE, 
+			VR.END_DATE, 
+			VR.REG_DATE, 
+			VR.DENIED_CONTENT,
+			VR.CONTENT,
+			VR.EMP_ID, 
+			VR.TYPE_ID
+		from vacation_REG VR 
+		JOIN EMPLOYEES E ON VR.EMP_ID = E.EMP_ID
+		JOIN EMPLOYEES E2 ON  E2.DEPT_ID = E.DEPT_ID
+		WHERE E2.EMP_ID=#{empId} AND E2.position=#{position} AND VR.STATE=#{state}
+	</select>
+	
+	<select id="searchEmployeeVacationCountPerMonth" resultType="com.example.vms.employee.model.EmployeeVacationCountPerMonthResponseDTO">
+		SELECT 
+	    EXTRACT(MONTH FROM S.START_DATE) || '월' AS startMonth,
+	    EXTRACT(MONTH FROM S.END_DATE) || '월' AS endMonth,
+	    CASE 
+	        WHEN MONTHS_BETWEEN(S.END_DATE, S.START_DATE) = 0 THEN S.END_DATE - S.START_DATE + 1
+	        ELSE 
+	            CASE 
+	                WHEN TO_CHAR(S.START_DATE, 'YYYY-MM') = TO_CHAR(S.END_DATE, 'YYYY-MM') THEN S.END_DATE - S.START_DATE + 1
+	                ELSE LAST_DAY(S.START_DATE) - S.START_DATE + 1
+	            END
+		    END AS startMonthDays,
+		    CASE 
+		        WHEN TO_CHAR(S.START_DATE, 'YYYY-MM') = TO_CHAR(S.END_DATE, 'YYYY-MM') THEN 0
+		        ELSE 
+		            S.END_DATE - TRUNC(S.END_DATE, 'MM') + 1
+		    END
+		    AS endMonthDays,
+		    S.START_DATE as startDate,
+		    S.END_DATE as endDate 
+		FROM 
+		    EMPLOYEES E
+		JOIN 
+		    schedule S ON E.emp_id = S.emp_id
+		WHERE 
+		    S.START_DATE BETWEEN ADD_MONTHS(TRUNC(SYSDATE, 'MONTH'), -5) AND LAST_DAY(TRUNC(SYSDATE, 'MONTH')) AND
+		    E.emp_id=#{empId}
+		ORDER BY 
+		    TO_CHAR(S.START_DATE, 'YYYY-MM')
+	</select>
+	
+	<select id="numberOfVacationUsagesSearchByYear" resultType="int">
+		SELECT 
+		    NVL (
+		    SUM(
+		        CASE 
+		            WHEN TO_CHAR(START_DATE, 'YYYY') = TO_CHAR(END_DATE, 'YYYY') THEN END_DATE - START_DATE + 1
+		            ELSE LAST_DAY(TO_DATE(#{year})) - START_DATE + 1 
+		        END
+		    ), 0)
+		    AS TOTAL_DAYS
+		FROM SCHEDULE  
+		WHERE EMP_ID = #{empId} AND TO_CHAR(START_DATE, 'YYYY') = #{year}
+	</select> 
 </mapper>
