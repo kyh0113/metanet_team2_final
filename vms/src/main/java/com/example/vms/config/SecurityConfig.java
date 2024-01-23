@@ -59,7 +59,8 @@ public class SecurityConfig {
         .anyRequest().authenticated(); // 나머지는 인증된 사용자만 접근 가능
         
         http
-        .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+        .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler());
     
         http.sessionManagement((session)->session.sessionCreationPolicy(
 				SessionCreationPolicy.STATELESS)); // 세션방식의 인증을 사용하지 않겠다는 뜻

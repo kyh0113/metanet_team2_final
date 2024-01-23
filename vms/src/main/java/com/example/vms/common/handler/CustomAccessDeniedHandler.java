@@ -23,9 +23,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         String requestedUrl = request.getRequestURI();
         
         String redirectUrl = "/error/access-denied?errorMessage=" + requestedUrl;
-
         // Access Denied 페이지로 리다이렉션
         response.sendRedirect(redirectUrl);
-		
 	}
 }

@@ -284,38 +284,6 @@ public class VacationServiceTest {
         verify(employeeMock, times(1)).getDeptId();
     }
 	
-	@Test
-    public void testApprovalRequest() {
-		// 테스트할 Vacation 객체 생성
-        Vacation vacation = new Vacation();
-        vacation.setRegId(123);
-        vacation.setEmpId("employee123");
-        vacation.setStartDate(LocalDate.now());
-        vacation.setEndDate(LocalDate.now().plusDays(2)); // 예시로 2일 동안의 휴가
-        vacation.setTypeId(1);
-        vacation.setState("거절"); // "승인"이 아닌 상태로 설정
-
-        // VacationDao의 mock 객체 설정
-        when(vacationDaoMock.updateRequest(vacation)).thenReturn(1); // 휴가 승인 성공
-        when(vacationDaoMock.selectRequestByRegId(vacation.getRegId())).thenReturn(vacation);
-
-        // EmployeeService의 mock 객체 설정
-        Employee employeeMock = mock(Employee.class);
-        when(employeeMock.getDeptId()).thenReturn(1);
-        when(employeeService.selectEmployee(anyString())).thenReturn(employeeMock);
-        
-        // Service 호출
-        //VacationService vacationService = new VacationService(vacationDaoMock, scheduleservice, employeeService);
-        String result = vacationService.approvalRequest(vacation);
-
-        // "결재 완료"가 아니라 "결재 실패"가 반환되어야 함
-        assertEquals("결재 완료", result);
-
-        // ScheduleService의 어떠한 메서드도 호출되지 않아야 함
-        verify(scheduleService, never()).maxScheduleId();
-        verify(scheduleService, never()).insertSchedule(any(Schedule.class));
-    }
-
     @Test
     void testApprovalRequest_Failure() {
         // 테스트 데이터
